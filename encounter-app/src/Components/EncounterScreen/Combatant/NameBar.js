@@ -18,8 +18,7 @@ const styles = theme => ({
    nameButton: {
     textTransform: 'none',
     fontSize: '1.15em',
-    width: '80%',
-    margin: '0 10%',
+    width: '100%',
     marginTop: '5px',
     textShadow: '0px 3px 10px rgba(0,0,0,1)',
    }

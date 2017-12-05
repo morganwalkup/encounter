@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
@@ -8,10 +9,15 @@ import MenuIcon from 'material-ui-icons/Menu';
 import Drawer from 'material-ui/Drawer';
 import EncounterDrawerContent from './EncounterDrawerContent';
 import Hidden from 'material-ui/Hidden';
-
 import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
+//=== Props ===
+const propTypes = {
+  subtle: PropTypes.bool,
+};
+
+//=== Component ===
 class EncounterNav extends React.Component {
   constructor(props) {
     super(props);
@@ -77,6 +83,10 @@ class EncounterNav extends React.Component {
   }
 }
 
+//=== Assign Props ===
+EncounterNav.propTypes = propTypes;
+
+//=== Styles ===
 const styles = theme => ({
   appBar: {
     backgroundColor: blueGrey[900],
@@ -101,4 +111,5 @@ const styles = theme => ({
   },
 });
 
+//=== Apply Styles ===
 export default withStyles(styles)(EncounterNav);

@@ -9,7 +9,11 @@ class CombatantGroup extends React.Component {
     const combatantNode = ReactDOM.findDOMNode(combatant);
     const cgNode = ReactDOM.findDOMNode(this);
     const paddingTop = 20;
-    cgNode.scrollTo(0, combatantNode.offsetTop - paddingTop);
+    cgNode.scrollTo({
+      top: combatantNode.offsetTop - paddingTop,
+      left: 0,
+      behavior: 'smooth',
+    });
   }
   
   render() {
@@ -32,7 +36,7 @@ class CombatantGroup extends React.Component {
 
     return(
       <div className={cgClassnames.join(' ')}>
-          {generatedCombatants}
+        {generatedCombatants}
       </div>
     ); 
   }
@@ -40,6 +44,7 @@ class CombatantGroup extends React.Component {
 
 const styles = ({
   combatantGroup: {
+    padding: '0 5px',
     paddingTop: '5vh',
     height: '95vh',
     overflow: 'auto',

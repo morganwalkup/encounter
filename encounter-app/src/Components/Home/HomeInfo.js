@@ -7,64 +7,49 @@ import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import { blueGrey } from 'material-ui/colors';
 
-function HomeSplash(props) {
+function HomeInfo(props) {
   const { classes } = props;
   return(
     <Grid container spacing={0} className={classes.splash}>
       <Grid item xs={12}>
-        <Typography className={classes.tagline}>Visual Combat for D&D</Typography>
+        <Typography className={classes.tagline}>So Much to Love!</Typography>
       </Grid>
       <Grid item xs={12} className={classes.splashCardContainer}>
         <Grid container justify="center" spacing={16}>
           <Grid item xs={12} sm={4} md={3}>
             <Card className={classes.splashCard}>
               <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
-                Characters
+                Polished Animations
               </Typography>
               <CardContent>
                 <Typography type='subheading' component="p" align='center'>
-                  Create intrepid, daring adventurers and their stalwart allies
+                  Breathe life into combat with smooth animations
                 </Typography>
               </CardContent>
-              <CardActions className={classes.splashCardActions}>
-                <Button raised>
-                  Create a Character
-                </Button>
-              </CardActions>
             </Card>
           </Grid>
           <Grid item xs={12} sm={4} md={3}>
              <Card className={classes.splashCard}>
               <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
-                Encounters
+                Initiative Tracking
               </Typography>
               <CardContent>
                 <Typography type='subheading' component="p" align='center'>
-                  Pit your characters against fearsome foes in the arena of your choice
+                  We take care of the little things, so you can focus on running the game
                 </Typography>
               </CardContent>
-              <CardActions className={classes.splashCardActions}>
-                <Button raised>
-                  Create an Encounter
-                </Button>
-              </CardActions>
             </Card>
           </Grid>
           <Grid item xs={12} sm={4} md={3}>
              <Card className={classes.splashCard}>
               <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
-                Monsters
+                Stat Blocks
               </Typography>
               <CardContent>
                 <Typography type='subheading' component="p" align='center'>
-                  Craft unspeakable horrors to oppose and endanger your adventurers
+                  Detailed stats are only a click away
                 </Typography>
               </CardContent>
-              <CardActions className={classes.splashCardActions}>
-                <Button raised>
-                  Create a Monster
-                </Button>
-              </CardActions>
             </Card>
           </Grid>
         </Grid>
@@ -77,13 +62,8 @@ const styles = theme => ({
   splash: {
     width: '100%',
     height: 'auto',
-    minHeight: 450,
-    paddingTop: theme.spacing.unit * 8,
-    backgroundImage: "url(" + SplashBackground + ")",
-    backgroundSize: '100% auto',
-    backgroundRepeat: 'no-repeat',
-    backgroundColor: 'black',
-    borderBottom: 'solid thick #69f0ae',
+    backgroundColor: blueGrey[900],
+    borderBottom: 'solid thick #FFFA58',
   },
   tagline: {
     fontSize: '2em',
@@ -116,4 +96,4 @@ const styles = theme => ({
   }
 });
 
-export default withStyles(styles)(HomeSplash);
+export default withStyles(styles)(HomeInfo);

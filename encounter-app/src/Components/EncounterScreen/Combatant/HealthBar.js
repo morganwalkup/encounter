@@ -2,25 +2,6 @@ import React from 'react';
 import { CircularProgress } from 'material-ui/Progress';
 import { withStyles } from 'material-ui/styles';
 
-const styles = theme => ({
-  healthBar: {
-    height: '110% !important',
-    width: '110% !important',
-    position: 'absolute',
-    top: '-5%',
-    left: '-5%',
-  },
-  fullHealth: {
-    color: '#69f0ae',
-  },
-  midHealth: {
-    color: '#FFFA58',
-  },
-  lowHealth: {
-    color: '#EE6055',
-  },
-});
-
 class CombatantCircle extends React.Component {
   render() {
     const { classes } = this.props;
@@ -47,5 +28,24 @@ class CombatantCircle extends React.Component {
     );
   }
 }
+
+const styles = theme => ({
+  healthBar: {
+    height: '110% !important',
+    width: '110% !important',
+    position: 'absolute',
+    top: '-5%',
+    left: '-5%',
+  },
+  fullHealth: {
+    color: '#69f0ae',
+  },
+  midHealth: {
+    color: '#FFFA58',
+  },
+  lowHealth: {
+    color: '#EE6055',
+  },
+});
 
 export default withStyles(styles)(CombatantCircle);

@@ -46,6 +46,7 @@ const styles = ({
     }
   },
   active: {
+    transition: 'width 0.4s',
     width: '75%',
   }
 });

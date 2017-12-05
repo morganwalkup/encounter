@@ -7,10 +7,11 @@ import SettingsDialog from './SettingsDialog';
 import EncounterFooter from './EncounterFooter';
 import { withStyles } from 'material-ui/styles';
 import './EncounterScreen.css';
-
 import encounter from '../../EncounterData/encounter.json';
 
+//=== Component ===
 class EncounterScreen extends React.Component {
+  
   constructor(props) {
     super(props);
     this.state = {
@@ -19,7 +20,8 @@ class EncounterScreen extends React.Component {
     };
   }
   
-  runEncounter = () => {
+  //Activates the next combatant in the initiative order
+  nextTurn = () => {
     //Temp storage for state variables
     let activeIndex = this.state.activeCombatantIndex;
     const combatants = this.state.orderedCombatants;
@@ -94,13 +96,16 @@ class EncounterScreen extends React.Component {
         </Grid>
         <SettingsDialog open={false}/>
         <CombatantDialog open={false}/>
-        <EncounterFooter handleInitiativeClick={this.runEncounter}/>
+        <EncounterFooter handleInitiativeClick={this.nextTurn}/>
       </div>
     );
   }
 }
 
+//=== Styles ===
 const styles = ({
+  //none
 });
 
+//=== Apply Styles ===
 export default withStyles(styles)(EncounterScreen);

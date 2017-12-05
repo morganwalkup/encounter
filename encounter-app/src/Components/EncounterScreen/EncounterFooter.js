@@ -3,6 +3,18 @@ import Button from 'material-ui/Button';
 
 import { withStyles } from 'material-ui/styles';
 
+function EncounterFooter(props) {
+  const { classes, handleInitiativeClick } = props;
+  
+  return(
+    <div className={classes.footer}>
+      <Button color='contrast'>&lt; Exit</Button>
+      <Button color='contrast' onClick={handleInitiativeClick}>Next Round</Button>
+      <Button color='contrast'>Settings</Button>
+    </div>
+  );
+}
+
 const styles = theme => ({
   footer: {
     position: 'absolute',
@@ -22,17 +34,5 @@ const styles = theme => ({
     },
   },
 });
-
-function EncounterFooter(props) {
-  const { classes, handleInitiativeClick } = props;
-  
-  return(
-    <div className={classes.footer}>
-      <Button color='contrast'>&lt; Exit</Button>
-      <Button color='contrast' onClick={handleInitiativeClick}>Begin!</Button>
-      <Button color='contrast'>Settings</Button>
-    </div>
-  );
-}
 
 export default withStyles(styles)(EncounterFooter);
