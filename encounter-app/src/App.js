@@ -12,16 +12,22 @@ function App(props) {
   
   return(
     <div>
-      <EncounterNav />
-      <Grid container direction="column" justify="space-between" spacing={0} className={classes.appContainer}>
+      <EncounterNav subtle/>
+      <Grid 
+        container 
+        direction="column" 
+        justify="space-between" 
+        spacing={0} 
+        className={classes.appContainer}
+      >
         <Grid item xs={12}>
-          {/* <EncounterScreen /> */}
-          {/*<Home /> */}
-          <Characters />
+          <EncounterScreen />
+          {/*<Home />*/}
+          {/*<Characters />*/}
         </Grid>
-        <Grid item xs={12}>
+        {/*<Grid item xs={12}>
           <EncounterFooter/>
-        </Grid>
+        </Grid>*/}
       </Grid>
     </div>
   );

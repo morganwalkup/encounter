@@ -15,13 +15,16 @@ class EncounterScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      orderedCombatants: this.calculateInitiativeOrder(),
+      orderedCombatants: this.applyInitiativeOrder(),
       activeCombatantIndex: -1,
+      isSettingsDialogOpen: false,
+      infoDialogSubject: null,
+      isInfoDialogOpen: false,
     };
   }
   
   //Activates the next combatant in the initiative order
-  nextTurn = () => {
+  handleContinueClick = () => {
     //Temp storage for state variables
     let activeIndex = this.state.activeCombatantIndex;
     const combatants = this.state.orderedCombatants;
@@ -40,7 +43,8 @@ class EncounterScreen extends React.Component {
     });
   }
   
-  calculateInitiativeOrder() {
+  //Applies initiative order to combatants
+  applyInitiativeOrder() {
     //Collect combatants
     let combatants = encounter.players.concat(encounter.enemies);
     //Roll initiative for combatants
@@ -52,6 +56,7 @@ class EncounterScreen extends React.Component {
     return combatants;
   }
   
+  //Calculates initiative for the combatant
   rollInitiative(combatant) {
     let roll = Math.floor((Math.random() * 21) + 1); //Returns number in range [1,20]
     let initiativeModifier = Math.floor((combatant.dexterity - 10) / 2);
@@ -59,6 +64,7 @@ class EncounterScreen extends React.Component {
     combatant.initiative = initiative;
   }
   
+  //Sorts combatants based on initiative
   initiativeBubbleSort(combatants) {
     let len = combatants.length;
     for (var i = len-1; i >= 0; i--){
@@ -71,6 +77,29 @@ class EncounterScreen extends React.Component {
       }
     }
     return combatants;
+  }
+  
+  //Opens the settings dialog
+  handleSettingsClick = () => {
+    this.setState({
+      isSettingsDialogOpen: true,
+    });
+  }
+  
+  //Opens the combatant info dialog
+  handleInfoClick = (combatant) => {
+    this.setState({
+      infoDialogSubject: combatant,
+      isInfoDialogOpen: true,
+    });
+  }
+  
+  //Closes the settings dialog
+  handleRequestClose = () => {
+    this.setState({
+      isSettingsDialogOpen: false,
+      isInfoDialogOpen: false,
+    });
   }
   
   render() {
@@ -88,15 +117,32 @@ class EncounterScreen extends React.Component {
         <EncounterBackground img={encounter.background}/>
         <Grid container spacing={0} justify="space-between">
           <Grid item xs={6} sm={4} lg={2}>
-            <CombatantGroup combatants={players}/>
+            <CombatantGroup 
+              combatants={players}
+              onInfoClick={this.handleInfoClick}
+            />
           </Grid>
           <Grid item xs={6} sm={4} lg={2}>
-            <CombatantGroup combatants={enemies} rightSide />
+            <CombatantGroup 
+              rightSide
+              combatants={enemies} 
+              onInfoClick={this.handleInfoClick}
+            />
           </Grid>
         </Grid>
-        <SettingsDialog open={false}/>
-        <CombatantDialog open={false}/>
-        <EncounterFooter handleInitiativeClick={this.nextTurn}/>
+        <SettingsDialog 
+          open={this.state.isSettingsDialogOpen}
+          onRequestClose={this.handleRequestClose}
+        />
+        <CombatantDialog 
+          open={this.state.isInfoDialogOpen}
+          onRequestClose={this.handleRequestClose}
+          combatant={this.state.infoDialogSubject}
+        />
+        <EncounterFooter 
+          onContinueClick={this.handleContinueClick}
+          onSettingsClick={this.handleSettingsClick}
+        />
       </div>
     );
   }

@@ -15,7 +15,7 @@ function HomeInfo(props) {
         <Typography className={classes.tagline}>So Much to Love!</Typography>
       </Grid>
       <Grid item xs={12} className={classes.splashCardContainer}>
-        <Grid container justify="center" spacing={16}>
+        <Grid container justify="center" spacing={0}>
           <Grid item xs={12} sm={4} md={3}>
             <Card className={classes.splashCard}>
               <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>

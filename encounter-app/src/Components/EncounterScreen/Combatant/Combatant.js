@@ -1,7 +1,7 @@
 import React from 'react';
 import CombatantCircle from './CombatantCircle';
 import StatBar from './StatBar';
-import NameBar from './NameBar';
+import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 
 class Combatant extends React.Component {
@@ -9,6 +9,10 @@ class Combatant extends React.Component {
     if(this.props.combatant.isActive) {
       this.props.onActive(this);
     }
+  }
+  
+  handleInfoClick = () => {
+    this.props.onInfoClick(this.props.combatant);
   }
   
   render() {
@@ -29,7 +33,12 @@ class Combatant extends React.Component {
           initiative={combatant.initiative}
           armorClass={combatant.armor_class}
         />
-        <NameBar name={combatant.name}/>
+        <Button color='contrast' 
+          onClick={this.handleInfoClick} 
+          className={classes.nameButton}
+        >
+          {combatant.name}
+        </Button>
       </div>
     );
   }
@@ -48,6 +57,13 @@ const styles = ({
   active: {
     transition: 'width 0.4s',
     width: '75%',
+  },
+  nameButton: {
+    textTransform: 'none',
+    fontSize: '1.15em',
+    width: '100%',
+    marginTop: '5px',
+    textShadow: '0px 3px 10px rgba(0,0,0,1)',
   }
 });
 

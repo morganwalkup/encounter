@@ -44,8 +44,10 @@ class DamageInteractable extends React.Component {
   render() {
     const { classes } = this.props;
     
+    let damageClasses = [classes.damage];
     let damageInteractable;
     if(this.state.showDamageInput === true) {
+      damageClasses.push(classes.activeDamage);
       damageInteractable = 
         <TextField
           value={this.state.damage}
@@ -58,6 +60,7 @@ class DamageInteractable extends React.Component {
           autoFocus
         />;
     } else {
+      damageClasses.push(classes.inactiveDamage);
       damageInteractable =
         <Button 
           color='contrast' 
@@ -66,7 +69,7 @@ class DamageInteractable extends React.Component {
     }
     
     return (
-      <div className={classes.damage}>
+      <div className={damageClasses.join(' ')}>
         {damageInteractable}
       </div>
     );
@@ -78,17 +81,22 @@ const styles = theme => ({
     position: 'absolute',
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
+    width: '101%',
+    height: '101%',
     borderRadius: '50%',
     background: 'rgba(0,0,0,0.5)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  inactiveDamage: {
     opacity: 0,
     '&:hover': {
       opacity: 1,
     },
+  },
+  activeDamage: {
+    opacity: 1,
   },
   damageInput: {
     width: '45%',

@@ -1,7 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import Combatant from './Combatant/Combatant';
 import { withStyles } from 'material-ui/styles';
+
+const propTypes = {
+  onInfoClick: PropTypes.func.isRequired,
+};
 
 class CombatantGroup extends React.Component {
   
@@ -14,6 +19,10 @@ class CombatantGroup extends React.Component {
       left: 0,
       behavior: 'smooth',
     });
+  }
+  
+  handleInfoClick = (combatant) => {
+    this.props.onInfoClick(combatant);
   }
   
   render() {
@@ -31,6 +40,7 @@ class CombatantGroup extends React.Component {
         key={index}
         combatant={combatant}
         onActive={this.scrollToActiveCombatant}
+        onInfoClick={this.handleInfoClick}
       />
     );
 
@@ -41,6 +51,8 @@ class CombatantGroup extends React.Component {
     ); 
   }
 }
+
+CombatantGroup.PropTypes = propTypes;
 
 const styles = ({
   combatantGroup: {

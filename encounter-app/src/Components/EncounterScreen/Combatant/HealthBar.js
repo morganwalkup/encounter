@@ -36,6 +36,9 @@ const styles = theme => ({
     position: 'absolute',
     top: '-5%',
     left: '-5%',
+    '& circle' : {
+      transition: 'stroke-dashoffset 1.0s',
+    },
   },
   fullHealth: {
     color: '#69f0ae',

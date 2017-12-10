@@ -1,19 +1,52 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
-
 import { withStyles } from 'material-ui/styles';
 
-function EncounterFooter(props) {
-  const { classes, handleInitiativeClick } = props;
+const propTypes = {
+  onContinueClick: PropTypes.func.isRequired,
+  onSettingsClick: PropTypes.func.isRequired,
+};
+
+class EncounterFooter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      encounterStarted: false,
+    };
+  }
   
-  return(
-    <div className={classes.footer}>
-      <Button color='contrast'>&lt; Exit</Button>
-      <Button color='contrast' onClick={handleInitiativeClick}>Next Round</Button>
-      <Button color='contrast'>Settings</Button>
-    </div>
-  );
+  handleContinueClick = () => {
+    this.setState({
+      encounterStarted: true,
+    });
+    this.props.onContinueClick();
+  }
+  
+  handleSettingsClick = () => {
+    this.props.onSettingsClick();
+  }
+  
+  render(){
+    const { classes } = this.props;
+  
+    return(
+      <div className={classes.footer}>
+        <Button color='contrast'>
+          &lt; Exit
+        </Button>
+        <Button color='contrast' onClick={this.handleContinueClick}>
+          {this.state.encounterStarted ? "Continue" : "Start"}
+        </Button>
+        <Button color='contrast' onClick={this.handleSettingsClick}>
+          Settings
+        </Button>
+      </div>
+    ); 
+  }
 }
+
+EncounterFooter.PropTypes = propTypes;
 
 const styles = theme => ({
   footer: {
