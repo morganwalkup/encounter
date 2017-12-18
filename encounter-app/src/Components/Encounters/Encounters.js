@@ -1,46 +1,46 @@
 import React from 'react';
 import Grid from 'material-ui/Grid';
-import characters from '../../EncounterData/players.json';
-import CharactersHeader from './CharactersHeader';
-import CharacterCard from './CharacterCard';
+import encounters from '../../EncounterData/encounters.json';
+import EncountersHeader from './EncountersHeader';
+import EncounterCard from './EncounterCard';
 import Hidden from 'material-ui/Hidden';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
-import CharacterDialog from './CharacterDialog';
+//import EncounterDialog from './EncounterDialog';
 import { withStyles } from 'material-ui/styles';
 
-class Characters extends React.Component {
+class Encounters extends React.Component {
   
   constructor(props) {
     super(props);
     this.state = {
-      isCharacterDialogOpen: false,
+      isEncounterDialogOpen: false,
     };
   }
   
-  //Handles the closing of a character dialog
+  //Handles the closing of an encounter dialog
   handleRequestClose = () => {
     this.setState({
-      isCharacterDialogOpen: false,
+      isEncounterDialogOpen: false,
     });
   }
   
-  //Handles a character view click
+  //Handles an encounter "view" click
   handleClickView = () => {
     this.setState({
-      isCharacterDialogOpen: true,
+      isEncounterDialogOpen: true,
     });
   }
   
   render() {
     const { classes } = this.props;
   
-    //Generate Character Cards
-    const characterCards = characters.map((character) => (
-      <Grid item xs={12} sm={6} lg={4} key={character.id}>
-        <CharacterCard 
-          img={character.image} 
-          name={character.name} 
+    //Generate Encounter Cards
+    const encounterCards = encounters.map((encounter) => (
+      <Grid item xs={12} sm={6} lg={4} key={encounter.id}>
+        <EncounterCard 
+          img={encounter.background} 
+          title={encounter.title} 
           onClickView={this.handleClickView}
         />
       </Grid>
@@ -50,11 +50,11 @@ class Characters extends React.Component {
       <div>
         <Grid container direction="row" justify="center" spacing={0}>
           <Grid item xs={12}>
-            <CharactersHeader />
+            <EncountersHeader />
           </Grid>
-          <Grid item xs={11} sm={11} lg={9} className={classes.charCardsContainer}>
+          <Grid item xs={11} sm={11} lg={9} className={classes.encounterCardsContainer}>
             <Grid container spacing={0}>
-              {characterCards}
+              {encounterCards}
             </Grid>
           </Grid>
         </Grid>
@@ -63,18 +63,18 @@ class Characters extends React.Component {
             <AddIcon />
           </Button>
         </Hidden>
-        <CharacterDialog 
-          open={this.state.isCharacterDialogOpen}
+        {/*<EncounterDialog 
+          open={this.state.isEncounterDialogOpen}
           onRequestClose={this.handleRequestClose}
-          combatant={characters[0]}
-        />
+          encounter={encounters[0]}
+        />*/}
       </div>
     );
   }
 }
 
 const styles = theme => ({
-  charCardsContainer: {
+  encounterCardsContainer: {
     paddingBottom: 60,
   },
   footer: {
@@ -93,4 +93,4 @@ const styles = theme => ({
   },
 });
 
-export default withStyles(styles)(Characters);
+export default withStyles(styles)(Encounters);

@@ -1,4 +1,7 @@
 import React from 'react';
+import {
+  Link,
+} from 'react-router-dom';
 import Grid from 'material-ui/Grid';
 import SplashBackground from '../../images/dndphbfaded.jpg';
 import Typography from 'material-ui/Typography';
@@ -27,7 +30,7 @@ function HomeSplash(props) {
                 </Typography>
               </CardContent>
               <CardActions className={classes.splashCardActions}>
-                <Button raised>
+                <Button raised component={Link} to="/characters">
                   Create a Character
                 </Button>
               </CardActions>

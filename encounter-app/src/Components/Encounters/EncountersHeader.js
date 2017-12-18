@@ -6,16 +6,16 @@ import Hidden from 'material-ui/Hidden';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 
-function CharactersHeader(props) {
+function EncountersHeader(props) {
   const { classes } = props;
   return(
     <Grid container spacing={0} justify="center" className={classes.splash}>
       <Grid item xs={12} md={12} lg={9}>
-        <Typography className={classes.tagline}>Characters</Typography>
+        <Typography className={classes.tagline}>Encounters</Typography>
       </Grid>
       <Grid item xs={12} md={12} lg={9}>
         <Hidden xsDown>
-          <Button raised className={classes.newButton}>New Character</Button>
+          <Button raised className={classes.newButton}>New Encounter</Button>
         </Hidden>
       </Grid>
     </Grid>
@@ -50,4 +50,4 @@ const styles = theme => ({
   },
 });
 
-export default withStyles(styles)(CharactersHeader);
+export default withStyles(styles)(EncountersHeader);

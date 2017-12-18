@@ -9,31 +9,60 @@ import { blueGrey } from 'material-ui/colors';
 const propTypes = {
   img: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
+  onClickView: PropTypes.func,
+  onClickEdit: PropTypes.func,
+  onClickDelete: PropTypes.func,
 };
 
-function CharacterCard(props) {
-  const { classes, img, name } = props;
-  const src = require('../../images/combatants/' + img);
+class CharacterCard extends React.Component {
   
-  return(
-    <Grid container justify="center">
-      <Grid item xs={12} className={classes.charCardContainer}>
-        <div className={classes.charCard}>
-          <div className={classes.charCircle}>
-            <img className={classes.avatar} src={src} alt={"img"} />
+  handleClickView = () => {
+    this.props.onClickView();
+  }
+  
+  render() {
+    const { classes, img, name } = this.props;
+    const src = require('../../images/combatants/' + img);
+    
+    return(
+      <Grid container justify="center">
+        <Grid item xs={12} className={classes.charCardContainer}>
+          <div className={classes.charCard}>
+            <div className={classes.charCircle}>
+              <img className={classes.avatar} src={src} alt={"img"} />
+            </div>
+            <Typography type="title" component="h2" className={classes.charCardTitle}>
+              {name}
+            </Typography>
+            
+            <div className={classes.charCardActions}>
+              <Button 
+                dense 
+                className={classes.charCardButton} 
+                onClick={this.handleClickView}
+              >
+                View
+              </Button>
+              <Button 
+                dense 
+                className={classes.charCardButton}
+              >
+                Edit
+              </Button>
+              <Button 
+                dense 
+                color="accent" 
+                className={classes.charCardButton}
+              >
+                Delete
+              </Button>
+            </div>
+            
           </div>
-          <Typography type="title" component="h2" className={classes.charCardTitle}>
-            {name}
-          </Typography>
-          <div className={classes.charCardActions}>
-            <Button dense className={classes.charCardButton}>View</Button>
-            <Button dense className={classes.charCardButton}>Edit</Button>
-            <Button dense color="accent" className={classes.charCardButton}>Delete</Button>
-          </div>
-        </div>
+        </Grid>
       </Grid>
-    </Grid>
-  );
+    );
+  }
 }
 
 CharacterCard.propTypes = propTypes;
@@ -86,6 +115,7 @@ const styles = theme => ({
     width: '91%',
     borderRadius: '50%',
     border: 'solid thick #69f0ae',
+    backgroundColor: blueGrey[900],
   },
 });
 

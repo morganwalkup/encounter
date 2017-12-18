@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
@@ -26,47 +27,81 @@ class EncounterNav extends React.Component {
     };
   }
   
-  handleCLick = () => {
+  handleClick = () => {
     this.setState(prevState => ({
       isDrawerOpen: !prevState.isDrawerOpen,
     }));
   }
   
   render() {
-    const {classes, subtle} = this.props;
+    const {classes, hoverOnly} = this.props;
     
     let appBarClasses = [classes.appBar];
-    if(subtle) {
-      appBarClasses.push(classes.hiddenAppBar);
+    if(hoverOnly === true) {
+      appBarClasses.push(classes.hoverOnlyAppBar);
     }
     
     return (
       <div>
         <AppBar className={appBarClasses.join(' ')}>
           <Toolbar>
-            <Typography type="title" color="inherit" className={classes.title}>
+            <Typography 
+              type="title" 
+              color="inherit" 
+              className={classes.title}
+              component={Link}
+              to="/"
+            >
               Encounter!
             </Typography>
+
             <Hidden smDown>
-              <Button color='contrast'>Encounters</Button>
-              <Button color='contrast'>Characters</Button>
-              <Button color='contrast'>Monsters</Button>
-              <Button color='primary' raised className={classes.signUp}>
+              <Button 
+                color="contrast"
+                component={Link}
+                to="/encounters"
+              >
+                Encounters
+              </Button>
+              <Button 
+                color="contrast"
+                component={Link}
+                to="/characters"
+              >
+                Characters
+              </Button>
+              <Button 
+                color="contrast"
+                component={Link}
+                to="/monsters"
+              >
+                Monsters
+              </Button>
+              <Button 
+                color="primary" 
+                raised 
+                className={classes.signUp}
+                component={Link}
+                to="/signup"
+              >
                 Sign Up!
               </Button>
             </Hidden>
+            
             <Hidden mdUp>
               <IconButton color="contrast" aria-label="Menu">
-                <MenuIcon onClick={this.handleCLick}/>
+                <MenuIcon onClick={this.handleClick}/>
               </IconButton>
             </Hidden>
+            
           </Toolbar>
         </AppBar>
+        
         <Hidden mdUp>
           <Drawer
             anchor="right"
             open={this.state.isDrawerOpen}
-            onRequestClose={this.handleCLick}
+            onRequestClose={this.handleClick}
           >
             <div
               tabIndex={0}
@@ -78,6 +113,7 @@ class EncounterNav extends React.Component {
             </div>
           </Drawer>
         </Hidden>
+        
       </div>
     );
   }
@@ -91,7 +127,7 @@ const styles = theme => ({
   appBar: {
     backgroundColor: blueGrey[900],
   },
-  hiddenAppBar: {
+  hoverOnlyAppBar: {
     opacity: 0,
     transition: 'opacity 0.4s',
     '&:hover': {

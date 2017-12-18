@@ -1,9 +1,7 @@
 import React from 'react';
 import Grid from 'material-ui/Grid';
-import SplashBackground from '../../images/dndphbfaded.jpg';
 import Typography from 'material-ui/Typography';
-import Card, { CardActions, CardContent } from 'material-ui/Card';
-import Button from 'material-ui/Button';
+import Card, { CardContent } from 'material-ui/Card';
 import { withStyles } from 'material-ui/styles';
 import { blueGrey } from 'material-ui/colors';
 

@@ -1,9 +1,14 @@
 import React from 'react';
+import {
+  Route,
+  Switch,
+} from 'react-router-dom';
 import Grid from 'material-ui/Grid';
 import EncounterNav from './Components/Persistent/EncounterNav';
-import EncounterScreen from './Components/EncounterScreen/EncounterScreen';
 import Home from './Components/Home/Home';
 import Characters from './Components/Characters/Characters';
+import Encounters from './Components/Encounters/Encounters';
+import EncounterScreen from './Components/EncounterScreen/EncounterScreen';
 import EncounterFooter from './Components/Persistent/EncounterFooter';
 import { withStyles } from 'material-ui/styles';
 
@@ -12,7 +17,11 @@ function App(props) {
   
   return(
     <div>
-      <EncounterNav subtle/>
+      {/* Navbar - Apply hoverOnly effect for encounter screen */}
+      <Route path="/playencounter" children={({ match }) => (
+        <EncounterNav hoverOnly={match ? true : false} />
+      )}/>
+      {/* Page Content */}
       <Grid 
         container 
         direction="column" 
@@ -20,14 +29,22 @@ function App(props) {
         spacing={0} 
         className={classes.appContainer}
       >
+        {/* Main page content */}
         <Grid item xs={12}>
-          <EncounterScreen />
-          {/*<Home />*/}
-          {/*<Characters />*/}
+          <Switch>
+            <Route exact path="/" component={Home}/>
+            <Route path="/encounters" component={Encounters}/>
+            <Route path="/characters" component={Characters}/>
+            <Route path="/playencounter" component={EncounterScreen}/>
+          </Switch>
         </Grid>
-        {/*<Grid item xs={12}>
-          <EncounterFooter/>
-        </Grid>*/}
+        {/* Page footer */}
+        <Grid item xs={12}>
+          <Switch>
+            <Route path="/playencounter" />
+            <Route path="/" component={EncounterFooter}/>
+          </Switch>
+        </Grid>
       </Grid>
     </div>
   );

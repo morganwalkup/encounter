@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 
@@ -10,19 +11,19 @@ function EncounterDrawerContent(props) {
   return (
     <div className={classes.drawerContent}>
       <List>
-        <ListItem button>
+        <ListItem button component={Link} to="/signup">
           <ListItemText primary="Sign Up!" />
         </ListItem>
       </List>
       <Divider />
       <List>
-        <ListItem button>
+        <ListItem button component={Link} to="/encounters">
           <ListItemText primary="Encounters" />
         </ListItem>
-        <ListItem button>
+        <ListItem button component={Link} to="/characters">
           <ListItemText primary="Characters" />
         </ListItem>
-        <ListItem button>
+        <ListItem button component={Link} to="/monsters">
           <ListItemText primary="Monsters" />
         </ListItem>
       </List>
