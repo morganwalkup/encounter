@@ -17,7 +17,15 @@ const propTypes = {
 class CharacterCard extends React.Component {
   
   handleClickView = () => {
-    this.props.onClickView();
+    this.props.onClickView(this.props.id);
+  }
+  
+  handleClickEdit = () => {
+    this.props.onClickEdit(this.props.id);
+  }
+  
+  handleClickDelete = () => {
+    this.props.onClickDelete(this.props.id);
   }
   
   render() {
@@ -46,6 +54,7 @@ class CharacterCard extends React.Component {
               <Button 
                 dense 
                 className={classes.charCardButton}
+                onClick={this.handleClickEdit}
               >
                 Edit
               </Button>
@@ -53,6 +62,7 @@ class CharacterCard extends React.Component {
                 dense 
                 color="accent" 
                 className={classes.charCardButton}
+                onClick={this.handleClickDelete}
               >
                 Delete
               </Button>

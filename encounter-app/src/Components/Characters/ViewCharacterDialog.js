@@ -8,13 +8,13 @@ import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
-  combatant: PropTypes.object.isRequired,
+  character: PropTypes.object.isRequired,
 };
 
-class CharacterDialog extends React.Component {
+class ViewCharacterDialog extends React.Component {
   
   //Calculates the modifier for a particular ability score value
-  //abilityScore: a combatant's ability score value
+  //abilityScore: a character's ability score value
   calculateModifier(abilityScore) {
     let modifier = Math.floor((abilityScore - 10) / 2);
     if(modifier >= 0) {
@@ -30,49 +30,79 @@ class CharacterDialog extends React.Component {
   }
   
   render() {
-    const { classes, combatant, ...other } = this.props;
-    const src = require('../../images/combatants/' + combatant.image);
+    const { classes, character, ...other } = this.props;
+    const src = require('../../images/combatants/' + character.image);
     
-    //Catch null combatant
-    if(combatant === null) {
+    //Catch null character
+    if(character === null) {
       return <div></div>;
     }
     
-    const abilityScores = [
+    const statValues = [
       {
-        name: 'STR',
-        value: combatant.strength,
-        mod: this.calculateModifier(combatant.strength)
+        name: 'LVL',
+        value: character.level
       },
       {
-        name: 'DEX',
-        value: combatant.dexterity,
-        mod: this.calculateModifier(combatant.dexterity)
+        name: 'AC',
+        value: character.armor_class
       },
       {
-        name: 'CON',
-        value: combatant.constitution,
-        mod: this.calculateModifier(combatant.constitution)
+        name: 'HP',
+        value: character.hit_points
       },
       {
-        name: 'INT',
-        value: combatant.intelligence,
-        mod: this.calculateModifier(combatant.intelligence)
-      },
-      {
-        name: 'WIS',
-        value: combatant.wisdom,
-        mod: this.calculateModifier(combatant.wisdom)
-      },
-      {
-        name: 'CHA',
-        value: combatant.charisma,
-        mod: this.calculateModifier(combatant.charisma)
+        name: 'SPD',
+        value: character.speed
       }
     ];
     
-    const abilities = abilityScores.map((score) => (
-      <div className={classes.stat} key={score.name}>
+    const abilityScoreValues = [
+      {
+        name: 'STR',
+        value: character.strength,
+        mod: this.calculateModifier(character.strength)
+      },
+      {
+        name: 'DEX',
+        value: character.dexterity,
+        mod: this.calculateModifier(character.dexterity)
+      },
+      {
+        name: 'CON',
+        value: character.constitution,
+        mod: this.calculateModifier(character.constitution)
+      },
+      {
+        name: 'INT',
+        value: character.intelligence,
+        mod: this.calculateModifier(character.intelligence)
+      },
+      {
+        name: 'WIS',
+        value: character.wisdom,
+        mod: this.calculateModifier(character.wisdom)
+      },
+      {
+        name: 'CHA',
+        value: character.charisma,
+        mod: this.calculateModifier(character.charisma)
+      }
+    ];
+    
+    const stats = statValues.map((stat) => (
+      <div className={classes.stat} key={stat.name}>
+        <Typography type="body1" align="center">
+          <strong>{stat.name}</strong>
+        </Typography>
+        <Typography type="subheading" align="center">
+          {stat.value}
+        </Typography>
+      </div>
+    ));
+    
+    const abilityScores = abilityScoreValues.map((score) => (
+      <div className={classes.abilityScore} key={score.name}>
         <Typography type="body1" align="center">
           <strong>{score.name}</strong>
         </Typography>
@@ -90,7 +120,7 @@ class CharacterDialog extends React.Component {
           <div className={classes.topSection}>
             <img className={classes.avatar} src={src} alt={"img"} />
             <Typography type="headline" className={classes.characterName}>
-              {combatant.name}
+              {character.name}
             </Typography>
           </div>
         
@@ -98,24 +128,7 @@ class CharacterDialog extends React.Component {
           
           <List dense className={classes.list}>
             <ListItem disableGutters className={classes.statListItem}>
-              <Typography type="body1">
-                <strong>Level: </strong>{combatant.level}
-              </Typography>
-            </ListItem>
-            <ListItem disableGutters className={classes.statListItem}>
-              <Typography type="body1">
-                <strong>Armor Class: </strong>{combatant.armor_class}
-              </Typography>
-            </ListItem>
-            <ListItem disableGutters className={classes.statListItem}>
-              <Typography type="body1">
-                <strong>Hit Points: </strong>{combatant.hit_points}
-              </Typography>
-            </ListItem>
-            <ListItem disableGutters className={classes.statListItem}>
-              <Typography type="body1">
-                <strong>Speed: </strong>{combatant.speed}
-              </Typography>
+              {stats}
             </ListItem>
           </List>  
           
@@ -123,7 +136,7 @@ class CharacterDialog extends React.Component {
           
           <List className={classes.list}>
             <ListItem disableGutters className={classes.statListItem}>
-              {abilities}
+              {abilityScores}
             </ListItem>
           </List>
           
@@ -133,7 +146,7 @@ class CharacterDialog extends React.Component {
   }
 }
 
-CharacterDialog.PropTypes = propTypes;
+ViewCharacterDialog.PropTypes = propTypes;
 
 const styles = {
   dialogTitle: {
@@ -151,7 +164,7 @@ const styles = {
   },
   avatar: {
     height: 70,
-    width: 'auto',
+    width: 70,
     borderRadius: '50%',
     margin: '10px 0',
     boxShadow: '0px 2px 5px rgba(0,0,0,0.5)',
@@ -170,6 +183,9 @@ const styles = {
     justifyContent: 'space-between',
   },
   stat: {
+    minWidth: 75,
+  },
+  abilityScore: {
     minWidth: 100,
     '&:nth-child(n+4)': {
       marginTop: 20,
@@ -177,4 +193,4 @@ const styles = {
   }
 };
 
-export default withStyles(styles)(CharacterDialog);
+export default withStyles(styles)(ViewCharacterDialog);
