@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  BrowserRouter as Router,
   Route,
   Switch,
 } from 'react-router-dom';
@@ -16,11 +17,13 @@ function App(props) {
   const { classes } = props;
   
   return(
+    <Router>
     <div>
       {/* Navbar - Apply hoverOnly effect for encounter screen */}
       <Route path="/playencounter" children={({ match }) => (
         <EncounterNav hoverOnly={match ? true : false} />
       )}/>
+      
       {/* Page Content */}
       <Grid 
         container 
@@ -38,6 +41,7 @@ function App(props) {
             <Route path="/playencounter" component={EncounterScreen}/>
           </Switch>
         </Grid>
+        
         {/* Page footer */}
         <Grid item xs={12}>
           <Switch>
@@ -45,8 +49,10 @@ function App(props) {
             <Route path="/" component={EncounterFooter}/>
           </Switch>
         </Grid>
+        
       </Grid>
     </div>
+    </Router>
   );
 }
 
