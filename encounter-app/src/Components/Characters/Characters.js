@@ -1,6 +1,6 @@
 import React from 'react';
+import * as firebase from 'firebase';
 import Grid from 'material-ui/Grid';
-import characters from '../../EncounterData/players.json';
 import CharactersHeader from './CharactersHeader';
 import CharacterCard from './CharacterCard';
 import Hidden from 'material-ui/Hidden';
@@ -24,10 +24,29 @@ class Characters extends React.Component {
       del: 'delete',
     };
     this.state = {
+      characters: null,
       openDialog: this.dialogOptions.none,
-      selectedCharacter: characters[0],
+      selectedCharacterId: null,
+      selectedCharacter: null,
     };
   }
+  
+  //Called immedately after the component mounts
+  componentDidMount() {
+    //Connect this component's state to 'characters' in firebase
+    firebase.database().ref('characters').on('value', snapshot => {
+      this.setState({
+        characters: snapshot.val()
+      });
+    });
+  }
+  
+  //Called just before the component unmounts
+  componentWillUnmount() {
+    //Disconnect this component's state from 'characters' in firebase
+    firebase.database().ref('characters').off();
+  }
+  
   
   //Handles the closing of all dialogs
   handleRequestClose = () => {
@@ -39,6 +58,7 @@ class Characters extends React.Component {
   //Handles a character view click
   handleClickView = (characterId) => {
     this.setState({
+      selectedCharacterId: characterId,
       selectedCharacter: this.getCharacter(characterId),
       openDialog: this.dialogOptions.view,
     });
@@ -47,6 +67,7 @@ class Characters extends React.Component {
   //Handles a character edit click
   handleClickEdit = (characterId) => {
     this.setState({
+      selectedCharacterId: characterId,
       selectedCharacter: this.getCharacter(characterId),
       openDialog: this.dialogOptions.edit,
     });
@@ -55,6 +76,7 @@ class Characters extends React.Component {
   //Handles a character delete click
   handleClickDelete = (characterId) => {
     this.setState({
+      selectedCharacterId: characterId,
       selectedCharacter: this.getCharacter(characterId),
       openDialog: this.dialogOptions.del,
     });
@@ -63,45 +85,47 @@ class Characters extends React.Component {
   //Handles a new character click
   handleClickNew = () => {
     this.setState({
+      selectedCharacterId: null,
+      selectedCharacter: null,
       openDialog: this.dialogOptions.new,
     });
   }
   
-  //Returns a character whose id matches the given index
-  //Returns null if the character is not found
+  //Returns a character whose id matches the given index,
+  //returns null if the character is not found
   getCharacter(characterId) {
-    for(let i = 0; i < characters.length; i++) {
-      if(characters[i].id === characterId) {
-        return characters[i];
-      }
-    }
-    return null;
+    return this.state.characters[characterId];
   }
   
   render() {
     const { classes } = this.props;
+    const characters = this.state.characters;
   
     //Generate Character Cards
-    const characterCards = characters.map((character) => (
-      <Grid item xs={12} sm={6} lg={4} key={character.id}>
-        <CharacterCard 
-          id={character.id}
-          img={character.image} 
-          name={character.name} 
-          onClickView={this.handleClickView}
-          onClickEdit={this.handleClickEdit}
-          onClickDelete={this.handleClickDelete}
-        />
-      </Grid>
-    ));
+    const characterCards = [];
+    for(var id in characters) {
+      let character = characters[id];
+      characterCards.push(
+        <Grid item xs={12} sm={6} lg={4} key={id}>
+          <CharacterCard 
+            id={id}
+            imgSrc={character.image} 
+            name={character.name} 
+            onClickView={this.handleClickView}
+            onClickEdit={this.handleClickEdit}
+            onClickDelete={this.handleClickDelete}
+          />
+        </Grid>
+      );
+    }
     
     return (
       <div>
         <Grid container direction="row" justify="center" spacing={0}>
           <Grid item xs={12}>
-            <CharactersHeader />
+            <CharactersHeader onClickNew={this.handleClickNew}/>
           </Grid>
-          <Grid item xs={11} sm={11} lg={9} className={classes.charCardsContainer}>
+          <Grid item xs={11} sm={12} md={11} lg={9} className={classes.charCardsContainer}>
             <Grid container spacing={0}>
               {characterCards}
             </Grid>
@@ -118,11 +142,13 @@ class Characters extends React.Component {
           onRequestClose={this.handleRequestClose}
         />
         <EditCharacterDialog 
+          characterid={this.state.selectedCharacterId}
           character={this.state.selectedCharacter}
           open={this.state.openDialog === this.dialogOptions.edit}
           onRequestClose={this.handleRequestClose}
         />
         <DeleteCharacterDialog 
+          characterid={this.state.selectedCharacterId}
           character={this.state.selectedCharacter}
           open={this.state.openDialog === this.dialogOptions.del}
           onRequestClose={this.handleRequestClose}

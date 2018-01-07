@@ -7,7 +7,7 @@ import { withStyles } from 'material-ui/styles';
 import { blueGrey } from 'material-ui/colors';
 
 const propTypes = {
-  img: PropTypes.string.isRequired,
+  imgSrc: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   onClickView: PropTypes.func,
   onClickEdit: PropTypes.func,
@@ -29,15 +29,14 @@ class CharacterCard extends React.Component {
   }
   
   render() {
-    const { classes, img, name } = this.props;
-    const src = require('../../images/combatants/' + img);
-    
+    const { classes, imgSrc, name } = this.props;
+
     return(
       <Grid container justify="center">
         <Grid item xs={12} className={classes.charCardContainer}>
           <div className={classes.charCard}>
             <div className={classes.charCircle}>
-              <img className={classes.avatar} src={src} alt={"img"} />
+              <img className={classes.avatar} src={imgSrc} alt={""} />
             </div>
             <Typography type="title" component="h2" className={classes.charCardTitle}>
               {name}

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import * as firebase from 'firebase';
 import Dialog, { DialogTitle, DialogContent, DialogActions } from 'material-ui/Dialog';
 import List from 'material-ui/List';
 import Divider from 'material-ui/Divider';
@@ -9,6 +10,7 @@ import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
+  characterid: PropTypes.string.isRequired,
   character: PropTypes.object.isRequired,
 };
 
@@ -18,8 +20,29 @@ class DeleteCharacterDialog extends React.Component {
     this.props.onRequestClose();
   }
   
-  handleDelete() {
-    alert("Deleted");
+  handleDelete = () => {
+    // Get reference to 'characters' in firebase
+    const db = firebase.database();
+    const dbCharacters = db.ref().child('characters');
+    
+    // Delete character from firebase
+    const removedCharacter = {
+      [this.props.characterid]: null
+    };
+    dbCharacters.update(removedCharacter);
+    
+    // Delete character image from firebase storage
+    const storageRef = firebase.storage().ref();
+    const charId = this.props.characterid;
+    const imagePath = storageRef.child('userid/images/characters/' + charId);
+    imagePath.delete().then(function() {
+      // File deleted successfully
+    }).catch(function(error) {
+      console.log(error);
+    });
+    
+    // Close the dialog
+    this.handleRequestClose();
   }
   
   handleCancel = () => {

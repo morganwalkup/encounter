@@ -19,8 +19,6 @@ class ViewCharacterDialog extends React.Component {
     let modifier = Math.floor((abilityScore - 10) / 2);
     if(modifier >= 0) {
       modifier = ("+" + modifier);
-    } else {
-      modifier = ("-" + modifier);
     }
     return modifier;
   }
@@ -31,62 +29,67 @@ class ViewCharacterDialog extends React.Component {
   
   render() {
     const { classes, character, ...other } = this.props;
-    const src = require('../../images/combatants/' + character.image);
     
     //Catch null character
     if(character === null) {
-      return <div></div>;
+      return (
+        <Dialog>
+          <DialogContent>
+            <h2>Character not found</h2>
+          </DialogContent>
+        </Dialog>
+      );
     }
-    
+  
     const statValues = [
       {
         name: 'LVL',
-        value: character.level
+        value: character.LVL
       },
       {
         name: 'AC',
-        value: character.armor_class
+        value: character.AC
       },
       {
         name: 'HP',
-        value: character.hit_points
+        value: character.HP
       },
       {
         name: 'SPD',
-        value: character.speed
+        value: character.SPD
       }
     ];
     
     const abilityScoreValues = [
       {
         name: 'STR',
-        value: character.strength,
-        mod: this.calculateModifier(character.strength)
+        value: character.STR,
+        mod: this.calculateModifier(character.STR)
       },
       {
         name: 'DEX',
-        value: character.dexterity,
-        mod: this.calculateModifier(character.dexterity)
+        value: character.DEX,
+        mod: this.calculateModifier(character.DEX)
       },
       {
         name: 'CON',
-        value: character.constitution,
-        mod: this.calculateModifier(character.constitution)
+        value: character.CON,
+        mod: this.calculateModifier(character.CON)
       },
       {
         name: 'INT',
-        value: character.intelligence,
-        mod: this.calculateModifier(character.intelligence)
+        value: character.INT,
+        mod: this.calculateModifier(character.INT)
       },
       {
         name: 'WIS',
-        value: character.wisdom,
-        mod: this.calculateModifier(character.wisdom)
+        value: character.WIS,
+        mod: this.calculateModifier(character.WIS)
       },
       {
         name: 'CHA',
-        value: character.charisma,
-        mod: this.calculateModifier(character.charisma)
+        value: character.CHA,
+        mod: this.calculateModifier(character.CHA)
       }
     ];
     
@@ -118,7 +121,7 @@ class ViewCharacterDialog extends React.Component {
         <DialogContent>
         
           <div className={classes.topSection}>
-            <img className={classes.avatar} src={src} alt={"img"} />
+            <img className={classes.avatar} src={character.image} alt={"img"} />
             <Typography type="headline" className={classes.characterName}>
               {character.name}
             </Typography>

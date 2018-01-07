@@ -6,20 +6,26 @@ import Hidden from 'material-ui/Hidden';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 
-function CharactersHeader(props) {
-  const { classes } = props;
-  return(
-    <Grid container spacing={0} justify="center" className={classes.splash}>
-      <Grid item xs={12} md={12} lg={9}>
-        <Typography className={classes.tagline}>Characters</Typography>
+class CharactersHeader extends React.Component {
+  handleClickNew = () => {
+    this.props.onClickNew();
+  }
+  
+  render() {
+    const { classes } = this.props;
+    return(
+      <Grid container spacing={0} justify="center" className={classes.splash}>
+        <Grid item xs={12} md={12} lg={9}>
+          <Typography className={classes.tagline}>Characters</Typography>
+        </Grid>
+        <Grid item xs={12} md={12} lg={9}>
+          <Hidden xsDown>
+            <Button raised className={classes.newButton} onClick={this.handleClickNew}>New Character</Button>
+          </Hidden>
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={12} lg={9}>
-        <Hidden xsDown>
-          <Button raised className={classes.newButton}>New Character</Button>
-        </Hidden>
-      </Grid>
-    </Grid>
-  );
+    );
+  }
 }
 
 const styles = theme => ({

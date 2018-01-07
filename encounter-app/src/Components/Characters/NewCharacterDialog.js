@@ -1,9 +1,11 @@
 import React from 'react';
+import * as firebase from 'firebase';
 import Dialog, { DialogTitle, DialogContent, DialogActions } from 'material-ui/Dialog';
 import List, { ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
+import ImageUpload from './ImageUpload';
 import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
@@ -11,41 +13,144 @@ class NewCharacterDialog extends React.Component {
   
   constructor(props) {
     super(props);
+    const defaultImage = "https://firebasestorage.googleapis.com/v0/b/encounter-49be9.appspot.com/o/admin%2Fimages%2Fcharacters%2Fdefault%2FDefault.jpg?alt=media&token=9129590d-c338-40fc-b50c-c6002387f4ea";
     this.state = {
+      image: null,
       character: {
-        id: null,
-        name: "",
-        image: "Default.jpg",
-        level: null,
-        armor_class: null,
-        hit_points: null,
-        speed: null,
-        strength: null,
-        dexterity: null,
-        constitution: null,
-        intelligence: null,
-        wisdom: null,
-        charisma: null
+        name: null,
+        image: defaultImage,
+        LVL: null,
+        AC: null,
+        HP: null,
+        SPD: null,
+        STR: null,
+        DEX: null,
+        CON: null,
+        INT: null,
+        WIS: null,
+        CHA: null
       }
     };
   }
   
+  // Callback for textfield input,
+  // Updates character data in component state
+  handleChange = (fieldName) => (event) => {
+    let characterObj = this.state.character;
+    characterObj[fieldName] = event.target.value;
+    this.setState({
+      character: characterObj,
+    });
+  }
+  
+  // Callback for ImageUpload
+  // Saves file reference in state
+  // imageFile: the new image file provided by ImageUpload
+  handleImageChange = (imageFile) => {
+    this.setState({
+      image: imageFile,
+    });
+  }
+  
+  // Callback for dialog close request
   handleRequestClose = () => {
     this.props.onRequestClose();
   }
   
-  handleSave() {
-    alert("save");
+  // Callback for 'SAVE' click,
+  // Saves the character data to firebase and closes the dialog
+  handleSave = () => {
+    // Create new character id in firebase
+    const dbCharacters = firebase.database().ref().child('characters');
+    const newCharId = dbCharacters.push().key;
+    
+    // Check for character image and upload data accordingly
+    const imageFile = this.state.image;
+    if(imageFile == null) {
+      
+      // Upload changes to firebase
+      this.uploadCharacterData(newCharId);
+      // Close the dialog
+      this.handleRequestClose();
+      // Reset local character data
+      this.resetLocalCharacterData();
+      
+    } else {
+      
+      // Upload character image
+      const imageUpload = this.uploadCharacterImage(newCharId);
+      imageUpload.on('state_changed', null, null, () => {
+        // On successful upload, update character image data
+        const imageUrl = imageUpload.snapshot.downloadURL;
+        let characterObj = this.state.character;
+        characterObj["image"] = imageUrl;
+        this.setState({
+          character: characterObj,
+        });
+        // Upload changes to firebase
+        this.uploadCharacterData(newCharId);
+        // Close the dialog
+        this.handleRequestClose();
+        // Reset local character data
+        this.resetLocalCharacterData();
+      });
+      
+    }
   }
   
+  // Callback for 'CANCEL' click,
+  // Closes the dialog
   handleCancel = () => {
     this.handleRequestClose();
+  }
+  
+  // Uploads a new character image to firebase
+  // Returns file upload task for progress monitoring
+  uploadCharacterImage = (charId) => {
+    const imageFile = this.state.image;
+    const imageMetaData = { 
+      contentType: imageFile.type,
+    };
+    const storageRef = firebase.storage().ref();
+    const fileDestination = storageRef.child('userid/images/characters/' + charId);
+    const fileUpload = fileDestination.put(imageFile, imageMetaData);
+    
+    return fileUpload;
+  }
+  
+  // Updates existing character data in firebase according to component state
+  uploadCharacterData = (characterId) => {
+    const dbCharacters = firebase.database().ref().child('characters');
+    const updatedCharacter = {
+      [characterId]: this.state.character
+    };
+    dbCharacters.update(updatedCharacter);
+  }
+  
+  // Resets local character data to default values
+  resetLocalCharacterData = () => {
+    const defaultImage = "https://firebasestorage.googleapis.com/v0/b/encounter-49be9.appspot.com/o/admin%2Fimages%2Fcharacters%2Fdefault%2FDefault.jpg?alt=media&token=9129590d-c338-40fc-b50c-c6002387f4ea";
+    this.setState({
+      character: {
+        name: null,
+        image: defaultImage,
+        LVL: null,
+        AC: null,
+        HP: null,
+        SPD: null,
+        STR: null,
+        DEX: null,
+        CON: null,
+        INT: null,
+        WIS: null,
+        CHA: null
+      },
+    });
   }
   
   render() {
     const { classes, ...other } = this.props;
     const { character } = this.state;
-    const src = require('../../images/combatants/' + character.image);
     
     //Catch null character
     if(character === null) {
@@ -61,46 +166,46 @@ class NewCharacterDialog extends React.Component {
     const statValues = [
       {
         name: 'LVL',
-        value: character.level
+        value: character.LVL
       },
       {
         name: 'AC',
-        value: character.armor_class
+        value: character.AC
       },
       {
         name: 'HP',
-        value: character.hit_points
+        value: character.HP
       },
       {
         name: 'SPD',
-        value: character.speed
+        value: character.SPD
       }
     ];
     
     const abilityScoreValues = [
       {
         name: 'STR',
-        value: character.strength
+        value: character.STR
       },
       {
         name: 'DEX',
-        value: character.dexterity
+        value: character.DEX
       },
       {
         name: 'CON',
-        value: character.constitution
+        value: character.CON
       },
       {
         name: 'INT',
-        value: character.intelligence
+        value: character.INT
       },
       {
         name: 'WIS',
-        value: character.wisdom
+        value: character.WIS
       },
       {
         name: 'CHA',
-        value: character.charisma
+        value: character.CHA
       }
     ];
     
@@ -108,10 +213,11 @@ class NewCharacterDialog extends React.Component {
       <div className={classes.stat} key={stat.name}>
         <TextField
           required
+          type="number"
           label={stat.name}
           defaultValue={stat.value}
           className={classes.textField}
-          margin="normal"
+          onChange={this.handleChange(stat.name)}
         />
       </div>
     ));
@@ -120,10 +226,11 @@ class NewCharacterDialog extends React.Component {
       <div className={classes.abilityScore} key={score.name}>
         <TextField
           required
+          type="number"
           label={score.name}
           defaultValue={score.value}
           className={classes.textField}
-          margin="normal"
+          onChange={this.handleChange(score.name)}
         />
       </div>
     ));
@@ -134,13 +241,16 @@ class NewCharacterDialog extends React.Component {
         <DialogContent className={classes.dialogContent}>
         
           <div className={classes.topSection}>
-            <img className={classes.avatar} src={src} alt={"img"} />
+            <ImageUpload 
+              onImageChange={this.handleImageChange} 
+            />
             <TextField
               required
+              type="text"
               label="Name"
               defaultValue={character.name}
               className={classes.characterName}
-              margin="normal"
+              onChange={this.handleChange('name')}
             />
           </div>
         
@@ -197,17 +307,10 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
   },
-  avatar: {
-    height: 70,
-    width: 70,
-    borderRadius: '50%',
-    margin: '10px 0',
-    boxShadow: '0px 2px 5px rgba(0,0,0,0.5)',
-  },
   characterName: {
     display: 'inline',
     marginTop: -3,
-    marginLeft: 12,
+    marginLeft: 20,
   },
   list: {
     width: 300,
