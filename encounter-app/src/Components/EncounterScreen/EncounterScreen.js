@@ -1,5 +1,9 @@
 import React from 'react';
-import * as firebase from 'firebase';
+import { getUserId, 
+         getEncounter, 
+         getCharacter, 
+         getMonster 
+        } from '../../DatabaseFunctions/FirebaseFunctions';
 import Grid from 'material-ui/Grid';
 import EncounterBackground from './EncounterBackground';
 import CombatantGroup from './CombatantGroup';
@@ -14,92 +18,119 @@ class EncounterScreen extends React.Component {
   
   constructor(props) {
     super(props);
+    this.dialogOptions = {
+      none: 'none',
+      settings: 'settings',
+      info: 'info',
+    };
     this.state = {
       characters: null,
       monsters: null,
+      charactersLoaded: false,
+      monstersLoaded: false,
       bgImage: null,
       orderedCombatants: null,
       activeCombatantIndex: -1,
-      isSettingsDialogOpen: false,
+      openDialog: this.dialogOptions.none,
       infoDialogSubject: null,
-      isInfoDialogOpen: false,
     };
   }
   
-  //Called immediately after the component mounts
+  
+  /**
+   * Called immediately after the component mounts
+   * Gets user id and encounter screen data
+   */
   componentDidMount() {
-    //Listen for user login changes
-    firebase.auth().onAuthStateChanged((user) => {
-      //Save user id, or 'anonymous' if no user is logged in
+    getUserId((userid) => {
       this.setState({
-        userid: (user) ? user.uid : 'anonymous'
+        userid: userid
       });
       
-      //Get user and encounter ids
-      const userid = this.state.userid;
-      const encounterid = "-L2NcF1lrtXt6UMVMDDm";
-      
-      //Get encounter data from firebase
-      const encounterRef = firebase.database().ref(userid + '/encounters/' + encounterid);
-      encounterRef.once('value', snapshot => {
-        let encounter = snapshot.val();
-        
-        //Get data for characters in encounter
-        let characters = encounter.characters; //Ids of the characters
-        for(let i = 0; i < characters.length; i++) {
-          firebase.database().ref(userid + '/characters/' + characters[i]).once('value', snapshot => {
-            characters[i] = snapshot.val(); //Overwrite id with character data
-            // On the last loop, save characters to state and order combatants
-            if(i === (characters.length - 1)) {
-              this.setState({
-                characters: characters,
-              });
-              //TODO: Please find a way to only call this once
-              this.setState({
-                orderedCombatants: this.applyInitiativeOrder(),
-              });
-            }
-          });
-        }
-        
-        //Get data for monsters in encounter
-        let monsters = encounter.monsters; //Ids of the monsters
-        for(let i = 0; i < monsters.length; i++) {
-          firebase.database().ref(userid + '/monsters/' + monsters[i]).once('value', snapshot => {
-            monsters[i] = snapshot.val(); //Overwrite id with monster data
-            // On the last loop, save monsters to state and order combatants
-            if(i === (monsters.length - 1)) {
-              this.setState({
-                monsters: monsters,
-              });
-              //TODO: Please find a way to only call this once
-              this.setState({
-                orderedCombatants: this.applyInitiativeOrder(),
-              });
-            }
-          });
-        }
-        
-        //Save background image url
-        this.setState({
-          bgImage: encounter.image,
-        });
-        
-      });
+      this.getEncounterScreenData();
     });
   }
   
-  //Called just before the component unmounts
-  componentWillUnmount() {
-    //Get user id
-    const userid = this.state.userid;
-    const encounterid = "-L2NcF1lrtXt6UMVMDDm";
-    //Disconnect this component's state from firebase
-    firebase.database().ref(userid + '/encounters/' + encounterid).off();
+  
+  /**
+   * Called following a change in props or state
+   * Orders combatants once all characters and monsters are loaded
+   */
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.monstersLoaded && this.state.charactersLoaded && this.state.orderedCombatants == null) {
+      this.setState({
+        orderedCombatants: this.applyInitiativeOrder()
+      });
+    }
   }
   
-  //Activates the next combatant in the initiative order
+  
+  /**
+   * Retrieves encounter data from database and saves it in state
+   */
+  getEncounterScreenData() {
+    //Get user and encounter ids
+    const userid = this.state.userid;
+    const encounterid = "-L2NcF1lrtXt6UMVMDDm";
+    
+    //Get encounter data from firebase
+    getEncounter(userid, encounterid, encounter => {
+      //Save background image and reset loading state
+      this.setState({
+        bgImage: encounter.image,
+        charactersLoaded: false,
+        monstersLoaded: false,
+        orderedCombatants: null,
+      });
+
+      //Get data for characters in encounter
+      let characters = encounter.characters; //Ids of the characters
+      for(let i = 0; i < characters.length; i++) {
+        getCharacter(userid, characters[i], character => {
+          //Overwrite id with character data
+          characters[i] = character; 
+          // On the last loop, save characters and indicate loading is done
+          if(i === (characters.length - 1)) {
+            this.setState({
+              characters: characters,
+              charactersLoaded: true,
+            });
+          }
+        });
+      }
+      
+      //Get data for monsters in encounter
+      let monsters = encounter.monsters; //Ids of the monsters
+      for(let i = 0; i < monsters.length; i++) {
+        getMonster(userid, monsters[i], monster => {
+          //Overwrite id with monster data
+          monsters[i] = monster; 
+          // On the last loop, save monsters to state and order combatants
+          if(i === (monsters.length - 1)) {
+            this.setState({
+              monsters: monsters,
+              monstersLoaded: true,
+            });
+          }
+        });
+      }
+      
+    });
+  }
+  
+  
+  /** 
+   * Handles user click of the 'continue' button
+   */
   handleContinueClick = () => {
+    this.activateNextCombatant();
+  }
+  
+  
+  /** 
+   * Activates the next combatant in the initiative order
+   */
+  activateNextCombatant = () => {
     //Temp storage for state variables
     let activeIndex = this.state.activeCombatantIndex;
     const combatants = this.state.orderedCombatants;
@@ -118,39 +149,30 @@ class EncounterScreen extends React.Component {
     });
   }
   
-  //Determine initiative for combatants and sort them by the results
+  
+  /**
+   * Determine initiative order for combatants and sort them by the results
+   */
   applyInitiativeOrder = () => {
-
-    if(this.state.characters == null || this.state.monsters == null) {
-      console.log(this.state.characters);
-      console.log(this.state.monsters);
-      console.log("Null combatants");
-      return null;
-    }
-
     //Collect combatants
-    let combatants = [];
-    for(let i = 0; i < this.state.characters.length; i++) {
-      let character = this.state.characters[i];
-      character.isCharacter = true;
-      combatants.push(character);
-    }
-    for(let i = 0; i < this.state.monsters.length; i++) {
-      let monster = this.state.monsters[i];
-      monster.isCharacter = false;
-      combatants.push(monster);
-    }
+    const characters = this.state.characters;
+    const monsters = this.state.monsters;
+    let combatants = characters.concat(monsters);
     
-    //Roll initiative for combatants
-    combatants.map((currentValue) => 
-      this.rollInitiative(currentValue)
+    //Roll initiative for each combatant
+    combatants.map((combatant) => 
+      this.rollInitiative(combatant)
     );
+    
     //Sort combatants based on initiative rolls
     this.initiativeBubbleSort(combatants);
     return combatants;
   }
   
-  //Calculates initiative for the combatant
+  
+  /**
+   * Calculates initiative for the combatant
+   */
   rollInitiative(combatant) {
     let roll = Math.floor((Math.random() * 21) + 1); //Returns number in range [1,20]
     let initiativeModifier = Math.floor((combatant.DEX - 10) / 2);
@@ -158,7 +180,10 @@ class EncounterScreen extends React.Component {
     combatant.initiative = initiative;
   }
   
-  //Sorts combatants based on initiative
+  
+  /**
+   * Sorts combatants based on initiative
+   */
   initiativeBubbleSort(combatants) {
     let len = combatants.length;
     for (var i = len-1; i >= 0; i--){
@@ -173,34 +198,45 @@ class EncounterScreen extends React.Component {
     return combatants;
   }
   
-  //Opens the settings dialog
+  
+  /**
+   * Opens the settings dialog
+   */
   handleSettingsClick = () => {
     this.setState({
-      isSettingsDialogOpen: true,
+      openDialog: this.dialogOptions.settings,
     });
   }
   
-  //Opens the combatant info dialog
+  
+  /**
+   * Opens the combatant info dialog
+   */
   handleInfoClick = (combatant) => {
     this.setState({
       infoDialogSubject: combatant,
-      isInfoDialogOpen: true,
+      openDialog: this.dialogOptions.info,
     });
   }
   
-  //Closes the settings dialog
+  
+  /**
+   * Closes all dialogs
+   */
   handleRequestClose = () => {
     this.setState({
-      isSettingsDialogOpen: false,
-      isInfoDialogOpen: false,
+      openDialog: this.dialogOptions.none,
     });
   }
   
-  //Renders the component
+  
+  /**
+   * Renders the component
+   */
   render() {
-    const { bgImage, orderedCombatants } = this.state;
+    const { bgImage, orderedCombatants, openDialog } = this.state;
 
-    // Return if combatants are still loading
+    // Show loading screen while combatants are still loading
     if(orderedCombatants == null) {
       return null; //TODO: Return loading screen
     }
@@ -210,12 +246,13 @@ class EncounterScreen extends React.Component {
     let orderedMonsters = [];
     for(let i = 0; i < orderedCombatants.length; i++) {
       const combatant = orderedCombatants[i];
-      if(combatant.isCharacter)
+      if(combatant.LVL)
         orderedCharacters.push(combatant);
       else
         orderedMonsters.push(combatant);
     }
     
+    // Return page structure
     return(
       <div>
         <EncounterBackground img={bgImage}/>
@@ -235,11 +272,11 @@ class EncounterScreen extends React.Component {
           </Grid>
         </Grid>
         <SettingsDialog 
-          open={this.state.isSettingsDialogOpen}
+          open={openDialog === this.dialogOptions.settings}
           onRequestClose={this.handleRequestClose}
         />
         <CombatantDialog 
-          open={this.state.isInfoDialogOpen}
+          open={openDialog === this.dialogOptions.info}
           onRequestClose={this.handleRequestClose}
           combatant={this.state.infoDialogSubject}
         />

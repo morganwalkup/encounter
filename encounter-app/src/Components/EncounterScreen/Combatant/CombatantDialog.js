@@ -12,14 +12,14 @@ const propTypes = {
 
 class CombatantDialog extends React.Component {
   
-  //Calculates the modifier for a particular ability score value
-  //abilityScore: a combatant's ability score value
+  /**
+   * Calculates the modifier for a particular ability score value
+   * @param abilityScore - a combatant's ability score value
+   */
   calculateModifier(abilityScore) {
     let modifier = Math.floor((abilityScore - 10) / 2);
     if(modifier >= 0) {
       modifier = ("+" + modifier);
-    } else {
-      modifier = ("-" + modifier);
     }
     return modifier;
   }
@@ -35,33 +35,33 @@ class CombatantDialog extends React.Component {
     const abilityScores = [
       {
         name: 'STR',
-        value: combatant.strength,
-        mod: this.calculateModifier(combatant.strength)
+        value: combatant.STR,
+        mod: this.calculateModifier(combatant.STR)
       },
       {
         name: 'DEX',
-        value: combatant.dexterity,
-        mod: this.calculateModifier(combatant.dexterity)
+        value: combatant.DEX,
+        mod: this.calculateModifier(combatant.DEX)
       },
       {
         name: 'CON',
-        value: combatant.constitution,
-        mod: this.calculateModifier(combatant.constitution)
+        value: combatant.CON,
+        mod: this.calculateModifier(combatant.CON)
       },
       {
         name: 'INT',
-        value: combatant.intelligence,
-        mod: this.calculateModifier(combatant.intelligence)
+        value: combatant.INT,
+        mod: this.calculateModifier(combatant.INT)
       },
       {
         name: 'WIS',
-        value: combatant.wisdom,
-        mod: this.calculateModifier(combatant.wisdom)
+        value: combatant.WIS,
+        mod: this.calculateModifier(combatant.WIS)
       },
       {
         name: 'CHA',
-        value: combatant.charisma,
-        mod: this.calculateModifier(combatant.charisma)
+        value: combatant.CHA,
+        mod: this.calculateModifier(combatant.CHA)
       }
     ];
     
@@ -86,17 +86,17 @@ class CombatantDialog extends React.Component {
           <List dense className={classes.list}>
             <ListItem disableGutters className={classes.statListItem}>
               <Typography type="body1">
-                <strong>Armor Class: </strong>{combatant.armor_class}
+                <strong>Armor Class: </strong>{combatant.AC}
               </Typography>
             </ListItem>
             <ListItem disableGutters className={classes.statListItem}>
               <Typography type="body1">
-                <strong>Hit Points: </strong>{combatant.hit_points}
+                <strong>Hit Points: </strong>{combatant.HP}
               </Typography>
             </ListItem>
             <ListItem disableGutters className={classes.statListItem}>
               <Typography type="body1">
-                <strong>Speed: </strong>{combatant.speed}
+                <strong>Speed: </strong>{combatant.SPD}
               </Typography>
             </ListItem>
           </List>  
