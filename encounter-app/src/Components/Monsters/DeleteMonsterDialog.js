@@ -10,32 +10,32 @@ import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
-  characterid: PropTypes.string.isRequired,
-  character: PropTypes.object.isRequired,
+  monsterid: PropTypes.string.isRequired,
+  monster: PropTypes.object.isRequired,
 };
 
-class DeleteCharacterDialog extends React.Component {
+class DeleteMonsterDialog extends React.Component {
   
   handleRequestClose = () => {
     this.props.onRequestClose();
   }
   
   handleDelete = () => {
-    // Get reference to 'characters' in firebase
+    // Get reference to 'monsters' in firebase
     const db = firebase.database();
     const userid = firebase.auth().currentUser.uid;
-    const dbCharacters = db.ref().child(userid + '/characters');
+    const dbmonsters = db.ref().child(userid + '/monsters');
     
-    // Delete character from firebase
-    const removedCharacter = {
-      [this.props.characterid]: null
+    // Delete monster from firebase
+    const removedmonster = {
+      [this.props.monsterid]: null
     };
-    dbCharacters.update(removedCharacter);
+    dbmonsters.update(removedmonster);
     
-    // Delete character image from firebase storage
+    // Delete monster image from firebase storage
     const storageRef = firebase.storage().ref();
-    const charId = this.props.characterid;
-    const imagePath = storageRef.child(userid + '/images/characters/' + charId);
+    const charId = this.props.monsterid;
+    const imagePath = storageRef.child(userid + '/images/monsters/' + charId);
     imagePath.delete().then(function() {
       // File deleted successfully
     }).catch(function(error) {
@@ -51,14 +51,14 @@ class DeleteCharacterDialog extends React.Component {
   }
   
   render() {
-    const { classes, character, ...other } = this.props;
+    const { classes, monster, ...other } = this.props;
 
-    //Catch null character
-    if(character === null) {
+    //Catch null monster
+    if(monster === null) {
       return (
         <Dialog>
           <DialogContent>
-            <h2>Character not found</h2>
+            <h2>monster not found</h2>
           </DialogContent>
         </Dialog>
       );
@@ -66,12 +66,12 @@ class DeleteCharacterDialog extends React.Component {
     
     return (
       <Dialog onRequestClose={this.handleRequestClose} {...other}>
-        <DialogTitle className={classes.dialogTitle}>Delete Character</DialogTitle>
+        <DialogTitle className={classes.dialogTitle}>Delete monster</DialogTitle>
         <DialogContent>
           
           <List className={classes.list}>
             <Typography type="headline">
-              Delete {character.name} forever?
+              Delete {monster.name} forever?
             </Typography>
           </List>
           
@@ -92,7 +92,7 @@ class DeleteCharacterDialog extends React.Component {
   }
 }
 
-DeleteCharacterDialog.PropTypes = propTypes;
+DeleteMonsterDialog.PropTypes = propTypes;
 
 const styles = {
   dialogTitle: {
@@ -109,4 +109,4 @@ const styles = {
   },
 };
 
-export default withStyles(styles)(DeleteCharacterDialog);
+export default withStyles(styles)(DeleteMonsterDialog);

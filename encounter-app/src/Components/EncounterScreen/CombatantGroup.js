@@ -5,10 +5,20 @@ import Combatant from './Combatant/Combatant';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
+  rightSide: PropTypes.bool,
+  combatants: PropTypes.object,
   onInfoClick: PropTypes.func.isRequired,
 };
 
 class CombatantGroup extends React.Component {
+  
+  handleActiveCombatant = (combatant) => {
+    this.scrollToActiveCombatant(combatant);
+  }
+  
+  handleInfoClick = (combatant) => {
+    this.props.onInfoClick(combatant);
+  }
   
   scrollToActiveCombatant = (combatant) => {
     const combatantNode = ReactDOM.findDOMNode(combatant);
@@ -19,10 +29,6 @@ class CombatantGroup extends React.Component {
       left: 0,
       behavior: 'smooth',
     });
-  }
-  
-  handleInfoClick = (combatant) => {
-    this.props.onInfoClick(combatant);
   }
   
   render() {
@@ -39,7 +45,7 @@ class CombatantGroup extends React.Component {
       <Combatant 
         key={index}
         combatant={combatant}
-        onActive={this.scrollToActiveCombatant}
+        onActive={this.handleActiveCombatant}
         onInfoClick={this.handleInfoClick}
       />
     );

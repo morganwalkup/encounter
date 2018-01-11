@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase';
 import Dialog, { DialogTitle, DialogContent, DialogActions } from 'material-ui/Dialog';
-import ImageUpload from './ImageUpload';
+import AvatarUpload from '../CharactersAndMonsters/AvatarUpload';
 import List, { ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
@@ -34,9 +34,9 @@ class EditCharacterDialog extends React.Component {
     }
   }
   
-  // Callback for ImageUpload
+  // Callback for AvatarUpload
   // Saves file reference in state
-  // file: the new image file provided by ImageUpload
+  // file: the new image file provided by AvatarUpload
   handleImageChange = (imageFile) => {
     this.setState({
       image: imageFile,
@@ -72,10 +72,11 @@ class EditCharacterDialog extends React.Component {
     } else {
       
       // Upload new character image
-      const imageUpload = this.uploadCharacterImage();
-      imageUpload.on('state_changed', null, null, () => {
+      const AvatarUpload = this.uploadCharacterImage();
+      AvatarUpload.on('state_changed', null, null, () => {
+        
         // On successful upload, update character image data
-        const imageUrl = imageUpload.snapshot.downloadURL;
+        const imageUrl = AvatarUpload.snapshot.downloadURL;
         let characterObj = this.state.character;
         characterObj["image"] = imageUrl;
         this.setState({
@@ -85,6 +86,7 @@ class EditCharacterDialog extends React.Component {
         this.uploadCharacterData();
         // Close the dialog
         this.handleRequestClose();
+        
       });
       
     }
@@ -104,8 +106,9 @@ class EditCharacterDialog extends React.Component {
       contentType: imageFile.type,
     };
     const storageRef = firebase.storage().ref();
+    const userid = firebase.auth().currentUser.uid;
     const charId = this.props.characterid;
-    const fileDestination = storageRef.child('userid/images/characters/' + charId);
+    const fileDestination = storageRef.child(userid + '/images/characters/' + charId);
     const fileUpload = fileDestination.put(imageFile, imageMetaData); 
     
     return fileUpload;
@@ -113,13 +116,15 @@ class EditCharacterDialog extends React.Component {
   
   // Uploads character data to firebase according to component state
   uploadCharacterData = () => {
-    const dbCharacters = firebase.database().ref().child('characters');
+    const userid = firebase.auth().currentUser.uid;
+    const dbCharacters = firebase.database().ref().child(userid + '/characters');
     const updatedCharacter = {
       [this.props.characterid]: this.state.character
     };
     dbCharacters.update(updatedCharacter);
   }
   
+  // Renders the component
   render() {
     const { classes, ...other } = this.props;
     const character = this.state.character;
@@ -135,11 +140,13 @@ class EditCharacterDialog extends React.Component {
       );
     }
     
+    //Get initial avatar url for AvatarUpload
     let initialAvatarUrl = null;
     if(character.image != null) {
       initialAvatarUrl = character.image;
     }
     
+    //Generate visuals for character stats
     const statValues = [
       {
         name: 'LVL',
@@ -158,7 +165,20 @@ class EditCharacterDialog extends React.Component {
         value: character.SPD
       }
     ];
+    const stats = statValues.map((stat) => (
+      <div className={classes.stat} key={stat.name}>
+        <TextField
+          required
+          type="number"
+          label={stat.name}
+          defaultValue={stat.value}
+          className={classes.textField}
+          onChange={this.handleChange(stat.name)}
+        />
+      </div>
+    ));
     
+    //Generate visuals for character ability scores
     const abilityScoreValues = [
       {
         name: 'STR',
@@ -185,20 +205,6 @@ class EditCharacterDialog extends React.Component {
         value: character.CHA
       }
     ];
-    
-    const stats = statValues.map((stat) => (
-      <div className={classes.stat} key={stat.name}>
-        <TextField
-          required
-          type="number"
-          label={stat.name}
-          defaultValue={stat.value}
-          className={classes.textField}
-          onChange={this.handleChange(stat.name)}
-        />
-      </div>
-    ));
-    
     const abilityScores = abilityScoreValues.map((score) => (
       <div className={classes.abilityScore} key={score.name}>
         <TextField
@@ -218,7 +224,7 @@ class EditCharacterDialog extends React.Component {
         <DialogContent className={classes.dialogContent}>
         
           <div className={classes.topSection}>
-            <ImageUpload 
+            <AvatarUpload 
               onImageChange={this.handleImageChange} 
               initialImgUrl={initialAvatarUrl}
             />

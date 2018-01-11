@@ -47,7 +47,7 @@ function HomeSplash(props) {
                 </Typography>
               </CardContent>
               <CardActions className={classes.splashCardActions}>
-                <Button raised>
+                <Button raised component={Link} to="/encounters">
                   Create an Encounter
                 </Button>
               </CardActions>
@@ -64,7 +64,7 @@ function HomeSplash(props) {
                 </Typography>
               </CardContent>
               <CardActions className={classes.splashCardActions}>
-                <Button raised>
+                <Button raised component={Link} to="/monsters">
                   Create a Monster
                 </Button>
               </CardActions>

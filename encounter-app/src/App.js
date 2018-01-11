@@ -7,7 +7,9 @@ import {
 import Grid from 'material-ui/Grid';
 import EncounterNav from './Components/Persistent/EncounterNav';
 import Home from './Components/Home/Home';
+import SignIn from './Components/SignIn/SignIn';
 import Characters from './Components/Characters/Characters';
+import Monsters from './Components/Monsters/Monsters';
 import Encounters from './Components/Encounters/Encounters';
 import EncounterScreen from './Components/EncounterScreen/EncounterScreen';
 import EncounterFooter from './Components/Persistent/EncounterFooter';
@@ -36,8 +38,10 @@ function App(props) {
         <Grid item xs={12}>
           <Switch>
             <Route exact path="/" component={Home}/>
+            <Route path="/signup" component={SignIn}/>
             <Route path="/encounters" component={Encounters}/>
             <Route path="/characters" component={Characters}/>
+            <Route path="/monsters" component={Monsters}/>
             <Route path="/playencounter" component={EncounterScreen}/>
           </Switch>
         </Grid>

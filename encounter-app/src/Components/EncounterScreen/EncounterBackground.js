@@ -1,6 +1,16 @@
 import React from 'react';
 import { withStyles } from 'material-ui/styles';
 
+function EncounterBackground(props) {
+  const { classes, img } = props;
+  
+  return(
+    <div className={classes.bgDiv}>
+      <img src={img} alt="Encounter Background" className={classes.bgImage}/>
+    </div>
+  );
+}
+
 const styles = theme => ({
   bgDiv: {
     position: 'fixed',
@@ -20,17 +30,5 @@ const styles = theme => ({
     height: 'auto',
   }
 });
-
-function EncounterBackground(props) {
-  const { classes, img } = props;
-  
-  let imgPath = require('../../images/' + img);
-  
-  return(
-    <div className={classes.bgDiv}>
-      <img src={imgPath} alt="Encounter Background" className={classes.bgImage}/>
-    </div>
-  );
-}
 
 export default withStyles(styles)(EncounterBackground);

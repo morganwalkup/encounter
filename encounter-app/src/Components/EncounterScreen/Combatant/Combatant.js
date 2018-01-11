@@ -1,8 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import CombatantCircle from './CombatantCircle';
 import StatBar from './StatBar';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
+
+const propTypes = {
+  combatant: PropTypes.object,
+  onActive: PropTypes.func,
+  onInfoClick: PropTypes.func,
+};
 
 class Combatant extends React.Component {
   componentDidUpdate() {
@@ -26,12 +33,12 @@ class Combatant extends React.Component {
     
     return (
       <div className={combatantClasses.join(' ')}>
-        <CombatantCircle hitPoints={combatant.hit_points} img={combatant.image}/>
+        <CombatantCircle hitPoints={combatant.HP} img={combatant.image}/>
         <StatBar 
           //hitPoints={combatant.hit_points}
-          speed={combatant.speed}
+          speed={combatant.SPD}
           initiative={combatant.initiative}
-          armorClass={combatant.armor_class}
+          armorClass={combatant.AC}
         />
         <Button color='contrast' 
           onClick={this.handleInfoClick} 
@@ -43,6 +50,8 @@ class Combatant extends React.Component {
     );
   }
 }
+
+Combatant.PropTypes = propTypes;
 
 const styles = ({
   base: {

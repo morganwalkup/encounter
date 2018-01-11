@@ -2,6 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 
+const propTypes = {
+  classes: PropTypes.object.isRequired,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+};
+
 function StatBadge(props) {
   const { classes } = props;
 
@@ -17,11 +23,7 @@ function StatBadge(props) {
   );
 }
 
-StatBadge.propTypes = {
-  classes: PropTypes.object.isRequired,
-  label: PropTypes.string.isRequired,
-  value: PropTypes.number.isRequired,
-};
+StatBadge.PropTypes = propTypes;
 
 const styles = theme => ({
   badge: {

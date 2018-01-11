@@ -9,16 +9,16 @@ import AvatarUpload from '../CharactersAndMonsters/AvatarUpload';
 import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
-class NewCharacterDialog extends React.Component {
+class NewMonsterDialog extends React.Component {
   constructor(props) {
     super(props);
-    const defaultImage = "https://firebasestorage.googleapis.com/v0/b/encounter-49be9.appspot.com/o/admin%2Fimages%2Fcharacters%2FDefault.jpg?alt=media&token=d67e681c-849f-4160-923a-5c87acd3b48a";
+    const defaultImage = "https://firebasestorage.googleapis.com/v0/b/encounter-49be9.appspot.com/o/admin%2Fimages%2Fmonsters%2FDefault.jpg?alt=media&token=09401431-a9d6-4e21-a204-f5a4e95390c3";
     this.state = {
       image: null,
-      character: {
+      monster: {
         name: null,
         image: defaultImage,
-        LVL: null,
+        CR: null,
         AC: null,
         HP: null,
         SPD: null,
@@ -33,12 +33,12 @@ class NewCharacterDialog extends React.Component {
   }
   
   // Callback for textfield input,
-  // Updates character data in component state
+  // Updates monster data in component state
   handleChange = (fieldName) => (event) => {
-    let characterObj = this.state.character;
-    characterObj[fieldName] = event.target.value;
+    let monsterObj = this.state.monster;
+    monsterObj[fieldName] = event.target.value;
     this.setState({
-      character: characterObj,
+      monster: monsterObj,
     });
   }
   
@@ -57,41 +57,41 @@ class NewCharacterDialog extends React.Component {
   }
   
   // Callback for 'SAVE' click,
-  // Saves the character data to firebase and closes the dialog
+  // Saves the monster data to firebase and closes the dialog
   handleSave = () => {
-    // Create new character id in firebase
-    const dbCharacters = firebase.database().ref().child('characters');
-    const newCharId = dbCharacters.push().key;
+    // Create new monster id in firebase
+    const dbmonsters = firebase.database().ref().child('monsters');
+    const newCharId = dbmonsters.push().key;
     
-    // Check for character image and upload data accordingly
+    // Check for monster image and upload data accordingly
     const imageFile = this.state.image;
     if(imageFile == null) {
       
       // Upload changes to firebase
-      this.uploadCharacterData(newCharId);
+      this.uploadmonsterData(newCharId);
       // Close the dialog
       this.handleRequestClose();
-      // Reset local character data
-      this.resetLocalCharacterData();
+      // Reset local monster data
+      this.resetLocalmonsterData();
       
     } else {
       
-      // Upload character image
-      const AvatarUpload = this.uploadCharacterImage(newCharId);
+      // Upload monster image
+      const AvatarUpload = this.uploadmonsterImage(newCharId);
       AvatarUpload.on('state_changed', null, null, () => {
-        // On successful upload, update character image data
+        // On successful upload, update monster image data
         const imageUrl = AvatarUpload.snapshot.downloadURL;
-        let characterObj = this.state.character;
-        characterObj["image"] = imageUrl;
+        let monsterObj = this.state.monster;
+        monsterObj["image"] = imageUrl;
         this.setState({
-          character: characterObj,
+          monster: monsterObj,
         });
         // Upload changes to firebase
-        this.uploadCharacterData(newCharId);
+        this.uploadmonsterData(newCharId);
         // Close the dialog
         this.handleRequestClose();
-        // Reset local character data
-        this.resetLocalCharacterData();
+        // Reset local monster data
+        this.resetLocalmonsterData();
       });
       
     }
@@ -103,39 +103,39 @@ class NewCharacterDialog extends React.Component {
     this.handleRequestClose();
   }
   
-  // Uploads a new character image to firebase
+  // Uploads a new monster image to firebase
   // Returns file upload task for progress monitoring
-  uploadCharacterImage = (charId) => {
+  uploadmonsterImage = (charId) => {
     const imageFile = this.state.image;
     const imageMetaData = { 
       contentType: imageFile.type,
     };
     const storageRef = firebase.storage().ref();
     const userid = firebase.auth().currentUser.uid;
-    const fileDestination = storageRef.child(userid + '/images/characters/' + charId);
+    const fileDestination = storageRef.child(userid + '/images/monsters/' + charId);
     const fileUpload = fileDestination.put(imageFile, imageMetaData);
     
     return fileUpload;
   }
   
-  // Updates existing character data in firebase according to component state
-  uploadCharacterData = (characterId) => {
+  // Updates existing monster data in firebase according to component state
+  uploadmonsterData = (monsterId) => {
     const userid = firebase.auth().currentUser.uid;
-    const dbCharacters = firebase.database().ref().child(userid + '/characters');
-    const updatedCharacter = {
-      [characterId]: this.state.character
+    const dbmonsters = firebase.database().ref().child(userid + '/monsters');
+    const updatedmonster = {
+      [monsterId]: this.state.monster
     };
-    dbCharacters.update(updatedCharacter);
+    dbmonsters.update(updatedmonster);
   }
   
-  // Resets local character data to default values
-  resetLocalCharacterData = () => {
-    const defaultImage = "https://firebasestorage.googleapis.com/v0/b/encounter-49be9.appspot.com/o/admin%2Fimages%2Fcharacters%2Fdefault%2FDefault.jpg?alt=media&token=9129590d-c338-40fc-b50c-c6002387f4ea";
+  // Resets local monster data to default values
+  resetLocalmonsterData = () => {
+    const defaultImage = "https://firebasestorage.googleapis.com/v0/b/encounter-49be9.appspot.com/o/admin%2Fimages%2Fmonsters%2Fdefault%2FDefault.jpg?alt=media&token=9129590d-c338-40fc-b50c-c6002387f4ea";
     this.setState({
-      character: {
+      monster: {
         name: null,
         image: defaultImage,
-        LVL: null,
+        CR: null,
         AC: null,
         HP: null,
         SPD: null,
@@ -151,14 +151,14 @@ class NewCharacterDialog extends React.Component {
   
   render() {
     const { classes, ...other } = this.props;
-    const { character } = this.state;
+    const { monster } = this.state;
     
-    //Catch null character
-    if(character === null) {
+    //Catch null monster
+    if(monster === null) {
       return (
         <Dialog>
           <DialogContent>
-            <h2>Character not found</h2>
+            <h2>monster not found</h2>
           </DialogContent>
         </Dialog>
       );
@@ -166,47 +166,47 @@ class NewCharacterDialog extends React.Component {
     
     const statValues = [
       {
-        name: 'LVL',
-        value: character.LVL
+        name: 'CR',
+        value: monster.CR
       },
       {
         name: 'AC',
-        value: character.AC
+        value: monster.AC
       },
       {
         name: 'HP',
-        value: character.HP
+        value: monster.HP
       },
       {
         name: 'SPD',
-        value: character.SPD
+        value: monster.SPD
       }
     ];
     
     const abilityScoreValues = [
       {
         name: 'STR',
-        value: character.STR
+        value: monster.STR
       },
       {
         name: 'DEX',
-        value: character.DEX
+        value: monster.DEX
       },
       {
         name: 'CON',
-        value: character.CON
+        value: monster.CON
       },
       {
         name: 'INT',
-        value: character.INT
+        value: monster.INT
       },
       {
         name: 'WIS',
-        value: character.WIS
+        value: monster.WIS
       },
       {
         name: 'CHA',
-        value: character.CHA
+        value: monster.CHA
       }
     ];
     
@@ -238,7 +238,7 @@ class NewCharacterDialog extends React.Component {
     
     return (
       <Dialog onRequestClose={this.handleRequestClose} className={classes.dialog} {...other}>
-        <DialogTitle className={classes.dialogTitle}>New Character</DialogTitle>
+        <DialogTitle className={classes.dialogTitle}>New monster</DialogTitle>
         <DialogContent className={classes.dialogContent}>
         
           <div className={classes.topSection}>
@@ -249,8 +249,8 @@ class NewCharacterDialog extends React.Component {
               required
               type="text"
               label="Name"
-              defaultValue={character.name}
-              className={classes.characterName}
+              defaultValue={monster.name}
+              className={classes.monsterName}
               onChange={this.handleChange('name')}
             />
           </div>
@@ -308,7 +308,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
   },
-  characterName: {
+  monsterName: {
     display: 'inline',
     marginTop: -3,
     marginLeft: 20,
@@ -336,4 +336,4 @@ const styles = {
   }
 };
 
-export default withStyles(styles)(NewCharacterDialog);
+export default withStyles(styles)(NewMonsterDialog);

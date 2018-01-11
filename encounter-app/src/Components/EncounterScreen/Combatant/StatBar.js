@@ -4,6 +4,13 @@ import StatBadge from './StatBadge';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 
+const propTypes = {
+  classes: PropTypes.object.isRequired,
+  initiative: PropTypes.string,
+  speed: PropTypes.string,
+  armorClass: PropTypes.string,
+};
+
 function StatBar(props) {
   const { classes } = props;
 
@@ -20,9 +27,7 @@ function StatBar(props) {
   );
 }
 
-StatBar.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+StatBar.PropTypes = propTypes;
 
 const styles = theme => ({
   stats: {

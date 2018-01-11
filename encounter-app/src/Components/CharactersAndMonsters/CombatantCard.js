@@ -14,7 +14,7 @@ const propTypes = {
   onClickDelete: PropTypes.func,
 };
 
-class CharacterCard extends React.Component {
+class CombatantCard extends React.Component {
   
   handleClickView = () => {
     this.props.onClickView(this.props.id);
@@ -33,26 +33,26 @@ class CharacterCard extends React.Component {
 
     return(
       <Grid container justify="center">
-        <Grid item xs={12} className={classes.charCardContainer}>
-          <div className={classes.charCard}>
-            <div className={classes.charCircle}>
+        <Grid item xs={12} className={classes.cardContainer}>
+          <div className={classes.card}>
+            <div className={classes.avatarCircle}>
               <img className={classes.avatar} src={imgSrc} alt={""} />
             </div>
-            <Typography type="title" component="h2" className={classes.charCardTitle}>
+            <Typography type="title" component="h2" className={classes.cardTitle}>
               {name}
             </Typography>
             
-            <div className={classes.charCardActions}>
+            <div className={classes.cardActions}>
               <Button 
                 dense 
-                className={classes.charCardButton} 
+                className={classes.cardButton} 
                 onClick={this.handleClickView}
               >
                 View
               </Button>
               <Button 
                 dense 
-                className={classes.charCardButton}
+                className={classes.cardButton}
                 onClick={this.handleClickEdit}
               >
                 Edit
@@ -60,7 +60,7 @@ class CharacterCard extends React.Component {
               <Button 
                 dense 
                 color="accent" 
-                className={classes.charCardButton}
+                className={classes.cardButton}
                 onClick={this.handleClickDelete}
               >
                 Delete
@@ -74,13 +74,13 @@ class CharacterCard extends React.Component {
   }
 }
 
-CharacterCard.propTypes = propTypes;
+CombatantCard.propTypes = propTypes;
 
 const styles = theme => ({
-  charCardContainer: {
+  cardContainer: {
     marginTop: 25,
   },
-  charCard: {
+  card: {
     position: 'relative',
     width: '94%',
     minWidth: 290,
@@ -90,7 +90,7 @@ const styles = theme => ({
     borderRadius: '5px 5px 3px 3px',
     boxSizing: 'border-box',
   },
-  charCardTitle: {
+  cardTitle: {
     color: 'white',
     fontWeight: 'bold',
     backgroundColor: blueGrey[900],
@@ -99,16 +99,16 @@ const styles = theme => ({
     borderRadius: '3px 3px 0 0',
     boxShadow: '0px 2px 3px rgba(0,0,0,0.4)',
   },
-  charCardActions: {
+  cardActions: {
     padding: 4,
     paddingLeft: 70,
     marginRight: 3,
     boxShadow: '0px 2px 3px rgba(0,0,0,0.4)',
   },
-  charCardButton: {
+  cardButton: {
     minWidth: 0,
   },
-  charCircle: {
+  avatarCircle: {
     position: 'absolute',
     top: -5,
     left: 0,
@@ -128,4 +128,4 @@ const styles = theme => ({
   },
 });
 
-export default withStyles(styles)(CharacterCard);
+export default withStyles(styles)(CombatantCard);

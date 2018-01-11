@@ -6,13 +6,13 @@ import CombatantCard from '../CharactersAndMonsters/CombatantCard';
 import Hidden from 'material-ui/Hidden';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
-import ViewCharacterDialog from './ViewCharacterDialog';
-import EditCharacterDialog from './EditCharacterDialog';
-import DeleteCharacterDialog from './DeleteCharacterDialog';
-import NewCharacterDialog from './NewCharacterDialog';
+import ViewMonsterDialog from './ViewMonsterDialog';
+import EditMonsterDialog from './EditMonsterDialog';
+import DeleteMonsterDialog from './DeleteMonsterDialog';
+import NewMonsterDialog from './NewMonsterDialog';
 import { withStyles } from 'material-ui/styles';
 
-class Characters extends React.Component {
+class Monsters extends React.Component {
   constructor(props) {
     super(props);
     this.dialogOptions = {
@@ -24,10 +24,10 @@ class Characters extends React.Component {
     };
     this.state = {
       userid: 'anonymous',
-      characters: null,
+      monsters: null,
       openDialog: this.dialogOptions.none,
-      selectedCharacterId: null,
-      selectedCharacter: null,
+      selectedMonsterId: null,
+      selectedMonster: null,
     };
   }
   
@@ -40,11 +40,11 @@ class Characters extends React.Component {
         userid: (user) ? user.uid : 'anonymous'
       });
 
-      //Connect this component's state to the user's characters in firebase
+      //Connect this component's state to the user's monsters in firebase
       const userid = this.state.userid;
-      firebase.database().ref(userid + '/characters').on('value', snapshot => {
+      firebase.database().ref(userid + '/monsters/').on('value', snapshot => {
         this.setState({
-          characters: snapshot.val()
+          monsters: snapshot.val()
         });
       });
     });
@@ -54,8 +54,8 @@ class Characters extends React.Component {
   componentWillUnmount() {
     //Get user id
     const userid = firebase.auth().currentUser.uid;
-    //Disconnect this component's state from 'characters' in firebase
-    firebase.database().ref(userid + '/characters').off();
+    //Disconnect this component's state from 'monsters' in firebase
+    firebase.database().ref(userid + '/monsters').off();
   }
   
   //Handles the closing of all dialogs
@@ -65,62 +65,62 @@ class Characters extends React.Component {
     });
   }
   
-  //Handles a character view click
-  handleClickView = (characterId) => {
+  //Handles a monster view click
+  handleClickView = (monsterId) => {
     this.setState({
-      selectedCharacterId: characterId,
-      selectedCharacter: this.getCharacter(characterId),
+      selectedMonsterId: monsterId,
+      selectedMonster: this.getMonster(monsterId),
       openDialog: this.dialogOptions.view,
     });
   }
   
-  //Handles a character edit click
-  handleClickEdit = (characterId) => {
+  //Handles a monster edit click
+  handleClickEdit = (monsterId) => {
     this.setState({
-      selectedCharacterId: characterId,
-      selectedCharacter: this.getCharacter(characterId),
+      selectedMonsterId: monsterId,
+      selectedMonster: this.getMonster(monsterId),
       openDialog: this.dialogOptions.edit,
     });
   }
   
-  //Handles a character delete click
-  handleClickDelete = (characterId) => {
+  //Handles a monster delete click
+  handleClickDelete = (monsterId) => {
     this.setState({
-      selectedCharacterId: characterId,
-      selectedCharacter: this.getCharacter(characterId),
+      selectedMonsterId: monsterId,
+      selectedMonster: this.getMonster(monsterId),
       openDialog: this.dialogOptions.del,
     });
   }
   
-  //Handles a new character click
+  //Handles a new monster click
   handleClickNew = () => {
     this.setState({
-      selectedCharacterId: null,
-      selectedCharacter: null,
+      selectedMonsterId: null,
+      selectedMonster: null,
       openDialog: this.dialogOptions.new,
     });
   }
   
-  //Returns a character whose id matches the given index,
-  //returns null if the character is not found
-  getCharacter(characterId) {
-    return this.state.characters[characterId];
+  //Returns a monster whose id matches the given index,
+  //returns null if the monster is not found
+  getMonster(monsterId) {
+    return this.state.monsters[monsterId];
   }
   
   render() {
     const { classes } = this.props;
-    const characters = this.state.characters;
+    const monsters = this.state.monsters;
   
-    //Generate Character Cards
+    //Generate Monster Cards
     let CombatantCards = [];
-    for(var id in characters) {
-      let character = characters[id];
+    for(var id in monsters) {
+      let monster = monsters[id];
       CombatantCards.push(
         <Grid item xs={12} sm={6} lg={4} key={id}>
           <CombatantCard 
             id={id}
-            imgSrc={character.image} 
-            name={character.name} 
+            imgSrc={monster.image} 
+            name={monster.name} 
             onClickView={this.handleClickView}
             onClickEdit={this.handleClickEdit}
             onClickDelete={this.handleClickDelete}
@@ -135,8 +135,8 @@ class Characters extends React.Component {
           <Grid item xs={12}>
             <PageHeader 
               onClickNew={this.handleClickNew}
-              title="Characters"
-              buttonText="New Character"
+              title="Monsters"
+              buttonText="New Monster"
             />
           </Grid>
           <Grid item xs={11} sm={12} md={11} lg={9} className={classes.charCardsContainer}>
@@ -150,24 +150,24 @@ class Characters extends React.Component {
             <AddIcon />
           </Button>
         </Hidden>
-        <ViewCharacterDialog 
-          character={this.state.selectedCharacter}
+        <ViewMonsterDialog 
+          monster={this.state.selectedMonster}
           open={this.state.openDialog === this.dialogOptions.view}
           onRequestClose={this.handleRequestClose}
         />
-        <EditCharacterDialog 
-          characterid={this.state.selectedCharacterId}
-          character={this.state.selectedCharacter}
+        <EditMonsterDialog 
+          monsterid={this.state.selectedMonsterId}
+          monster={this.state.selectedMonster}
           open={this.state.openDialog === this.dialogOptions.edit}
           onRequestClose={this.handleRequestClose}
         />
-        <DeleteCharacterDialog 
-          characterid={this.state.selectedCharacterId}
-          character={this.state.selectedCharacter}
+        <DeleteMonsterDialog 
+          monsterid={this.state.selectedMonsterId}
+          monster={this.state.selectedMonster}
           open={this.state.openDialog === this.dialogOptions.del}
           onRequestClose={this.handleRequestClose}
         />
-        <NewCharacterDialog
+        <NewMonsterDialog
           open={this.state.openDialog === this.dialogOptions.new}
           onRequestClose={this.handleRequestClose}
         />
@@ -196,4 +196,4 @@ const styles = theme => ({
   },
 });
 
-export default withStyles(styles)(Characters);
+export default withStyles(styles)(Monsters);

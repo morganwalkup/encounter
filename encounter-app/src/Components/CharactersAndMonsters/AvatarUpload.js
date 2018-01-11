@@ -9,7 +9,7 @@ const propTypes = {
   initialImgUrl: PropTypes.string,
 };
 
-class ImageUpload extends React.Component {
+class AvatarUpload extends React.Component {
   constructor(props) {
     super(props);
     let initialImgUrl = props.initialImgUrl;
@@ -76,7 +76,7 @@ class ImageUpload extends React.Component {
   }
 }
 
-ImageUpload.PropTypes = propTypes;
+AvatarUpload.PropTypes = propTypes;
 
 const styles = {
   avatarContainer: {
@@ -113,4 +113,4 @@ const styles = {
   },
 };
 
-export default withStyles(styles)(ImageUpload);
+export default withStyles(styles)(AvatarUpload);

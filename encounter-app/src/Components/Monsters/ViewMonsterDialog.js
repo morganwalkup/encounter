@@ -8,13 +8,13 @@ import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
-  character: PropTypes.object.isRequired,
+  monster: PropTypes.object.isRequired,
 };
 
-class ViewCharacterDialog extends React.Component {
+class ViewMonsterDialog extends React.Component {
   
   //Calculates the modifier for a particular ability score value
-  //abilityScore: a character's ability score value
+  //abilityScore: a monster's ability score value
   calculateModifier(abilityScore) {
     let modifier = Math.floor((abilityScore - 10) / 2);
     if(modifier >= 0) {
@@ -28,14 +28,14 @@ class ViewCharacterDialog extends React.Component {
   }
   
   render() {
-    const { classes, character, ...other } = this.props;
+    const { classes, monster, ...other } = this.props;
     
-    //Catch null character
-    if(character === null) {
+    //Catch null monster
+    if(monster === null) {
       return (
         <Dialog>
           <DialogContent>
-            <h2>Character not found</h2>
+            <h2>Monster not found</h2>
           </DialogContent>
         </Dialog>
       );
@@ -43,53 +43,53 @@ class ViewCharacterDialog extends React.Component {
   
     const statValues = [
       {
-        name: 'LVL',
-        value: character.LVL
+        name: 'CR',
+        value: monster.CR
       },
       {
         name: 'AC',
-        value: character.AC
+        value: monster.AC
       },
       {
         name: 'HP',
-        value: character.HP
+        value: monster.HP
       },
       {
         name: 'SPD',
-        value: character.SPD
+        value: monster.SPD
       }
     ];
     
     const abilityScoreValues = [
       {
         name: 'STR',
-        value: character.STR,
-        mod: this.calculateModifier(character.STR)
+        value: monster.STR,
+        mod: this.calculateModifier(monster.STR)
       },
       {
         name: 'DEX',
-        value: character.DEX,
-        mod: this.calculateModifier(character.DEX)
+        value: monster.DEX,
+        mod: this.calculateModifier(monster.DEX)
       },
       {
         name: 'CON',
-        value: character.CON,
-        mod: this.calculateModifier(character.CON)
+        value: monster.CON,
+        mod: this.calculateModifier(monster.CON)
       },
       {
         name: 'INT',
-        value: character.INT,
-        mod: this.calculateModifier(character.INT)
+        value: monster.INT,
+        mod: this.calculateModifier(monster.INT)
       },
       {
         name: 'WIS',
-        value: character.WIS,
-        mod: this.calculateModifier(character.WIS)
+        value: monster.WIS,
+        mod: this.calculateModifier(monster.WIS)
       },
       {
         name: 'CHA',
-        value: character.CHA,
-        mod: this.calculateModifier(character.CHA)
+        value: monster.CHA,
+        mod: this.calculateModifier(monster.CHA)
       }
     ];
     
@@ -117,13 +117,13 @@ class ViewCharacterDialog extends React.Component {
     
     return (
       <Dialog onRequestClose={this.handleRequestClose} {...other}>
-        <DialogTitle className={classes.dialogTitle}>View Character</DialogTitle>
+        <DialogTitle className={classes.dialogTitle}>View monster</DialogTitle>
         <DialogContent>
         
           <div className={classes.topSection}>
-            <img className={classes.avatar} src={character.image} alt={""} />
-            <Typography type="headline" className={classes.characterName}>
-              {character.name}
+            <img className={classes.avatar} src={monster.image} alt={""} />
+            <Typography type="headline" className={classes.monsterName}>
+              {monster.name}
             </Typography>
           </div>
         
@@ -149,7 +149,7 @@ class ViewCharacterDialog extends React.Component {
   }
 }
 
-ViewCharacterDialog.PropTypes = propTypes;
+ViewMonsterDialog.PropTypes = propTypes;
 
 const styles = {
   dialogTitle: {
@@ -173,7 +173,7 @@ const styles = {
     boxShadow: '0px 2px 5px rgba(0,0,0,0.5)',
     backgroundColor: blueGrey[900],
   },
-  characterName: {
+  monsterName: {
     display: 'inline',
     paddingLeft: 10,
     fontWeight: 'bold',
@@ -197,4 +197,4 @@ const styles = {
   }
 };
 
-export default withStyles(styles)(ViewCharacterDialog);
+export default withStyles(styles)(ViewMonsterDialog);

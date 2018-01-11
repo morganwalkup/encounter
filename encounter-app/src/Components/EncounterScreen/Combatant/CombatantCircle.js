@@ -9,8 +9,8 @@ class CombatantCircle extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      maxHealth: props.hitPoints,
-      health: props.hitPoints,
+      maxHealth: Number(props.hitPoints),
+      health: Number(props.hitPoints),
     };
   }
   
@@ -29,11 +29,9 @@ class CombatantCircle extends React.Component {
   render() {
     const { classes, img } = this.props;
     
-    let imgPath = require('../../../images/combatants/' + img);
-    
     return (
       <Paper className={classes.combatantCircle}>
-        <Avatar src={imgPath} className={classes.avatar} />
+        <Avatar src={img} className={classes.avatar} />
         <HealthBar max={this.state.maxHealth} value={this.state.health}/>
         <DamageInteractable onDamage={this.handleDamage}/>
       </Paper>
