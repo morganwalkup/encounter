@@ -1,18 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as firebase from 'firebase';
-import Dialog, { DialogTitle, DialogContent, DialogActions } from 'material-ui/Dialog';
+import { getUserId,
+         updateCharacter,
+         updateCharacterWithImage,
+        } from '../../DatabaseFunctions/FirebaseFunctions'; 
+import Dialog, { DialogContent } from 'material-ui/Dialog';
+import CRUDDialog from '../CharactersAndMonsters/CRUDDialog';
 import AvatarUpload from '../CharactersAndMonsters/AvatarUpload';
 import List, { ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
-  characterid: PropTypes.string.isRequired,
-  character: PropTypes.object.isRequired,
+  open: PropTypes.bool,
+  characterid: PropTypes.string,
+  character: PropTypes.object,
 };
 
 class EditCharacterDialog extends React.Component {
@@ -61,35 +65,26 @@ class EditCharacterDialog extends React.Component {
   // Callback for 'SAVE' click,
   // Saves altered character data to firebase and closes the dialog
   handleSave = () => {
-    const imageFile = this.state.image;
-    if(imageFile == null) {
-      
-      // Upload revised character data to firebase immediately
-      this.uploadCharacterData();
-      // Close the dialog
-      this.handleRequestClose();
-      
-    } else {
-      
-      // Upload new character image
-      const AvatarUpload = this.uploadCharacterImage();
-      AvatarUpload.on('state_changed', null, null, () => {
+    getUserId((userid) => {
+      const imageFile = this.state.image;
+      if(imageFile == null) {
         
-        // On successful upload, update character image data
-        const imageUrl = AvatarUpload.snapshot.downloadURL;
-        let characterObj = this.state.character;
-        characterObj["image"] = imageUrl;
-        this.setState({
-          character: characterObj,
-        });
-        // Upload revised character data to firebase
-        this.uploadCharacterData();
+        // Update character data in database immediately
+        updateCharacter(userid, this.props.characterid, this.state.character);
         // Close the dialog
         this.handleRequestClose();
         
-      });
-      
-    }
+      } else {
+        
+        // Upload character image and update character in database
+        const imageUpload = updateCharacterWithImage(userid, this.props.characterid, this.state.character, imageFile);
+        imageUpload.on('state_changed', null, null, () => {
+          // Close the dialog
+          this.handleRequestClose();
+        });
+
+      }
+    });
   }
   
   // Callback for "CANCEL" click
@@ -98,41 +93,15 @@ class EditCharacterDialog extends React.Component {
     this.handleRequestClose();
   }
   
-  // Uploads a new character image to firebase
-  // Returns file upload task for progress monitoring
-  uploadCharacterImage = () => {
-    const imageFile = this.state.image;
-    const imageMetaData = { 
-      contentType: imageFile.type,
-    };
-    const storageRef = firebase.storage().ref();
-    const userid = firebase.auth().currentUser.uid;
-    const charId = this.props.characterid;
-    const fileDestination = storageRef.child(userid + '/images/characters/' + charId);
-    const fileUpload = fileDestination.put(imageFile, imageMetaData); 
-    
-    return fileUpload;
-  }
-  
-  // Uploads character data to firebase according to component state
-  uploadCharacterData = () => {
-    const userid = firebase.auth().currentUser.uid;
-    const dbCharacters = firebase.database().ref().child(userid + '/characters');
-    const updatedCharacter = {
-      [this.props.characterid]: this.state.character
-    };
-    dbCharacters.update(updatedCharacter);
-  }
-  
   // Renders the component
   render() {
-    const { classes, ...other } = this.props;
+    const { classes, } = this.props;
     const character = this.state.character;
 
     //Catch null character
     if(character === null) {
       return (
-        <Dialog>
+        <Dialog open={this.props.open}>
           <DialogContent>
             <h2>Character not found</h2>
           </DialogContent>
@@ -219,75 +188,59 @@ class EditCharacterDialog extends React.Component {
     ));
     
     return (
-      <Dialog onRequestClose={this.handleRequestClose} className={classes.dialog} {...other}>
-        <DialogTitle className={classes.dialogTitle}>Edit Character</DialogTitle>
-        <DialogContent className={classes.dialogContent}>
-        
-          <div className={classes.topSection}>
-            <AvatarUpload 
-              onImageChange={this.handleImageChange} 
-              initialImgUrl={initialAvatarUrl}
-            />
-            <TextField
-              required
-              type="text"
-              label="Name"
-              defaultValue={character.name}
-              className={classes.characterName}
-              onChange={this.handleChange('name')}
-            />
+      <CRUDDialog 
+        title="Edit Character"
+        onSave={this.handleSave}
+        onCancel={this.handleCancel}
+        onRequestClose={this.handleRequestClose}
+        open={this.props.open}
+        actions={
+          <div>
+            <Button onClick={this.handleCancel}>Cancel</Button>
+            <Button onClick={this.handleSave} color="primary">Save</Button> 
           </div>
+        }
+      >
+
+        <div className={classes.topSection}>
+          <AvatarUpload 
+            onImageChange={this.handleImageChange} 
+            initialImgUrl={initialAvatarUrl}
+          />
+          <TextField
+            required
+            type="text"
+            label="Name"
+            defaultValue={character.name}
+            className={classes.characterName}
+            onChange={this.handleChange('name')}
+          />
+        </div>
+      
+        <Divider />
         
-          <Divider />
-          
-          <List dense className={classes.list}>
-            <ListItem disableGutters className={classes.statListItem}>
-              {stats}
-            </ListItem>
-          </List>  
-          
-          <Divider />
-          
-          <List className={classes.list}>
-            <ListItem disableGutters className={classes.statListItem}>
-              {abilityScores}
-            </ListItem>
-          </List>
-          
-        </DialogContent>
+        <List dense className={classes.list}>
+          <ListItem disableGutters className={classes.statListItem}>
+            {stats}
+          </ListItem>
+        </List>  
         
         <Divider />
         
-        <DialogActions>
-          <Button onClick={this.handleCancel} >
-            Cancel
-          </Button>
-          <Button onClick={this.handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <List className={classes.list}>
+          <ListItem disableGutters className={classes.statListItem}>
+            {abilityScores}
+          </ListItem>
+        </List>
+        
+      </CRUDDialog>
     );
   }
 }
 
-EditCharacterDialog.PropTypes = propTypes;
+EditCharacterDialog.propTypes = propTypes;
 
 const styles = {
-  dialog: {
-    position: 'absolute',
-  },
-  dialogTitle: {
-    backgroundColor: blueGrey[900],
-    padding: 15,
-    paddingLeft: 24,
-    '& > h2': {
-      color: 'white', 
-    }
-  },
-  dialogContent: {
-    paddingBottom: 0,
-  },
   topSection: {
     width: '100%',
     display: 'flex',
@@ -300,6 +253,7 @@ const styles = {
   },
   list: {
     width: 300,
+    margin: '0 auto',
   },
   statListItem: {
     display: 'flex',

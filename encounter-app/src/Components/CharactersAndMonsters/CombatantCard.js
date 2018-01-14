@@ -120,8 +120,8 @@ const styles = theme => ({
     boxShadow: '0px 2px 3px rgba(0,0,0,0.4)',
   },
   avatar: {
-    height: '91%',
-    width: '91%',
+    height: '100%',
+    width: '100%',
     borderRadius: '50%',
     border: 'solid thick #69f0ae',
     backgroundColor: blueGrey[900],

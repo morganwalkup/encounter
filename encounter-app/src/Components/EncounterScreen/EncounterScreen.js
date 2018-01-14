@@ -1,6 +1,5 @@
 import React from 'react';
-import { getUserId, 
-         getEncounter, 
+import { getEncounter, 
          getCharacter, 
          getMonster 
         } from '../../DatabaseFunctions/FirebaseFunctions';
@@ -42,13 +41,7 @@ class EncounterScreen extends React.Component {
    * Gets user id and encounter screen data
    */
   componentDidMount() {
-    getUserId((userid) => {
-      this.setState({
-        userid: userid
-      });
-      
-      this.getEncounterScreenData();
-    });
+    this.getEncounterScreenData();
   }
   
   
@@ -68,10 +61,10 @@ class EncounterScreen extends React.Component {
   /**
    * Retrieves encounter data from database and saves it in state
    */
-  getEncounterScreenData() {
-    //Get user and encounter ids
-    const userid = this.state.userid;
-    const encounterid = "-L2NcF1lrtXt6UMVMDDm";
+  getEncounterScreenData = () => {
+    //Get user and encounter ids from url
+    const userid = this.props.match.params.userid;
+    const encounterid = this.props.match.params.encounterid;
     
     //Get encounter data from firebase
     getEncounter(userid, encounterid, encounter => {
@@ -105,7 +98,7 @@ class EncounterScreen extends React.Component {
         getMonster(userid, monsters[i], monster => {
           //Overwrite id with monster data
           monsters[i] = monster; 
-          // On the last loop, save monsters to state and order combatants
+          // On the last loop, save monsters and indicate loading is done
           if(i === (monsters.length - 1)) {
             this.setState({
               monsters: monsters,

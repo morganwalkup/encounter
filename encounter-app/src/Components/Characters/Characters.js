@@ -1,5 +1,9 @@
 import React from 'react';
-import * as firebase from 'firebase';
+import { 
+  getUserId,
+  getAllCharacters,
+  disconnectCharacters
+} from '../../DatabaseFunctions/FirebaseFunctions';
 import Grid from 'material-ui/Grid';
 import PageHeader from '../CharactersAndMonsters/PageHeader';
 import CombatantCard from '../CharactersAndMonsters/CombatantCard';
@@ -34,17 +38,11 @@ class Characters extends React.Component {
   //Called immedately after the component mounts
   componentDidMount() {
     //Listen for user login changes
-    firebase.auth().onAuthStateChanged((user) => {
-      //Save user id, or 'anonymous' if no user is logged in
-      this.setState({
-        userid: (user) ? user.uid : 'anonymous'
-      });
-
-      //Connect this component's state to the user's characters in firebase
-      const userid = this.state.userid;
-      firebase.database().ref(userid + '/characters').on('value', snapshot => {
+    getUserId((userId) => {
+      //Link component state to character data in database
+      getAllCharacters(userId, (allCharacters) => {
         this.setState({
-          characters: snapshot.val()
+          characters: allCharacters
         });
       });
     });
@@ -53,9 +51,10 @@ class Characters extends React.Component {
   //Called just before the component unmounts
   componentWillUnmount() {
     //Get user id
-    const userid = firebase.auth().currentUser.uid;
-    //Disconnect this component's state from 'characters' in firebase
-    firebase.database().ref(userid + '/characters').off();
+    getUserId((userid) => {
+      //Disconnect this component from the database
+      disconnectCharacters(userid);
+    });
   }
   
   //Handles the closing of all dialogs

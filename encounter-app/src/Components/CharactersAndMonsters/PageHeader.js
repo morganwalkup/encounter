@@ -35,7 +35,7 @@ class CharactersHeader extends React.Component {
   }
 }
 
-CharactersHeader.PropTypes = propTypes;
+CharactersHeader.propTypes = propTypes;
 
 const styles = theme => ({
   splash: {

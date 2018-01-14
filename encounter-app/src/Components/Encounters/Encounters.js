@@ -1,34 +1,49 @@
 import React from 'react';
 import Grid from 'material-ui/Grid';
 import encounters from '../../EncounterData/encounters.json';
-import EncountersHeader from './EncountersHeader';
+import PageHeader from '../CharactersAndMonsters/PageHeader';
 import EncounterCard from './EncounterCard';
 import Hidden from 'material-ui/Hidden';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
-//import EncounterDialog from './EncounterDialog';
+import NewEncounterDialog from './NewEncounterDialog';
+import ViewEncounterDialog from './ViewEncounterDialog';
 import { withStyles } from 'material-ui/styles';
 
 class Encounters extends React.Component {
   
   constructor(props) {
     super(props);
+    this.dialogOptions = {
+      none: 'none',
+      create: 'create',
+      view: 'view',
+      edit: 'edit',
+      del: 'delete',
+    };
     this.state = {
-      isEncounterDialogOpen: false,
+      openDialog: this.dialogOptions.none,
     };
   }
   
   //Handles the closing of an encounter dialog
   handleRequestClose = () => {
     this.setState({
-      isEncounterDialogOpen: false,
+      openDialog: this.dialogOptions.none,
     });
   }
   
   //Handles an encounter "view" click
   handleClickView = () => {
     this.setState({
-      isEncounterDialogOpen: true,
+      openDialog: this.dialogOptions.view,
+    });
+  }
+  
+  //Handles a "new encounter" click
+  handleClickNew = () => {
+    this.setState({
+      openDialog: this.dialogOptions.new,
     });
   }
   
@@ -50,7 +65,11 @@ class Encounters extends React.Component {
       <div>
         <Grid container direction="row" justify="center" spacing={0}>
           <Grid item xs={12}>
-            <EncountersHeader />
+            <PageHeader 
+              title="Encounters"
+              buttonText="New Encounter"
+              onClickNew={this.handleClickNew}
+            />
           </Grid>
           <Grid item xs={11} sm={11} lg={9} className={classes.encounterCardsContainer}>
             <Grid container spacing={0}>
@@ -59,15 +78,19 @@ class Encounters extends React.Component {
           </Grid>
         </Grid>
         <Hidden smUp>
-          <Button fab className={classes.addButton}>
+          <Button fab onClick={this.handleClickNew} className={classes.addButton}>
             <AddIcon />
           </Button>
         </Hidden>
-        {/*<EncounterDialog 
-          open={this.state.isEncounterDialogOpen}
+        <NewEncounterDialog 
+          open={this.state.openDialog === this.dialogOptions.new}
           onRequestClose={this.handleRequestClose}
-          encounter={encounters[0]}
-        />*/}
+        />
+        <ViewEncounterDialog
+          encounter={null}
+          open={this.state.openDialog === this.dialogOptions.view}
+          onRequestClose={this.handleRequestClose}
+        />
       </div>
     );
   }

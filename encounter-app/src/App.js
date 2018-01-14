@@ -4,6 +4,7 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
+import Reboot from 'material-ui/Reboot';
 import Grid from 'material-ui/Grid';
 import EncounterNav from './Components/Persistent/EncounterNav';
 import Home from './Components/Home/Home';
@@ -21,6 +22,8 @@ function App(props) {
   return(
     <Router>
     <div>
+      {/* Reset browser styling */}
+      <Reboot />
       {/* Navbar - Apply hoverOnly effect for encounter screen */}
       <Route path="/playencounter" children={({ match }) => (
         <EncounterNav hoverOnly={match ? true : false} />
@@ -42,7 +45,7 @@ function App(props) {
             <Route path="/encounters" component={Encounters}/>
             <Route path="/characters" component={Characters}/>
             <Route path="/monsters" component={Monsters}/>
-            <Route path="/playencounter" component={EncounterScreen}/>
+            <Route path="/playencounter/:userid/:encounterid" component={EncounterScreen}/>
           </Switch>
         </Grid>
         

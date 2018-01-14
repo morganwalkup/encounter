@@ -1,5 +1,8 @@
 import React from 'react';
-import * as firebase from 'firebase';
+import { getUserId,
+         getAllMonsters,
+         disconnectMonsters
+        } from '../../DatabaseFunctions/FirebaseFunctions';
 import Grid from 'material-ui/Grid';
 import PageHeader from '../CharactersAndMonsters/PageHeader';
 import CombatantCard from '../CharactersAndMonsters/CombatantCard';
@@ -34,17 +37,11 @@ class Monsters extends React.Component {
   //Called immedately after the component mounts
   componentDidMount() {
     //Listen for user login changes
-    firebase.auth().onAuthStateChanged((user) => {
-      //Save user id, or 'anonymous' if no user is logged in
-      this.setState({
-        userid: (user) ? user.uid : 'anonymous'
-      });
-
-      //Connect this component's state to the user's monsters in firebase
-      const userid = this.state.userid;
-      firebase.database().ref(userid + '/monsters/').on('value', snapshot => {
+    getUserId((userId) => {
+      //Link component state to monster data in database
+      getAllMonsters(userId, (allMonsters) => {
         this.setState({
-          monsters: snapshot.val()
+          monsters: allMonsters
         });
       });
     });
@@ -53,9 +50,10 @@ class Monsters extends React.Component {
   //Called just before the component unmounts
   componentWillUnmount() {
     //Get user id
-    const userid = firebase.auth().currentUser.uid;
-    //Disconnect this component's state from 'monsters' in firebase
-    firebase.database().ref(userid + '/monsters').off();
+    getUserId((userid) => {
+      //Disconnect this component from the database
+      disconnectMonsters(userid);
+    });
   }
   
   //Handles the closing of all dialogs

@@ -29,7 +29,7 @@ class card extends React.Component {
         <Grid item xs={12} className={classes.cardContainer}>
           <div className={classes.card}>
             <div className={classes.cardTop}>
-              <img src={src} alt={img} className={classes.cardImage}/>
+              <img src={src} alt={""} className={classes.cardImage}/>
             </div>
             <Grid container alignItems="center" spacing={0} className={classes.cardInfo}>
               <Grid item xs={9}>

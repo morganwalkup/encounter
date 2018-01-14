@@ -23,7 +23,7 @@ class SettingsDialog extends React.Component {
     const { classes, ...other } = this.props;
     
     return (
-      <Dialog onRequestClose={this.handleRequestClose} {...other}>
+      <Dialog onClose={this.handleRequestClose} {...other}>
         <DialogTitle>Settings</DialogTitle>
         <DialogContent>
           <List className={classes.settingsList} >
@@ -51,7 +51,7 @@ class SettingsDialog extends React.Component {
   }
 }
 
-SettingsDialog.PropTypes = propTypes;
+SettingsDialog.propTypes = propTypes;
 
 const styles = {
   settingsList: {

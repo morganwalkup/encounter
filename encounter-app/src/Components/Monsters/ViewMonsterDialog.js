@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Dialog, { DialogTitle, DialogContent } from 'material-ui/Dialog';
+import * as dnd from '../../Utilities/DndFunctions';
+import Dialog, { DialogContent } from 'material-ui/Dialog';
+import CRUDDialog from '../CharactersAndMonsters/CRUDDialog';
 import List, { ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import Typography from 'material-ui/Typography';
@@ -8,32 +10,26 @@ import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
-  monster: PropTypes.object.isRequired,
+  open: PropTypes.bool,
+  monster: PropTypes.object,
 };
 
 class ViewMonsterDialog extends React.Component {
   
-  //Calculates the modifier for a particular ability score value
-  //abilityScore: a monster's ability score value
-  calculateModifier(abilityScore) {
-    let modifier = Math.floor((abilityScore - 10) / 2);
-    if(modifier >= 0) {
-      modifier = ("+" + modifier);
-    }
-    return modifier;
-  }
-  
+  /**
+   * Handles close request from CRUD Dialog
+   */
   handleRequestClose = () => {
     this.props.onRequestClose();
   }
   
   render() {
-    const { classes, monster, ...other } = this.props;
+    const { classes, monster, } = this.props;
     
     //Catch null monster
     if(monster === null) {
       return (
-        <Dialog>
+        <Dialog open={this.props.open}>
           <DialogContent>
             <h2>Monster not found</h2>
           </DialogContent>
@@ -43,8 +39,8 @@ class ViewMonsterDialog extends React.Component {
   
     const statValues = [
       {
-        name: 'CR',
-        value: monster.CR
+        name: 'LVL',
+        value: monster.LVL
       },
       {
         name: 'AC',
@@ -64,32 +60,32 @@ class ViewMonsterDialog extends React.Component {
       {
         name: 'STR',
         value: monster.STR,
-        mod: this.calculateModifier(monster.STR)
+        mod: dnd.calculateModifier(monster.STR)
       },
       {
         name: 'DEX',
         value: monster.DEX,
-        mod: this.calculateModifier(monster.DEX)
+        mod: dnd.calculateModifier(monster.DEX)
       },
       {
         name: 'CON',
         value: monster.CON,
-        mod: this.calculateModifier(monster.CON)
+        mod: dnd.calculateModifier(monster.CON)
       },
       {
         name: 'INT',
         value: monster.INT,
-        mod: this.calculateModifier(monster.INT)
+        mod: dnd.calculateModifier(monster.INT)
       },
       {
         name: 'WIS',
         value: monster.WIS,
-        mod: this.calculateModifier(monster.WIS)
+        mod: dnd.calculateModifier(monster.WIS)
       },
       {
         name: 'CHA',
         value: monster.CHA,
-        mod: this.calculateModifier(monster.CHA)
+        mod: dnd.calculateModifier(monster.CHA)
       }
     ];
     
@@ -116,50 +112,43 @@ class ViewMonsterDialog extends React.Component {
     ));
     
     return (
-      <Dialog onRequestClose={this.handleRequestClose} {...other}>
-        <DialogTitle className={classes.dialogTitle}>View monster</DialogTitle>
-        <DialogContent>
+      <CRUDDialog 
+        title="View Monster"
+        action="read"
+        onCloseClick={this.handleRequestClose}
+        onRequestClose={this.handleRequestClose}
+        open={this.props.open}
+      >
+        <div className={classes.topSection}>
+          <img className={classes.avatar} src={monster.image} alt={""} />
+          <Typography type="headline" className={classes.monsterName}>
+            {monster.name}
+          </Typography>
+        </div>
+      
+        <Divider />
         
-          <div className={classes.topSection}>
-            <img className={classes.avatar} src={monster.image} alt={""} />
-            <Typography type="headline" className={classes.monsterName}>
-              {monster.name}
-            </Typography>
-          </div>
+        <List dense className={classes.list}>
+          <ListItem disableGutters className={classes.statListItem}>
+            {stats}
+          </ListItem>
+        </List>  
         
-          <Divider />
-          
-          <List dense className={classes.list}>
-            <ListItem disableGutters className={classes.statListItem}>
-              {stats}
-            </ListItem>
-          </List>  
-          
-          <Divider />
-          
-          <List className={classes.list}>
-            <ListItem disableGutters className={classes.statListItem}>
-              {abilityScores}
-            </ListItem>
-          </List>
-          
-        </DialogContent>
-      </Dialog>
+        <Divider />
+        
+        <List className={classes.list}>
+          <ListItem disableGutters className={classes.statListItem}>
+            {abilityScores}
+          </ListItem>
+        </List>
+      </CRUDDialog>
     );
   }
 }
 
-ViewMonsterDialog.PropTypes = propTypes;
+ViewMonsterDialog.propTypes = propTypes;
 
 const styles = {
-  dialogTitle: {
-    backgroundColor: blueGrey[900],
-    padding: 15,
-    paddingLeft: 24,
-    '& > h2': {
-      color: 'white', 
-    }
-  },
   topSection: {
     width: '100%',
     display: 'flex',
@@ -180,6 +169,7 @@ const styles = {
   },
   list: {
     width: 300,
+    margin: '0 auto',
   },
   statListItem: {
     display: 'flex',

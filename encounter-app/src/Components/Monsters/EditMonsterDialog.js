@@ -1,18 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as firebase from 'firebase';
-import Dialog, { DialogTitle, DialogContent, DialogActions } from 'material-ui/Dialog';
+import { getUserId,
+         updateMonster,
+         updateMonsterWithImage,
+        } from '../../DatabaseFunctions/FirebaseFunctions'; 
+import Dialog, { DialogContent } from 'material-ui/Dialog';
+import CRUDDialog from '../CharactersAndMonsters/CRUDDialog';
 import AvatarUpload from '../CharactersAndMonsters/AvatarUpload';
 import List, { ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
-import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
-  monsterid: PropTypes.string.isRequired,
-  monster: PropTypes.object.isRequired,
+  open: PropTypes.bool,
+  monsterid: PropTypes.string,
+  monster: PropTypes.object,
 };
 
 class EditMonsterDialog extends React.Component {
@@ -61,35 +64,26 @@ class EditMonsterDialog extends React.Component {
   // Callback for 'SAVE' click,
   // Saves altered monster data to firebase and closes the dialog
   handleSave = () => {
-    const imageFile = this.state.image;
-    if(imageFile == null) {
-      
-      // Upload revised monster data to firebase immediately
-      this.uploadmonsterData();
-      // Close the dialog
-      this.handleRequestClose();
-      
-    } else {
-      
-      // Upload new monster image
-      const AvatarUpload = this.uploadmonsterImage();
-      AvatarUpload.on('state_changed', null, null, () => {
+    getUserId((userid) => {
+      const imageFile = this.state.image;
+      if(imageFile == null) {
         
-        // On successful upload, update monster image data
-        const imageUrl = AvatarUpload.snapshot.downloadURL;
-        let monsterObj = this.state.monster;
-        monsterObj["image"] = imageUrl;
-        this.setState({
-          monster: monsterObj,
-        });
-        // Upload revised monster data to firebase
-        this.uploadmonsterData();
+        // Update monster data in database immediately
+        updateMonster(userid, this.props.monsterid, this.state.monster);
         // Close the dialog
         this.handleRequestClose();
         
-      });
-      
-    }
+      } else {
+        
+        // Upload monster image and update monster in database
+        const imageUpload = updateMonsterWithImage(userid, this.props.monsterid, this.state.monster, imageFile);
+        imageUpload.on('state_changed', null, null, () => {
+          // Close the dialog
+          this.handleRequestClose();
+        });
+
+      }
+    });
   }
   
   // Callback for "CANCEL" click
@@ -98,41 +92,15 @@ class EditMonsterDialog extends React.Component {
     this.handleRequestClose();
   }
   
-  // Uploads a new monster image to firebase
-  // Returns file upload task for progress monitoring
-  uploadmonsterImage = () => {
-    const imageFile = this.state.image;
-    const imageMetaData = { 
-      contentType: imageFile.type,
-    };
-    const storageRef = firebase.storage().ref();
-    const userid = firebase.auth().currentUser.uid;
-    const charId = this.props.monsterid;
-    const fileDestination = storageRef.child(userid + '/images/monsters/' + charId);
-    const fileUpload = fileDestination.put(imageFile, imageMetaData); 
-    
-    return fileUpload;
-  }
-  
-  // Uploads monster data to firebase according to component state
-  uploadmonsterData = () => {
-    const userid = firebase.auth().currentUser.uid;
-    const dbmonsters = firebase.database().ref().child(userid + '/monsters');
-    const updatedmonster = {
-      [this.props.monsterid]: this.state.monster
-    };
-    dbmonsters.update(updatedmonster);
-  }
-  
   // Renders the component
   render() {
-    const { classes, ...other } = this.props;
+    const { classes, } = this.props;
     const monster = this.state.monster;
 
     //Catch null monster
     if(monster === null) {
       return (
-        <Dialog>
+        <Dialog open={this.props.open}>
           <DialogContent>
             <h2>Monster not found</h2>
           </DialogContent>
@@ -149,8 +117,8 @@ class EditMonsterDialog extends React.Component {
     //Generate visuals for monster stats
     const statValues = [
       {
-        name: 'CR',
-        value: monster.CR
+        name: 'LVL',
+        value: monster.LVL
       },
       {
         name: 'AC',
@@ -219,75 +187,54 @@ class EditMonsterDialog extends React.Component {
     ));
     
     return (
-      <Dialog onRequestClose={this.handleRequestClose} className={classes.dialog} {...other}>
-        <DialogTitle className={classes.dialogTitle}>Edit monster</DialogTitle>
-        <DialogContent className={classes.dialogContent}>
+      <CRUDDialog 
+        title="Edit Monster"
+        action="update"
+        onSave={this.handleSave}
+        onCancel={this.handleCancel}
+        onRequestClose={this.handleRequestClose}
+        open={this.props.open}
+      >
+
+        <div className={classes.topSection}>
+          <AvatarUpload 
+            onImageChange={this.handleImageChange} 
+            initialImgUrl={initialAvatarUrl}
+          />
+          <TextField
+            required
+            type="text"
+            label="Name"
+            defaultValue={monster.name}
+            className={classes.monsterName}
+            onChange={this.handleChange('name')}
+          />
+        </div>
+      
+        <Divider />
         
-          <div className={classes.topSection}>
-            <AvatarUpload 
-              onImageChange={this.handleImageChange} 
-              initialImgUrl={initialAvatarUrl}
-            />
-            <TextField
-              required
-              type="text"
-              label="Name"
-              defaultValue={monster.name}
-              className={classes.monsterName}
-              onChange={this.handleChange('name')}
-            />
-          </div>
-        
-          <Divider />
-          
-          <List dense className={classes.list}>
-            <ListItem disableGutters className={classes.statListItem}>
-              {stats}
-            </ListItem>
-          </List>  
-          
-          <Divider />
-          
-          <List className={classes.list}>
-            <ListItem disableGutters className={classes.statListItem}>
-              {abilityScores}
-            </ListItem>
-          </List>
-          
-        </DialogContent>
+        <List dense className={classes.list}>
+          <ListItem disableGutters className={classes.statListItem}>
+            {stats}
+          </ListItem>
+        </List>  
         
         <Divider />
         
-        <DialogActions>
-          <Button onClick={this.handleCancel} >
-            Cancel
-          </Button>
-          <Button onClick={this.handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <List className={classes.list}>
+          <ListItem disableGutters className={classes.statListItem}>
+            {abilityScores}
+          </ListItem>
+        </List>
+        
+      </CRUDDialog>
     );
   }
 }
 
-EditMonsterDialog.PropTypes = propTypes;
+EditMonsterDialog.propTypes = propTypes;
 
 const styles = {
-  dialog: {
-    position: 'absolute',
-  },
-  dialogTitle: {
-    backgroundColor: blueGrey[900],
-    padding: 15,
-    paddingLeft: 24,
-    '& > h2': {
-      color: 'white', 
-    }
-  },
-  dialogContent: {
-    paddingBottom: 0,
-  },
   topSection: {
     width: '100%',
     display: 'flex',
@@ -300,6 +247,7 @@ const styles = {
   },
   list: {
     width: 300,
+    margin: '0 auto',
   },
   statListItem: {
     display: 'flex',

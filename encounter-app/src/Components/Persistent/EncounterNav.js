@@ -101,7 +101,7 @@ class EncounterNav extends React.Component {
           <Drawer
             anchor="right"
             open={this.state.isDrawerOpen}
-            onRequestClose={this.handleClick}
+            onClose={this.handleClick}
           >
             <div
               tabIndex={0}

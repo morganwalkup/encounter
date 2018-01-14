@@ -46,7 +46,7 @@ class EncounterFooter extends React.Component {
   }
 }
 
-EncounterFooter.PropTypes = propTypes;
+EncounterFooter.propTypes = propTypes;
 
 const styles = theme => ({
   footer: {

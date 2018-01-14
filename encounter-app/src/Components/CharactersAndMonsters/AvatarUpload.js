@@ -76,7 +76,7 @@ class AvatarUpload extends React.Component {
   }
 }
 
-AvatarUpload.PropTypes = propTypes;
+AvatarUpload.propTypes = propTypes;
 
 const styles = {
   avatarContainer: {

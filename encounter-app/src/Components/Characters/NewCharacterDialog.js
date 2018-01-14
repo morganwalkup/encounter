@@ -1,13 +1,22 @@
 import React from 'react';
-import * as firebase from 'firebase';
-import Dialog, { DialogTitle, DialogContent, DialogActions } from 'material-ui/Dialog';
+import PropTypes from 'prop-types';
+import { getUserId,
+         createCharacter,
+         createCharacterWithImage,
+        } from '../../DatabaseFunctions/FirebaseFunctions';
+import Dialog, { DialogContent, withMobileDialog } from 'material-ui/Dialog';
+import CRUDDialog from '../CharactersAndMonsters/CRUDDialog';
 import List, { ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
 import AvatarUpload from '../CharactersAndMonsters/AvatarUpload';
-import { blueGrey } from 'material-ui/colors';
+import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
+
+const propTypes = {
+  open: PropTypes.bool,
+  onRequestClose: PropTypes.func,
+};
 
 class NewCharacterDialog extends React.Component {
   constructor(props) {
@@ -32,8 +41,10 @@ class NewCharacterDialog extends React.Component {
     };
   }
   
-  // Callback for textfield input,
-  // Updates character data in component state
+  /**
+   * Callback for textfield input,
+   * Updates character data in component state
+   */
   handleChange = (fieldName) => (event) => {
     let characterObj = this.state.character;
     characterObj[fieldName] = event.target.value;
@@ -42,93 +53,66 @@ class NewCharacterDialog extends React.Component {
     });
   }
   
-  // Callback for AvatarUpload
-  // Saves file reference in state
-  // imageFile: the new image file provided by AvatarUpload
+  /**
+   * Callback for AvatarUpload
+   * Saves file reference in state
+   * @param imageFile - the new image file provided by AvatarUpload
+   */
   handleImageChange = (imageFile) => {
     this.setState({
       image: imageFile,
     });
   }
   
-  // Callback for dialog close request
+  /**
+   * Callback for dialog close request
+   */
   handleRequestClose = () => {
     this.props.onRequestClose();
   }
   
-  // Callback for 'SAVE' click,
-  // Saves the character data to firebase and closes the dialog
+  /**
+   * Callback for 'SAVE' click,
+   * Saves the character data to the database and closes the dialog
+   */
   handleSave = () => {
-    // Create new character id in firebase
-    const dbCharacters = firebase.database().ref().child('characters');
-    const newCharId = dbCharacters.push().key;
-    
-    // Check for character image and upload data accordingly
-    const imageFile = this.state.image;
-    if(imageFile == null) {
-      
-      // Upload changes to firebase
-      this.uploadCharacterData(newCharId);
-      // Close the dialog
-      this.handleRequestClose();
-      // Reset local character data
-      this.resetLocalCharacterData();
-      
-    } else {
-      
-      // Upload character image
-      const AvatarUpload = this.uploadCharacterImage(newCharId);
-      AvatarUpload.on('state_changed', null, null, () => {
-        // On successful upload, update character image data
-        const imageUrl = AvatarUpload.snapshot.downloadURL;
-        let characterObj = this.state.character;
-        characterObj["image"] = imageUrl;
-        this.setState({
-          character: characterObj,
-        });
-        // Upload changes to firebase
-        this.uploadCharacterData(newCharId);
+    // Get user id
+    getUserId((userid) => {
+      // Check for character image and upload data accordingly
+      const imageFile = this.state.image;
+      if(imageFile == null) {
+        // Upload character to database
+        createCharacter(userid, this.state.character);
         // Close the dialog
         this.handleRequestClose();
         // Reset local character data
         this.resetLocalCharacterData();
-      });
-      
-    }
+      } else {
+        // Upload character image and character to database
+        const imageUpload = createCharacterWithImage(userid, this.state.character, imageFile);
+        // Wait for successful upload
+        imageUpload.on('state_changed', null, null, () => {
+          // Close the dialog
+          this.handleRequestClose();
+          // Reset local character data
+          this.resetLocalCharacterData();
+        });
+      }
+    });
+    
   }
   
-  // Callback for 'CANCEL' click,
-  // Closes the dialog
+  /**
+   * Callback for 'CANCEL' click,
+   * Closes the dialog
+   */
   handleCancel = () => {
     this.handleRequestClose();
   }
   
-  // Uploads a new character image to firebase
-  // Returns file upload task for progress monitoring
-  uploadCharacterImage = (charId) => {
-    const imageFile = this.state.image;
-    const imageMetaData = { 
-      contentType: imageFile.type,
-    };
-    const storageRef = firebase.storage().ref();
-    const userid = firebase.auth().currentUser.uid;
-    const fileDestination = storageRef.child(userid + '/images/characters/' + charId);
-    const fileUpload = fileDestination.put(imageFile, imageMetaData);
-    
-    return fileUpload;
-  }
-  
-  // Updates existing character data in firebase according to component state
-  uploadCharacterData = (characterId) => {
-    const userid = firebase.auth().currentUser.uid;
-    const dbCharacters = firebase.database().ref().child(userid + '/characters');
-    const updatedCharacter = {
-      [characterId]: this.state.character
-    };
-    dbCharacters.update(updatedCharacter);
-  }
-  
-  // Resets local character data to default values
+  /**
+   * Resets local character data to default value
+   */
   resetLocalCharacterData = () => {
     const defaultImage = "https://firebasestorage.googleapis.com/v0/b/encounter-49be9.appspot.com/o/admin%2Fimages%2Fcharacters%2Fdefault%2FDefault.jpg?alt=media&token=9129590d-c338-40fc-b50c-c6002387f4ea";
     this.setState({
@@ -150,13 +134,13 @@ class NewCharacterDialog extends React.Component {
   }
   
   render() {
-    const { classes, ...other } = this.props;
+    const { classes, } = this.props;
     const { character } = this.state;
     
     //Catch null character
     if(character === null) {
       return (
-        <Dialog>
+        <Dialog open={this.props.open}>
           <DialogContent>
             <h2>Character not found</h2>
           </DialogContent>
@@ -237,74 +221,62 @@ class NewCharacterDialog extends React.Component {
     ));
     
     return (
-      <Dialog onRequestClose={this.handleRequestClose} className={classes.dialog} {...other}>
-        <DialogTitle className={classes.dialogTitle}>New Character</DialogTitle>
-        <DialogContent className={classes.dialogContent}>
-        
-          <div className={classes.topSection}>
-            <AvatarUpload 
-              onImageChange={this.handleImageChange} 
-            />
-            <TextField
-              required
-              type="text"
-              label="Name"
-              defaultValue={character.name}
-              className={classes.characterName}
-              onChange={this.handleChange('name')}
-            />
+      <CRUDDialog 
+        title="New Character"
+        action="create"
+        onSave={this.handleSave}
+        onCancel={this.handleCancel}
+        onRequestClose={this.handleRequestClose}
+        open={this.props.open}
+        actions={
+          <div>
+            <Button onClick={this.handleCancel}>Cancel</Button>
+            <Button onClick={this.handleSave} color="primary">Save</Button> 
           </div>
+        }
+      >
         
-          <Divider />
-          
-          <List dense className={classes.list}>
-            <ListItem disableGutters className={classes.statListItem}>
-              {stats}
-            </ListItem>
-          </List>  
-          
-          <Divider />
-          
-          <List className={classes.list}>
-            <ListItem disableGutters className={classes.statListItem}>
-              {abilityScores}
-            </ListItem>
-          </List>
-          
-        </DialogContent>
+        <div className={classes.topSection}>
+          <AvatarUpload 
+            onImageChange={this.handleImageChange} 
+          />
+          <TextField
+            required
+            type="text"
+            label="Name"
+            defaultValue={character.name}
+            className={classes.characterName}
+            onChange={this.handleChange('name')}
+          />
+        </div>
         
         <Divider />
-        
-        <DialogActions>
-          <Button onClick={this.handleCancel} >
-            Cancel
-          </Button>
-          <Button onClick={this.handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+          
+        <List dense className={classes.list}>
+          <ListItem disableGutters className={classes.statListItem}>
+            {stats}
+          </ListItem>
+        </List>  
+          
+        <Divider />
+          
+        <List className={classes.list}>
+          <ListItem disableGutters className={classes.statListItem}>
+            {abilityScores}
+          </ListItem>
+        </List>
+          
+      </CRUDDialog>
     );
   }
 }
 
+NewCharacterDialog.propTypes = propTypes;
+
 const styles = {
-  dialog: {
-    position: 'absolute',
-  },
-  dialogTitle: {
-    backgroundColor: blueGrey[900],
-    padding: 15,
-    paddingLeft: 24,
-    '& > h2': {
-      color: 'white', 
-    }
-  },
-  dialogContent: {
-    paddingBottom: 0,
-  },
   topSection: {
-    width: '100%',
+    width: 300,
+    margin: '0 auto',
     display: 'flex',
     alignItems: 'center',
   },
@@ -315,6 +287,7 @@ const styles = {
   },
   list: {
     width: 300,
+    margin: '0 auto',
   },
   statListItem: {
     display: 'flex',
@@ -333,7 +306,7 @@ const styles = {
   textField: {
     width: '80%',
     margin: '0 10%',
-  }
+  },
 };
 
-export default withStyles(styles)(NewCharacterDialog);
+export default withStyles(styles)(withMobileDialog()(NewCharacterDialog));

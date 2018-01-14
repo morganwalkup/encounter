@@ -6,7 +6,7 @@ import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
   rightSide: PropTypes.bool,
-  combatants: PropTypes.object,
+  combatants: PropTypes.array,
   onInfoClick: PropTypes.func.isRequired,
 };
 
@@ -58,7 +58,7 @@ class CombatantGroup extends React.Component {
   }
 }
 
-CombatantGroup.PropTypes = propTypes;
+CombatantGroup.propTypes = propTypes;
 
 const styles = ({
   combatantGroup: {

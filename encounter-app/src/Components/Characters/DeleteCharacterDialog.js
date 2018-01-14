@@ -1,17 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as firebase from 'firebase';
-import Dialog, { DialogTitle, DialogContent, DialogActions } from 'material-ui/Dialog';
+import { getUserId,
+         deleteCharacter
+        } from '../../DatabaseFunctions/FirebaseFunctions';
+import Dialog, { DialogContent } from 'material-ui/Dialog';
+import CRUDDialog from '../CharactersAndMonsters/CRUDDialog';
 import List from 'material-ui/List';
-import Divider from 'material-ui/Divider';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
-import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
-  characterid: PropTypes.string.isRequired,
-  character: PropTypes.object.isRequired,
+  open: PropTypes.bool,
+  characterid: PropTypes.string,
+  character: PropTypes.object,
 };
 
 class DeleteCharacterDialog extends React.Component {
@@ -21,25 +23,10 @@ class DeleteCharacterDialog extends React.Component {
   }
   
   handleDelete = () => {
-    // Get reference to 'characters' in firebase
-    const db = firebase.database();
-    const userid = firebase.auth().currentUser.uid;
-    const dbCharacters = db.ref().child(userid + '/characters');
-    
-    // Delete character from firebase
-    const removedCharacter = {
-      [this.props.characterid]: null
-    };
-    dbCharacters.update(removedCharacter);
-    
-    // Delete character image from firebase storage
-    const storageRef = firebase.storage().ref();
-    const charId = this.props.characterid;
-    const imagePath = storageRef.child(userid + '/images/characters/' + charId);
-    imagePath.delete().then(function() {
-      // File deleted successfully
-    }).catch(function(error) {
-      console.log(error);
+    // Get user id
+    getUserId((userid) => {
+      //Delete character from database
+      deleteCharacter(userid, this.props.characterid);
     });
     
     // Close the dialog
@@ -51,12 +38,12 @@ class DeleteCharacterDialog extends React.Component {
   }
   
   render() {
-    const { classes, character, ...other } = this.props;
+    const { classes, character, } = this.props;
 
     //Catch null character
     if(character === null) {
       return (
-        <Dialog>
+        <Dialog open={this.props.open}>
           <DialogContent>
             <h2>Character not found</h2>
           </DialogContent>
@@ -65,46 +52,35 @@ class DeleteCharacterDialog extends React.Component {
     }
     
     return (
-      <Dialog onRequestClose={this.handleRequestClose} {...other}>
-        <DialogTitle className={classes.dialogTitle}>Delete Character</DialogTitle>
-        <DialogContent>
-          
-          <List className={classes.list}>
-            <Typography type="headline">
-              Delete {character.name} forever?
-            </Typography>
-          </List>
-          
-        </DialogContent>
-        
-        <Divider />
-        
-        <DialogActions>
-          <Button onClick={this.handleCancel} >
-            Cancel
-          </Button>
-          <Button onClick={this.handleDelete} color="accent">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <CRUDDialog
+        title="Delete Character"
+        onDelete={this.handleDelete}
+        onCancel={this.handleCancel}
+        onRequestClose={this.handleRequestClose}
+        open={this.props.open}
+        actions={
+          <div>
+            <Button onClick={this.handleCancel}>Cancel</Button>
+            <Button onClick={this.handleDelete} color="accent">Delete</Button> 
+          </div>
+        }
+      >
+        <List className={classes.list}>
+          <Typography type="headline">
+            Delete <strong>{character.name}</strong> forever?
+          </Typography>
+        </List>
+      </CRUDDialog>
     );
   }
 }
 
-DeleteCharacterDialog.PropTypes = propTypes;
+DeleteCharacterDialog.propTypes = propTypes;
 
 const styles = {
-  dialogTitle: {
-    backgroundColor: blueGrey[900],
-    padding: 15,
-    paddingLeft: 24,
-    '& > h2': {
-      color: 'white', 
-    }
-  },
   list: {
     marginTop: 20,
+    marginBottom: 20,
     width: 300,
   },
 };
