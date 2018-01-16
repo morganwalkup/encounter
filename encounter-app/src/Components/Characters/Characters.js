@@ -27,7 +27,6 @@ class Characters extends React.Component {
       del: 'delete',
     };
     this.state = {
-      userid: 'anonymous',
       characters: null,
       openDialog: this.dialogOptions.none,
       selectedCharacterId: null,
@@ -126,8 +125,8 @@ class Characters extends React.Component {
   
   render() {
     const { classes } = this.props;
-    const characters = this.state.characters;
-  
+    const { characters, selectedCharacterId, selectedCharacter } = this.state;
+    
     //Generate Character Cards
     let CombatantCards = [];
     for(var id in characters) {
@@ -168,19 +167,19 @@ class Characters extends React.Component {
           </Button>
         </Hidden>
         <ViewCharacterDialog 
-          character={this.state.selectedCharacter}
+          character={selectedCharacter}
           open={this.state.openDialog === this.dialogOptions.view}
           onRequestClose={this.handleRequestClose}
         />
         <EditCharacterDialog 
-          characterid={this.state.selectedCharacterId}
-          character={this.state.selectedCharacter}
+          characterid={selectedCharacterId}
+          character={selectedCharacter}
           open={this.state.openDialog === this.dialogOptions.edit}
           onRequestClose={this.handleRequestClose}
         />
         <DeleteCharacterDialog 
-          characterid={this.state.selectedCharacterId}
-          character={this.state.selectedCharacter}
+          characterid={selectedCharacterId}
+          character={selectedCharacter}
           open={this.state.openDialog === this.dialogOptions.del}
           onRequestClose={this.handleRequestClose}
         />

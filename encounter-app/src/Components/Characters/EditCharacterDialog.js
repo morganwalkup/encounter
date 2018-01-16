@@ -95,7 +95,7 @@ class EditCharacterDialog extends React.Component {
   }
   
   render() {
-    const character = this.state.character;
+    const { character } = this.state;
     
     return (
       <EditCombatantDialog

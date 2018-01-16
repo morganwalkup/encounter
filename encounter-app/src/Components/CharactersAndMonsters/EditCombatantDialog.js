@@ -120,7 +120,7 @@ class EditCombatantDialog extends React.Component {
     
     return (
       <CRUDDialog 
-        title={(isCharacter) ? "New Character" : "New Monster"}
+        title={(isCharacter) ? "Edit Character" : "Edit Monster"}
         onSave={this.handleSave}
         onCancel={this.handleCancel}
         onRequestClose={this.handleRequestClose}
@@ -135,7 +135,7 @@ class EditCombatantDialog extends React.Component {
         
         <div className={classes.topSection}>
           <AvatarUpload 
-            initialAvatarUrl={initialAvatarUrl}
+            initialImgUrl={initialAvatarUrl}
             onImageChange={this.handleImageChange} 
           />
           <TextField

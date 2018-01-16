@@ -12,13 +12,10 @@ const propTypes = {
 class AvatarUpload extends React.Component {
   constructor(props) {
     super(props);
-    let initialImgUrl = props.initialImgUrl;
-    if(initialImgUrl == null) {
-      initialImgUrl = require('../../images/combatants/Default.jpg');
-    }
+    let defaultImage = require('../../images/combatants/Default.jpg');
     this.state = {
       imageFile: '',
-      imagePreviewUrl: initialImgUrl,
+      imagePreviewUrl: props.initialImgUrl || defaultImage,
     };
   }
 
