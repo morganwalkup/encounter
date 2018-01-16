@@ -62,7 +62,11 @@ export function getEncounter(userid, encounterid, onSuccess) {
  */
 export function createEncounter(userid, encounterData) {
   const dbEncounters = firebase.database().ref().child(userid + '/encounters');
+  //Get unique id
   const newEncounterId = dbEncounters.push().key;
+  //Add timestamp
+  encounterData.created_date = firebase.database.ServerValue.TIMESTAMP;
+  //Upload encounter data
   updateEncounter(userid, newEncounterId, encounterData);
 }
 
@@ -71,7 +75,7 @@ export function createEncounter(userid, encounterData) {
  * and creates a new encounter in firebase
  * 
  * @param userid - firebase uid of the active user
- * @param charData - new data for the encounter
+ * @param encounterData - new data for the encounter
  * @returns file upload task for progress monitoring
  */
 export function createEncounterWithImage(userid, encounterData, imageFile) {
@@ -83,6 +87,8 @@ export function createEncounterWithImage(userid, encounterData, imageFile) {
     // On successful upload, update encounter with image url
     const imageUrl = imageUpload.snapshot.downloadURL;
     encounterData["image"] = imageUrl;
+    //Add timestamp
+    encounterData.created_date = firebase.database.ServerValue.TIMESTAMP;
     // Upload encounter to firebase
     updateEncounter(userid, newEncounterId, encounterData);
   });
@@ -223,7 +229,11 @@ export function getCharacter(userid, charid, onSuccess) {
  */
 export function createCharacter(userid, charData) {
   const dbCharacters = firebase.database().ref().child(userid + '/characters');
+  //Get unique id
   const newCharId = dbCharacters.push().key;
+  //Add timestamp
+  charData.created_date = firebase.database.ServerValue.TIMESTAMP;
+  //Uplaod character data to firebase
   updateCharacter(userid, newCharId, charData);
 }
 
@@ -244,6 +254,8 @@ export function createCharacterWithImage(userid, charData, imageFile) {
     // On successful upload, update character with image url
     const imageUrl = imageUpload.snapshot.downloadURL;
     charData["image"] = imageUrl;
+    // Add timestamp
+    charData.created_date = firebase.database.ServerValue.TIMESTAMP;
     // Upload character to firebase
     updateCharacter(userid, newCharId, charData);
   });
@@ -382,10 +394,14 @@ export function getMonster(userid, monsterid, onSuccess) {
  * @param userid - firebase uid of the active user
  * @param charData - new data for the monster
  */
-export function createMonster(userid, charData) {
+export function createMonster(userid, monsterData) {
   const dbMonsters = firebase.database().ref().child(userid + '/monsters');
-  const newCharId = dbMonsters.push().key;
-  updateMonster(userid, newCharId, charData);
+  // Get unique id
+  const newMonsterId = dbMonsters.push().key;
+  // Add timestamp
+  monsterData.created_date = firebase.database.ServerValue.TIMESTAMP;
+  // Upload data to firebase
+  updateMonster(userid, newMonsterId, monsterData);
 }
 
 /**
@@ -396,17 +412,19 @@ export function createMonster(userid, charData) {
  * @param charData - new data for the monster
  * @returns file upload task for progress monitoring
  */
-export function createMonsterWithImage(userid, charData, imageFile) {
+export function createMonsterWithImage(userid, monsterData, imageFile) {
   const dbMonsters = firebase.database().ref().child(userid + '/monsters');
-  const newCharId = dbMonsters.push().key;
-  const imageUpload = uploadMonsterImage(userid, newCharId, imageFile);
+  const newMonsterId = dbMonsters.push().key;
+  const imageUpload = uploadMonsterImage(userid, newMonsterId, imageFile);
   
   imageUpload.on('state_changed', null, null, () => {
     // On successful upload, update monster with image url
     const imageUrl = imageUpload.snapshot.downloadURL;
-    charData["image"] = imageUrl;
+    monsterData["image"] = imageUrl;
+    // Add timestamp
+    monsterData.created_date = firebase.database.ServerValue.TIMESTAMP;
     // Upload monster to firebase
-    updateMonster(userid, newCharId, charData);
+    updateMonster(userid, newMonsterId, monsterData);
   });
   
   return imageUpload;
@@ -420,12 +438,12 @@ export function createMonsterWithImage(userid, charData, imageFile) {
  * @param imageFile - the image file to upload
  * @returns file upload task for progress monitoring
  */
-export function uploadMonsterImage(userid, charid, imageFile) {
+export function uploadMonsterImage(userid, monsterid, imageFile) {
   const imageMetaData = { 
     contentType: imageFile.type,
   };
   const storageRef = firebase.storage().ref();
-  const fileDestination = storageRef.child(userid + '/images/monsters/' + charid);
+  const fileDestination = storageRef.child(userid + '/images/monsters/' + monsterid);
   const fileUpload = fileDestination.put(imageFile, imageMetaData);
   
   return fileUpload;
@@ -435,14 +453,14 @@ export function uploadMonsterImage(userid, charid, imageFile) {
  * Updates monster data in firebase
  * 
  * @param userid - firebase uid of the active user
- * @param charid - firebase id of the monster
- * @param charData - new data for the monster
+ * @param monsterid - firebase id of the monster
+ * @param monsterData - new data for the monster
  * @param onSuccess - optional function called once transaction is complete
  */
-export function updateMonster(userid, charid, charData) {
+export function updateMonster(userid, monsterid, monsterData) {
   const dbMonsters = firebase.database().ref().child(userid + '/monsters');
   const updatedMonster = {
-    [charid]: charData
+    [monsterid]: monsterData
   };
   dbMonsters.update(updatedMonster);
 }
@@ -452,17 +470,17 @@ export function updateMonster(userid, charid, charData) {
  * and updates monster in firebase
  * 
  * @param userid - firebase uid of the active user
- * @param charData - new data for the monster
+ * @param monsterData - new data for the monster
  * @returns file upload task for progress monitoring
  */
-export function updateMonsterWithImage(userid, charid, charData, imageFile) {
-  const imageUpload = uploadMonsterImage(userid, charid, imageFile);
+export function updateMonsterWithImage(userid, monsterid, monsterData, imageFile) {
+  const imageUpload = uploadMonsterImage(userid, monsterid, imageFile);
   imageUpload.on('state_changed', null, null, () => {
     // On successful upload, update monster data with image url
     const imageUrl = imageUpload.snapshot.downloadURL;
-    charData["image"] = imageUrl;
+    monsterData["image"] = imageUrl;
     // Upload monster to firebase
-    updateMonster(userid, charid, charData);
+    updateMonster(userid, monsterid, monsterData);
   });
   
   return imageUpload;
@@ -472,26 +490,26 @@ export function updateMonsterWithImage(userid, charid, charData, imageFile) {
  * Deletes a monster from firebase
  * 
  * @param userid - firebase uid of the active user
- * @param charid - firebase id of the monster
+ * @param monsterid - firebase id of the monster
  */
-export function deleteMonster(userid, charid) {
+export function deleteMonster(userid, monsterid) {
   const dbMonsters = firebase.database().ref().child(userid + '/monsters');
   const deletedMonster = {
-    [charid]: null
+    [monsterid]: null
   };
   dbMonsters.update(deletedMonster);
-  deleteMonsterImage(userid, charid);
+  deleteMonsterImage(userid, monsterid);
 }
 
 /**
  * Deletes a monster image from firebase storage
  * 
  * @param userid - the uid of the active firebase user
- * @charid - id of the monster whose image we are deleting
+ * @monsterid - id of the monster whose image we are deleting
  */
-export function deleteMonsterImage(userid, charid) {
+export function deleteMonsterImage(userid, monsterid) {
   const storageRef = firebase.storage().ref();
-  const imagePath = storageRef.child(userid + '/images/monsters/' + charid);
+  const imagePath = storageRef.child(userid + '/images/monsters/' + monsterid);
   imagePath.delete().then(function() {
     // File deleted successfully
   }).catch(function(error) {

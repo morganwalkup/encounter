@@ -19,6 +19,7 @@ import {
 
 
 const propTypes = {
+  isCharacterTable: PropTypes.bool,
   combatants: PropTypes.array,
   selectedCombatants: PropTypes.array,
   onSelectionChange: PropTypes.func,
@@ -31,8 +32,18 @@ class CombatantTable extends React.PureComponent {
     this.state = {
       columns: [
         { name: 'name', title: 'Name' },
-        { name: 'LVL', title: 'Level' },
-        { name: 'created_date', title: 'Date' }
+        { 
+          name: (this.props.isCharacterTable ? 'LVL' : 'CR'), 
+          title: (this.props.isCharacterTable ? 'Level' : 'CR')
+        },
+        { 
+          name: 'created_date', 
+          title: 'Date',
+          getCellValue: row => {
+            const date = new Date(row.created_date);
+            return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+          },
+        }
       ],
     };
   }

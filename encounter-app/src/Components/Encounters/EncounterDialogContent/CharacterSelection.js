@@ -101,6 +101,7 @@ class CharacterSelection extends React.Component {
         </Grid>
         <Grid item xs={12} md={10} lg={8}>
           <CombatantTable 
+            isCharacterTable
             combatants={characterRows}
             selectedCombatants={selectedCharacterIndices}
             onSelectionChange={this.handleSelectionChange}
