@@ -24,7 +24,7 @@ function HomeSplash(props) {
               <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
                 Characters
               </Typography>
-              <CardContent>
+              <CardContent className={classes.splashCardContent}>
                 <Typography type='subheading' component="p" align='center'>
                   Create intrepid, daring adventurers and their stalwart allies
                 </Typography>
@@ -41,7 +41,7 @@ function HomeSplash(props) {
               <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
                 Encounters
               </Typography>
-              <CardContent>
+              <CardContent className={classes.splashCardContent}>
                 <Typography type='subheading' component="p" align='center'>
                   Pit your characters against fearsome foes in the arena of your choice
                 </Typography>
@@ -58,7 +58,7 @@ function HomeSplash(props) {
               <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
                 Monsters
               </Typography>
-              <CardContent>
+              <CardContent className={classes.splashCardContent}>
                 <Typography type='subheading' component="p" align='center'>
                   Craft unspeakable horrors to oppose and endanger your adventurers
                 </Typography>
@@ -94,6 +94,7 @@ const styles = theme => ({
     letterSpacing: '1px',
     color: 'white',
     margin: '25px 10px',
+    marginBottom: '15px',
     textShadow: '0px 2px 5px rgba(0,0,0,1)',
     textAlign: 'center',
   },
@@ -101,8 +102,9 @@ const styles = theme => ({
     marginBottom: 30,
   },
   splashCard: {
-    width: '80%',
-    margin: '0 10%',
+    width: '90%',
+    margin: '0 5%',
+    marginTop: 10,
     borderRadius: '5px 5px 3px 3px',
   },
   splashCardTitle: {
@@ -112,10 +114,14 @@ const styles = theme => ({
     margin: 0,
     borderRadius: '3px 3px 0 0',
   },
+  splashCardContent: {
+    //minHeight: 155,
+  },
   splashCardActions: {
     display: 'flex',
     justifyContent: 'center',
     paddingBottom: 10,
+    textAlign: 'center',
   }
 });
 

@@ -19,12 +19,12 @@ import {
 
 
 const propTypes = {
-  characters: PropTypes.array,
-  selectedCharacters: PropTypes.array,
+  combatants: PropTypes.array,
+  selectedCombatants: PropTypes.array,
   onSelectionChange: PropTypes.func,
 };
 
-class CharacterTable extends React.PureComponent {
+class CombatantTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -37,16 +37,20 @@ class CharacterTable extends React.PureComponent {
     };
   }
   
+  /**
+   * Handles a change in selected table rows
+   * @param selection - array of the indices of the newly selected table rows
+   */
   handleSelectionChange = (selection) => {
     this.props.onSelectionChange(selection);
   }
   
   render() {
-    const { characters, selectedCharacters } = this.props;
+    const { combatants, selectedCombatants } = this.props;
     const { columns } = this.state;
     
-    //Catch undefined characters
-    let rows = (characters === undefined) ? [] : characters;
+    //Catch undefined combatants
+    let rows = (combatants === undefined) ? [] : combatants;
        
     return (
       <Paper>
@@ -59,7 +63,7 @@ class CharacterTable extends React.PureComponent {
           <FilteringState defaultFilters={[/* ... */]}/>
           <IntegratedFiltering/>
           <SelectionState
-            selection={selectedCharacters}
+            selection={selectedCombatants}
             onSelectionChange={this.handleSelectionChange}
           />
           <IntegratedSelection />
@@ -73,6 +77,6 @@ class CharacterTable extends React.PureComponent {
   }
 }
 
-CharacterTable.propTypes = propTypes;
+CombatantTable.propTypes = propTypes;
 
-export default CharacterTable;
+export default CombatantTable;

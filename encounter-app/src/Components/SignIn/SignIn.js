@@ -36,7 +36,7 @@ class SignIn extends React.Component {
           <Grid item xs={12} sm={8} md={6} lg={4}>
             <Card className={classes.splashCard}>
               <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
-                __
+                Sign In Options
               </Typography>
               <CardContent>
                 <Typography type='subheading' component="p" align='center'>

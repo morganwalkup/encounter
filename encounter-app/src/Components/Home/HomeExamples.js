@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Grid from 'material-ui/Grid';
 import ExampleBg1 from '../../images/dndphb.jpg';
 import ExampleBg2 from '../../images/battlefield.jpg';
@@ -20,21 +21,25 @@ function HomeExamples(props) {
       bg: ExampleBg1,
       title: 'Frost Giant\'s Lair',
       subtitle: 'Example 1',
+      link: '/playencounter/anonymous/-L2w26doG8h7187XOw5W',
     },
     {
       bg: ExampleBg2,
       title: 'Moonball Arena',
       subtitle: 'Example 2',
+      link: '/playencounter/anonymous/-L2w2P4q-IKXPMyfMf1V',
     },
     {
       bg: ExampleBg3,
       title: 'Moonlit Night',
       subtitle: 'Example 3',
+      link: '/playencounter/anonymous/-L2wSJj56TNpUaS1FyPf',
     },
     {
       bg: ExampleBg4,
       title: 'Crescent Cavern',
       subtitle: 'Example 4',
+      link: '/playencounter/anonymous/-L2wSRYyAwEziXvV1Sx5',
     }
   ];
   
@@ -56,8 +61,11 @@ function HomeExamples(props) {
                       title={example.title}
                       subtitle={example.subtitle}
                       actionIcon={
-                        <IconButton>
-                          <PlayCircleFilled color="rgba(255, 255, 255, 0.54)" />
+                        <IconButton
+                          component={Link}
+                          to={example.link}
+                        >
+                          <PlayCircleFilled color="contrast" />
                         </IconButton>
                       }
                     />
@@ -70,7 +78,14 @@ function HomeExamples(props) {
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <Button raised className={classes.buildButton}>Build your own!</Button>
+        <Button 
+          raised 
+          component={Link}
+          to="/encounters"
+          className={classes.buildButton}
+        >
+          Build your own!
+        </Button>
       </Grid>
       
     </Grid>
@@ -98,8 +113,10 @@ const styles = theme => ({
   },
   buildButton: {
     display: 'block',
-    margin: 'auto',
+    width: 160,
+    margin: '0 auto',
     marginBottom: '50px',
+    textAlign: 'center',
   },
   container: {
     display: 'flex',

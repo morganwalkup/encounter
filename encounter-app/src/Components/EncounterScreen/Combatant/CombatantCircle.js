@@ -14,6 +14,11 @@ class CombatantCircle extends React.Component {
     };
   }
   
+  /**
+   * Handles the application of damage to a combatant
+   * Updates hit points based on damage taken
+   * @param damage - number representing the points of damage taken
+   */
   handleDamage = (damage) => {
     let newHealth = this.state.health - damage;
     if(newHealth > this.state.maxHealth)

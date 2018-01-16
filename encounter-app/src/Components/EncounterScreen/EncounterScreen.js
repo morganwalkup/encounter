@@ -8,9 +8,9 @@ import EncounterBackground from './EncounterBackground';
 import CombatantGroup from './CombatantGroup';
 import CombatantDialog from './Combatant/CombatantDialog';
 import SettingsDialog from './SettingsDialog';
-import EncounterFooter from './EncounterFooter';
+import EncounterScreenFooter from './EncounterScreenFooter';
 import { withStyles } from 'material-ui/styles';
-import './EncounterScreen.css';
+import './EncounterScreen.css'; //Removes scrollbars on CombatantGroup divs
 
 //=== Component ===
 class EncounterScreen extends React.Component {
@@ -44,7 +44,6 @@ class EncounterScreen extends React.Component {
     this.getEncounterScreenData();
   }
   
-  
   /**
    * Called following a change in props or state
    * Orders combatants once all characters and monsters are loaded
@@ -56,7 +55,6 @@ class EncounterScreen extends React.Component {
       });
     }
   }
-  
   
   /**
    * Retrieves encounter data from database and saves it in state
@@ -78,39 +76,52 @@ class EncounterScreen extends React.Component {
 
       //Get data for characters in encounter
       let characters = encounter.characters; //Ids of the characters
-      for(let i = 0; i < characters.length; i++) {
-        getCharacter(userid, characters[i], character => {
-          //Overwrite id with character data
-          characters[i] = character; 
-          // On the last loop, save characters and indicate loading is done
-          if(i === (characters.length - 1)) {
-            this.setState({
-              characters: characters,
-              charactersLoaded: true,
-            });
-          }
+      if(characters != null) {
+        for(let i = 0; i < characters.length; i++) {
+          getCharacter(userid, characters[i], character => {
+            //Overwrite id with character data
+            characters[i] = character; 
+            // On the last loop, save characters and indicate loading is done
+            if(i === (characters.length - 1)) {
+              this.setState({
+                characters: characters,
+                charactersLoaded: true,
+              });
+            }
+          });
+        }
+      } else {
+        this.setState({
+          characters: null,
+          charactersLoaded: true
         });
       }
       
       //Get data for monsters in encounter
       let monsters = encounter.monsters; //Ids of the monsters
-      for(let i = 0; i < monsters.length; i++) {
-        getMonster(userid, monsters[i], monster => {
-          //Overwrite id with monster data
-          monsters[i] = monster; 
-          // On the last loop, save monsters and indicate loading is done
-          if(i === (monsters.length - 1)) {
-            this.setState({
-              monsters: monsters,
-              monstersLoaded: true,
-            });
-          }
+      if(monsters != null) {
+        for(let i = 0; i < monsters.length; i++) {
+          getMonster(userid, monsters[i], monster => {
+            //Overwrite id with monster data
+            monsters[i] = monster; 
+            // On the last loop, save monsters and indicate loading is done
+            if(i === (monsters.length - 1)) {
+              this.setState({
+                monsters: monsters,
+                monstersLoaded: true,
+              });
+            }
+          });
+        }
+      } else {
+        this.setState({
+          monsters: null,
+          monstersLoaded: true,
         });
       }
       
     });
   }
-  
   
   /** 
    * Handles user click of the 'continue' button
@@ -118,7 +129,6 @@ class EncounterScreen extends React.Component {
   handleContinueClick = () => {
     this.activateNextCombatant();
   }
-  
   
   /** 
    * Activates the next combatant in the initiative order
@@ -142,16 +152,25 @@ class EncounterScreen extends React.Component {
     });
   }
   
-  
   /**
    * Determine initiative order for combatants and sort them by the results
    */
   applyInitiativeOrder = () => {
     //Collect combatants
-    const characters = this.state.characters;
-    const monsters = this.state.monsters;
-    let combatants = characters.concat(monsters);
-    
+    let combatants = [];
+    const characters = this.state.characters || [];
+    const monsters = this.state.monsters || [];
+    for(let character of characters) {
+      if(character) {
+        combatants.push(character);
+      }
+    }
+    for(let monster of monsters) {
+      if(monster) {
+        combatants.push(monster);
+      }
+    }
+
     //Roll initiative for each combatant
     combatants.map((combatant) => 
       this.rollInitiative(combatant)
@@ -162,7 +181,6 @@ class EncounterScreen extends React.Component {
     return combatants;
   }
   
-  
   /**
    * Calculates initiative for the combatant
    */
@@ -172,7 +190,6 @@ class EncounterScreen extends React.Component {
     let initiative = roll + initiativeModifier;
     combatant.initiative = initiative;
   }
-  
   
   /**
    * Sorts combatants based on initiative
@@ -191,7 +208,6 @@ class EncounterScreen extends React.Component {
     return combatants;
   }
   
-  
   /**
    * Opens the settings dialog
    */
@@ -200,7 +216,6 @@ class EncounterScreen extends React.Component {
       openDialog: this.dialogOptions.settings,
     });
   }
-  
   
   /**
    * Opens the combatant info dialog
@@ -212,7 +227,6 @@ class EncounterScreen extends React.Component {
     });
   }
   
-  
   /**
    * Closes all dialogs
    */
@@ -221,7 +235,6 @@ class EncounterScreen extends React.Component {
       openDialog: this.dialogOptions.none,
     });
   }
-  
   
   /**
    * Renders the component
@@ -273,7 +286,7 @@ class EncounterScreen extends React.Component {
           onRequestClose={this.handleRequestClose}
           combatant={this.state.infoDialogSubject}
         />
-        <EncounterFooter 
+        <EncounterScreenFooter 
           onContinueClick={this.handleContinueClick}
           onSettingsClick={this.handleSettingsClick}
         />
@@ -283,9 +296,7 @@ class EncounterScreen extends React.Component {
 }
 
 //=== Styles ===
-const styles = ({
-  //none
-});
+const styles = {};
 
 //=== Apply Styles ===
 export default withStyles(styles)(EncounterScreen);

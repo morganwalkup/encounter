@@ -10,20 +10,24 @@ import { FormControl } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
+  open: PropTypes.bool,
   onRequestClose: PropTypes.func.isRequired,
 };
 
 class SettingsDialog extends React.Component {
   
+  /**
+   * Handles close request from dialogs
+   */
   handleRequestClose = () => {
     this.props.onRequestClose();
   }
 
   render() {
-    const { classes, ...other } = this.props;
+    const { classes, open } = this.props;
     
     return (
-      <Dialog onClose={this.handleRequestClose} {...other}>
+      <Dialog onClose={this.handleRequestClose} open={open}>
         <DialogTitle>Settings</DialogTitle>
         <DialogContent>
           <List className={classes.settingsList} >

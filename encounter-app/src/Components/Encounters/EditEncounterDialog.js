@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   getUserId,
-  createEncounter,
-  createEncounterWithImage
+  updateEncounter,
+  updateEncounterWithImage
 } from '../../DatabaseFunctions/FirebaseFunctions';
 import CRUDDialog from '../CharactersAndMonsters/CRUDDialog';
 import EncounterDialogStepper from './EncounterDialogContent/EncounterDialogStepper';
@@ -13,26 +13,32 @@ import MonsterSelection from './EncounterDialogContent/MonsterSelection';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
+  id: PropTypes.string,
+  encounter: PropTypes.object,
   open: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func,
 };
 
-class NewEncounterDialog extends React.Component {
+class EditEncounterDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.defaultImageURL = "https://firebasestorage.googleapis.com/v0/b/encounter-49be9.appspot.com/o/admin%2Fimages%2Fencounters%2FDefaultEncounter.jpg?alt=media&token=41e728ac-1167-4436-bd44-e40c533595b4";
-    this.defaultEncounter = {
-      title: null,
-      description: null,
-      image: this.defaultImageURL,
-      characters: [],
-      monsters: [],
-    };
     this.state = {
       activeDialogStep: 0,
       imageFile: null,
-      encounter: Object.assign({}, this.defaultEncounter),
+      encounter: Object.assign({}, this.props.encounter),
     };
+  }
+  
+  /**
+   * Called when the component receives new props
+   */
+  componentWillReceiveProps(nextProps) {
+    if(nextProps !== this.props) {
+      this.setState({
+        imageFile: null,
+        encounter: Object.assign({}, nextProps.encounter)
+      });
+    }
   }
   
   /**
@@ -75,16 +81,17 @@ class NewEncounterDialog extends React.Component {
     //Get user id and save encounter to database
     getUserId((userid) => {
       const imageFile = this.state.imageFile;
+      const encounterid = this.props.id;
       const encounterData = Object.assign({}, this.state.encounter);
       if(imageFile === null) {
-        createEncounter(userid, encounterData);
-        this.resetComponentState();
-        this.handleRequestClose();
+        updateEncounter(userid, encounterid, encounterData);
       } else {
-        createEncounterWithImage(userid, encounterData, imageFile);
-        this.resetComponentState();
-        this.handleRequestClose();
+        updateEncounterWithImage(userid, encounterid, encounterData, imageFile);
       }
+      this.handleRequestClose();
+      this.setState({
+        activeDialogStep: 0
+      });
     });
   }
   
@@ -134,17 +141,6 @@ class NewEncounterDialog extends React.Component {
       encounter: encounterObj
     });
   }
-  
-  /**
-   * Resets the component's state to default values
-   */
-  resetComponentState = () => {
-    this.setState({
-      activeDialogStep: 0,
-      imageFile: null,
-      encounter: Object.assign({}, this.defaultEncounter),
-    });
-  }
 
   render() {
     const { activeDialogStep } = this.state;
@@ -175,7 +171,7 @@ class NewEncounterDialog extends React.Component {
           multistep
           open={this.props.open}
           onRequestClose={this.handleRequestClose}
-          title="New Encounter"
+          title="Edit Encounter"
           onSave={this.handleSave}
           onCancel={this.handleCancel}
           actions={
@@ -195,8 +191,8 @@ class NewEncounterDialog extends React.Component {
   }
 }
 
-NewEncounterDialog.propTypes = propTypes;
+EditEncounterDialog.propTypes = propTypes;
 
 const styles = {};
 
-export default withStyles(styles)(NewEncounterDialog);
+export default withStyles(styles)(EditEncounterDialog);

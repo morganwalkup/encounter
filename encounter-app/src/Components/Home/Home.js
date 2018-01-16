@@ -21,7 +21,6 @@ function Home(props) {
   );
 }
 
-const styles = ({
-});
+const styles = {};
 
 export default withStyles(styles)(Home);

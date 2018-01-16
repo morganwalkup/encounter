@@ -8,11 +8,14 @@ import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
-  combatant: PropTypes.object.isRequired,
+  combatant: PropTypes.object,
 };
 
 class CombatantDialog extends React.Component {
   
+  /**
+   * Handles close requests from dialogs
+   */
   handleRequestClose = () => {
     this.props.onRequestClose();
   }
@@ -25,6 +28,7 @@ class CombatantDialog extends React.Component {
       return <div></div>;
     }
     
+    //Collect ability scores
     const abilityScores = [
       {
         name: 'STR',
@@ -58,8 +62,9 @@ class CombatantDialog extends React.Component {
       }
     ];
     
+    // Generate labels for ability scores
     const abilities = abilityScores.map((score) => (
-      <div className={classes.stat}>
+      <div className={classes.stat} key={score.name}>
         <Typography type="body1" align="center">
           <strong>{score.name}</strong>
         </Typography>
@@ -108,7 +113,7 @@ class CombatantDialog extends React.Component {
   }
 }
 
-CombatantDialog.PropTypes = propTypes;
+CombatantDialog.propTypes = propTypes;
 
 const styles = {
     list: {

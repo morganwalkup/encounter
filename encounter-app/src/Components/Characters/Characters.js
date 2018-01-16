@@ -35,7 +35,9 @@ class Characters extends React.Component {
     };
   }
   
-  //Called immedately after the component mounts
+  /**
+   * Called immedately after the component mounts
+   */
   componentDidMount() {
     //Listen for user login changes
     getUserId((userId) => {
@@ -48,7 +50,9 @@ class Characters extends React.Component {
     });
   }
   
-  //Called just before the component unmounts
+  /**
+   * Called just before the component unmounts
+   */
   componentWillUnmount() {
     //Get user id
     getUserId((userid) => {
@@ -57,14 +61,18 @@ class Characters extends React.Component {
     });
   }
   
-  //Handles the closing of all dialogs
+  /**
+   * Handles the closing of all dialogs
+   */
   handleRequestClose = () => {
     this.setState({
       openDialog: this.dialogOptions.none,
     });
   }
   
-  //Handles a character view click
+  /**
+   * Handles a character view click
+   */
   handleClickView = (characterId) => {
     this.setState({
       selectedCharacterId: characterId,
@@ -73,7 +81,9 @@ class Characters extends React.Component {
     });
   }
   
-  //Handles a character edit click
+  /**
+   * Handles a character edit click
+   */
   handleClickEdit = (characterId) => {
     this.setState({
       selectedCharacterId: characterId,
@@ -82,7 +92,9 @@ class Characters extends React.Component {
     });
   }
   
-  //Handles a character delete click
+  /**
+   * Handles a character delete click
+   */
   handleClickDelete = (characterId) => {
     this.setState({
       selectedCharacterId: characterId,
@@ -91,7 +103,9 @@ class Characters extends React.Component {
     });
   }
   
-  //Handles a new character click
+  /**
+   * Handles a new character click
+   */
   handleClickNew = () => {
     this.setState({
       selectedCharacterId: null,
@@ -100,8 +114,12 @@ class Characters extends React.Component {
     });
   }
   
-  //Returns a character whose id matches the given index,
-  //returns null if the character is not found
+  /**
+   * Retrieves a character using the given charcter id
+   * 
+   * @param characterId - the unique id of the character
+   * @return Character with the given id, or null if no character is found
+   */
   getCharacter(characterId) {
     return this.state.characters[characterId];
   }
@@ -178,9 +196,6 @@ class Characters extends React.Component {
 const styles = theme => ({
   charCardsContainer: {
     paddingBottom: 60,
-  },
-  footer: {
-    alignSelf: 'flex-end',
   },
   addButton: {
     position: "fixed",

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import StatBadge from './StatBadge';
-import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
@@ -19,15 +18,11 @@ function StatBar(props) {
       <StatBadge value={props.initiative} label='ITV' />
       <StatBadge value={props.speed} label='SPD' />
       <StatBadge value={props.armorClass} label='AC' />
-      <Button 
-        raised 
-        className={classes.statBtn}
-      >STATS</Button>
     </div>
   );
 }
 
-StatBar.PropTypes = propTypes;
+StatBar.propTypes = propTypes;
 
 const styles = theme => ({
   stats: {
@@ -37,17 +32,6 @@ const styles = theme => ({
     display: 'flex', 
     justifyContent: 'center', 
     alignItems: 'center',
-  },
-  statBtn: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    height: '100%',
-    width: '100%',
-    opacity: '0',
-    '&:hover': {
-      //opacity: '1.0',
-    }
   },
 });
 

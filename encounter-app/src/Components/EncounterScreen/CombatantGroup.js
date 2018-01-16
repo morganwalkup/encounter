@@ -12,14 +12,26 @@ const propTypes = {
 
 class CombatantGroup extends React.Component {
   
+  /**
+   * Handles the activation of a combatant
+   * @param combatant - the activated combatant
+   */
   handleActiveCombatant = (combatant) => {
     this.scrollToActiveCombatant(combatant);
   }
   
+  /**
+   * Handles user click of combatant name
+   * @param combatant - the combatant whose name was clicked
+   */
   handleInfoClick = (combatant) => {
     this.props.onInfoClick(combatant);
   }
   
+  /**
+   * Scrolls the combatant group div to display the active combatant
+   * @param combatant - the active combatant to display
+   */
   scrollToActiveCombatant = (combatant) => {
     const combatantNode = ReactDOM.findDOMNode(combatant);
     const cgNode = ReactDOM.findDOMNode(this);
@@ -64,7 +76,7 @@ const styles = ({
   combatantGroup: {
     padding: '0 5px',
     paddingTop: '5vh',
-    height: '95vh',
+    height: '100vh',
     overflow: 'auto',
     position: 'relative',
   },

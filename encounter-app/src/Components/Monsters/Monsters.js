@@ -34,7 +34,9 @@ class Monsters extends React.Component {
     };
   }
   
-  //Called immedately after the component mounts
+  /**
+   * Called immedately after the component mounts
+   */
   componentDidMount() {
     //Listen for user login changes
     getUserId((userId) => {
@@ -47,7 +49,9 @@ class Monsters extends React.Component {
     });
   }
   
-  //Called just before the component unmounts
+  /**
+   * Called just before the component unmounts
+   */
   componentWillUnmount() {
     //Get user id
     getUserId((userid) => {
@@ -56,14 +60,18 @@ class Monsters extends React.Component {
     });
   }
   
-  //Handles the closing of all dialogs
+  /**
+   * Handles the closing of all dialogs
+   */
   handleRequestClose = () => {
     this.setState({
       openDialog: this.dialogOptions.none,
     });
   }
   
-  //Handles a monster view click
+  /**
+   * Handles a monster view click
+   */
   handleClickView = (monsterId) => {
     this.setState({
       selectedMonsterId: monsterId,
@@ -72,7 +80,9 @@ class Monsters extends React.Component {
     });
   }
   
-  //Handles a monster edit click
+  /**
+   * Handles a monster edit click
+   */
   handleClickEdit = (monsterId) => {
     this.setState({
       selectedMonsterId: monsterId,
@@ -81,7 +91,9 @@ class Monsters extends React.Component {
     });
   }
   
-  //Handles a monster delete click
+  /**
+   * Handles a monster delete click
+   */
   handleClickDelete = (monsterId) => {
     this.setState({
       selectedMonsterId: monsterId,
@@ -90,7 +102,9 @@ class Monsters extends React.Component {
     });
   }
   
-  //Handles a new monster click
+  /**
+   * Handles a new monster click
+   */
   handleClickNew = () => {
     this.setState({
       selectedMonsterId: null,
@@ -99,8 +113,11 @@ class Monsters extends React.Component {
     });
   }
   
-  //Returns a monster whose id matches the given index,
-  //returns null if the monster is not found
+  /**
+   * Retrieves monster with the given id
+   * @param monsterId - the unique id of the desired monster
+   * @return The monster with the given id, or null if no monster is found
+   */
   getMonster(monsterId) {
     return this.state.monsters[monsterId];
   }

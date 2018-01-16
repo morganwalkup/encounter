@@ -12,12 +12,19 @@ const propTypes = {
 };
 
 class Combatant extends React.Component {
+  
+  /**
+   * Called after the component updates with new props or state
+   */
   componentDidUpdate() {
     if(this.props.combatant.isActive) {
       this.props.onActive(this);
     }
   }
   
+  /**
+   * Handles user click of combatant name
+   */
   handleInfoClick = () => {
     this.props.onInfoClick(this.props.combatant);
   }
@@ -35,9 +42,8 @@ class Combatant extends React.Component {
       <div className={combatantClasses.join(' ')}>
         <CombatantCircle hitPoints={combatant.HP} img={combatant.image}/>
         <StatBar 
-          //hitPoints={combatant.hit_points}
           speed={combatant.SPD}
-          initiative={combatant.initiative}
+          initiative={combatant.initiative.toString()}
           armorClass={combatant.AC}
         />
         <Button color='contrast' 
@@ -51,7 +57,7 @@ class Combatant extends React.Component {
   }
 }
 
-Combatant.PropTypes = propTypes;
+Combatant.propTypes = propTypes;
 
 const styles = ({
   base: {

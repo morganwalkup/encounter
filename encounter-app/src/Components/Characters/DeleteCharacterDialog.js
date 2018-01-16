@@ -3,11 +3,7 @@ import PropTypes from 'prop-types';
 import { getUserId,
          deleteCharacter
         } from '../../DatabaseFunctions/FirebaseFunctions';
-import Dialog, { DialogContent } from 'material-ui/Dialog';
-import CRUDDialog from '../CharactersAndMonsters/CRUDDialog';
-import List from 'material-ui/List';
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
+import DeleteDialog from '../CharactersAndMonsters/DeleteDialog';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
@@ -18,10 +14,16 @@ const propTypes = {
 
 class DeleteCharacterDialog extends React.Component {
   
+  /**
+   * Handles close requests from the delete dialog
+   */
   handleRequestClose = () => {
     this.props.onRequestClose();
   }
   
+  /**
+   * Deletes a character from the database
+   */
   handleDelete = () => {
     // Get user id
     getUserId((userid) => {
@@ -33,56 +35,35 @@ class DeleteCharacterDialog extends React.Component {
     this.handleRequestClose();
   }
   
+  /** 
+   * Handles user clicks of the "Cancel" button
+   */
   handleCancel = () => {
     this.handleRequestClose();
   }
   
   render() {
-    const { classes, character, } = this.props;
-
+    const { character } = this.props;
+    
     //Catch null character
-    if(character === null) {
-      return (
-        <Dialog open={this.props.open}>
-          <DialogContent>
-            <h2>Character not found</h2>
-          </DialogContent>
-        </Dialog>
-      );
+    if(character == null) {
+      return <div></div>;
     }
     
     return (
-      <CRUDDialog
-        title="Delete Character"
-        onDelete={this.handleDelete}
-        onCancel={this.handleCancel}
-        onRequestClose={this.handleRequestClose}
+      <DeleteDialog
+        objectName={character.name}
+        objectType={'character'}
         open={this.props.open}
-        actions={
-          <div>
-            <Button onClick={this.handleCancel}>Cancel</Button>
-            <Button onClick={this.handleDelete} color="accent">Delete</Button> 
-          </div>
-        }
-      >
-        <List className={classes.list}>
-          <Typography type="headline">
-            Delete <strong>{character.name}</strong> forever?
-          </Typography>
-        </List>
-      </CRUDDialog>
+        onDelete={this.handleDelete}
+        onRequestClose={this.handleRequestClose}
+      />
     );
   }
 }
 
 DeleteCharacterDialog.propTypes = propTypes;
 
-const styles = {
-  list: {
-    marginTop: 20,
-    marginBottom: 20,
-    width: 300,
-  },
-};
+const styles = {};
 
 export default withStyles(styles)(DeleteCharacterDialog);

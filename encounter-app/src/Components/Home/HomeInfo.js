@@ -69,6 +69,7 @@ const styles = theme => ({
     letterSpacing: '1px',
     color: 'white',
     margin: '25px 10px',
+    marginBottom: '15px',
     textShadow: '0px 2px 5px rgba(0,0,0,1)',
     textAlign: 'center',
   },
@@ -76,8 +77,9 @@ const styles = theme => ({
     marginBottom: 30,
   },
   splashCard: {
-    width: '80%',
-    margin: '0 10%',
+    width: '90%',
+    margin: '0 5%',
+    marginTop: 10,
     borderRadius: '5px 5px 3px 3px',
   },
   splashCardTitle: {

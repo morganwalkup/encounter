@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
+import { Link } from 'react-router-dom';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
@@ -8,7 +9,7 @@ const propTypes = {
   onSettingsClick: PropTypes.func.isRequired,
 };
 
-class EncounterFooter extends React.Component {
+class EncounterScreenFooter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,6 +17,9 @@ class EncounterFooter extends React.Component {
     };
   }
   
+  /**
+   * Handles user click of "start" or "continue" button
+   */
   handleContinueClick = () => {
     this.setState({
       encounterStarted: true,
@@ -23,6 +27,9 @@ class EncounterFooter extends React.Component {
     this.props.onContinueClick();
   }
   
+  /**
+   * Handles user click of the "settings" button
+   */
   handleSettingsClick = () => {
     this.props.onSettingsClick();
   }
@@ -32,13 +39,17 @@ class EncounterFooter extends React.Component {
   
     return(
       <div className={classes.footer}>
-        <Button color='contrast'>
+        <Button 
+          color="contrast"
+          component={Link}
+          to="/"
+        >
           &lt; Exit
         </Button>
-        <Button color='contrast' onClick={this.handleContinueClick}>
+        <Button color="contrast" onClick={this.handleContinueClick}>
           {this.state.encounterStarted ? "Continue" : "Start"}
         </Button>
-        <Button color='contrast' onClick={this.handleSettingsClick}>
+        <Button color="contrast" onClick={this.handleSettingsClick}>
           Settings
         </Button>
       </div>
@@ -46,10 +57,11 @@ class EncounterFooter extends React.Component {
   }
 }
 
-EncounterFooter.propTypes = propTypes;
+EncounterScreenFooter.propTypes = propTypes;
 
 const styles = theme => ({
   footer: {
+    boxSizing: 'content-box',
     position: 'absolute',
     top: '93vh',
     left: '0vw',
@@ -68,4 +80,4 @@ const styles = theme => ({
   },
 });
 
-export default withStyles(styles)(EncounterFooter);
+export default withStyles(styles)(EncounterScreenFooter);

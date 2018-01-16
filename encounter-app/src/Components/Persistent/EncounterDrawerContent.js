@@ -6,14 +6,28 @@ import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
 
 function EncounterDrawerContent(props) {
-  const { classes } = props;
+  const { isUserSignedIn, onSignOut, classes } = props;
+
+  //Display "sign up" or "sign out" buttons depending on user state
+  let authenticationButton;
+  if(isUserSignedIn) {
+    authenticationButton = (
+      <ListItem button onClick={onSignOut} component={Link} to="/">
+        <ListItemText primary="Sign Out" />
+      </ListItem>  
+    );
+  } else {
+    authenticationButton = (
+      <ListItem button component={Link} to="/signup">
+        <ListItemText primary="Sign Up!" />
+      </ListItem>  
+    );
+  }
   
   return (
     <div className={classes.drawerContent}>
       <List>
-        <ListItem button component={Link} to="/signup">
-          <ListItemText primary="Sign Up!" />
-        </ListItem>
+        {authenticationButton}
       </List>
       <Divider />
       <List>

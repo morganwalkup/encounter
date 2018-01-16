@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import './index.css';
 import 'typeface-roboto';
 import * as firebase from 'firebase';
 import App from './App';

@@ -9,12 +9,12 @@ const propTypes = {
   initialImgUrl: PropTypes.string,
 };
 
-class AvatarUpload extends React.Component {
+class BackgroundUpload extends React.Component {
   constructor(props) {
     super(props);
     let initialImgUrl = props.initialImgUrl;
     if(initialImgUrl == null) {
-      initialImgUrl = require('../../images/combatants/Default.jpg');
+      initialImgUrl = require('../../../images/DefaultEncounter.jpg');
     }
     this.state = {
       imageFile: '',
@@ -24,7 +24,7 @@ class AvatarUpload extends React.Component {
 
   /**
    * Handles the selection of a new image
-   * @param e - event raised on selection of a new image
+   * @param event - The event raised by selection of a new image
    */
   handleImageChange = (event) => {
     event.preventDefault();
@@ -54,11 +54,11 @@ class AvatarUpload extends React.Component {
 
     return (
       <div>
-        <div className={classes.avatarContainer}>
+        <div className={classes.backgroundContainer}>
           <img 
             src={imagePreviewUrl} 
             alt={""}
-            className={classes.charImg} 
+            className={classes.bgImg} 
           />
           <input
             accept="image/*"
@@ -69,7 +69,7 @@ class AvatarUpload extends React.Component {
             onChange={this.handleImageChange}
           />  
           <label htmlFor="image-upload">
-            <Button fab component="span" className={classes.avatarButton}>
+            <Button fab component="span" className={classes.bgButton}>
               <EditIcon />
             </Button>
           </label>
@@ -79,26 +79,27 @@ class AvatarUpload extends React.Component {
   }
 }
 
-AvatarUpload.propTypes = propTypes;
+BackgroundUpload.propTypes = propTypes;
 
 const styles = {
-  avatarContainer: {
+  backgroundContainer: {
     position: 'relative',
+    width: '100%',
+    maxWidth: 500,
   },
   fileInput: {
     display: 'none',
   },
-  charImg: {
-    height: 70,
-    width: 70,
-    borderRadius: '50%',
+  bgImg: {
+    width: '100%',
+    height: 'auto',
     margin: '10px 0',
     boxShadow: '0px 2px 5px rgba(0,0,0,0.5)',
   },
-  avatarButton: {
+  bgButton: {
     position: 'absolute',
-    top: 45,
-    left: 40,
+    bottom: 0,
+    right: 10,
     width: 36,
     height: 36,
     color: 'black',
@@ -116,4 +117,4 @@ const styles = {
   },
 };
 
-export default withStyles(styles)(AvatarUpload);
+export default withStyles(styles)(BackgroundUpload);

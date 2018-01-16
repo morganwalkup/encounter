@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   getUserId,
-  getAllCharacters
+  getAllCharacters,
+  disconnectCharacters
 } from '../../../DatabaseFunctions/FirebaseFunctions';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
-import CharacterTable from './CharacterTable';
+import CombatantTable from './CombatantTable';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
@@ -23,20 +24,25 @@ class CharacterSelection extends React.Component {
     };
   }
   
+  /**
+   * Called immediately after the component mounts
+   */
   componentDidMount() {
     getUserId((userid) => {
        getAllCharacters(userid, (allCharacters) => {
          //Get selected character indices
          const ids = this.props.selectedCharacterIds;
          let indices = [];
-         let charIndex = 0;
-         for(let i = 0; i < ids.length; i++) {
-           charIndex = 0;
-           for(let id in allCharacters) {
-             if(ids[i] === id) {
-               indices.push(charIndex);
+         if(ids != null) {
+           let charIndex = 0;
+           for(let i = 0; i < ids.length; i++) {
+             charIndex = 0;
+             for(let id in allCharacters) {
+               if(ids[i] === id) {
+                 indices.push(charIndex);
+               }
+               charIndex = charIndex + 1;
              }
-             charIndex = charIndex + 1;
            }
          }
          //Save characters and selected indices
@@ -48,13 +54,26 @@ class CharacterSelection extends React.Component {
     });
   }
   
-  handleSelectionChange = (selection) => {
+  /**
+   * Called prior to component unmounting
+   */
+  componentWillUnmount() {
+    getUserId((userid) => {
+      disconnectCharacters(userid);
+    });
+  }
+  
+  /**
+   * Handles a change in the selection of characters within the CombatantTable
+   * @param selectedIndices - array of indices for the selected character rows
+   */
+  handleSelectionChange = (selectedIndices) => {
     //Save selected character indices
     this.setState({
-      selectedCharacterIndices: selection
+      selectedCharacterIndices: selectedIndices
     });
     //Send character ids to parent component
-    const selectedCharacterIds = selection.map((index) => {
+    const selectedCharacterIds = selectedIndices.map((index) => {
       return Object.keys(this.state.characters)[index]; 
     });
     this.props.onCharacterSelect(selectedCharacterIds);
@@ -64,6 +83,7 @@ class CharacterSelection extends React.Component {
     const { classes } = this.props;
     const { characters, selectedCharacterIndices } = this.state;
     
+    //Structure character data into rows for CombatantTable
     let characterRows = [];
     for(let id in characters) {
       characterRows.push(characters[id]);
@@ -80,9 +100,9 @@ class CharacterSelection extends React.Component {
           </Typography>
         </Grid>
         <Grid item xs={12} md={10} lg={8}>
-          <CharacterTable 
-            characters={characterRows}
-            selectedCharacters={selectedCharacterIndices}
+          <CombatantTable 
+            combatants={characterRows}
+            selectedCombatants={selectedCharacterIndices}
             onSelectionChange={this.handleSelectionChange}
           />
         </Grid>

@@ -4,28 +4,176 @@ import * as firebase from 'firebase';
  * Retrieves the active user id or 'anonymous' if no user is logged in
  * and sets up a listener for authentication changes
  * 
- * @param onResolve - function called once data is retrieved. Accepts userid as a parameter
+ * @param onSuccess - function called once data is retrieved. Accepts userid as a parameter
  */
-export function getUserId(onResolve) {
+export function getUserId(onSuccess) {
   firebase.auth().onAuthStateChanged((user) => {
     if(user)
-        onResolve(user.uid);
+        onSuccess(user.uid);
     else
-        onResolve('anonymous');
+        onSuccess('anonymous');
   });
 }
 
+/**
+ * Retrieves the active user id as of the last firebase refresh
+ * 
+ * @return userid - the userid of the active user, or 'anonymous' if no user is logged in
+ */
+export function getMostRecentUserId() {
+  const user = firebase.auth().currentUser;
+  if(user)
+      return user.uid;
+  else
+      return 'anonymous';
+}
+
+/**
+ * Signs the active user out of firebase
+ */
+export function signOutUser() {
+  firebase.auth().signOut().then(function() {
+    console.log('User Signed Out');
+  }, function(error) {
+    console.error('Sign Out Error', error);
+  });
+}
+
+//===== Encounter CRUD =====
 /**
 * Retrieves encounter data from firebase once
 * 
 * @param userid - firebase uid of the active user
 * @param encounterid - firebase id of the encounter
-* @param onResolve - function called once data is retrieved. Accepts encounter data as a parameter
+* @param onSuccess - function called once data is retrieved. Accepts encounter data as a parameter
 */
-export function getEncounter(userid, encounterid, onResolve) {
+export function getEncounter(userid, encounterid, onSuccess) {
   const encounterRef = firebase.database().ref(userid + '/encounters/' + encounterid);
   encounterRef.once('value', snapshot => {
-    onResolve(snapshot.val());
+    onSuccess(snapshot.val());
+  });
+}
+
+/**
+ * Creates a new encounter in firebase
+ * 
+ * @param userid - firebase uid of the active user
+ * @param encounterData - new data for the encounter
+ */
+export function createEncounter(userid, encounterData) {
+  const dbEncounters = firebase.database().ref().child(userid + '/encounters');
+  const newEncounterId = dbEncounters.push().key;
+  updateEncounter(userid, newEncounterId, encounterData);
+}
+
+/**
+ * Uploads a new encounter image to firebase
+ * and creates a new encounter in firebase
+ * 
+ * @param userid - firebase uid of the active user
+ * @param charData - new data for the encounter
+ * @returns file upload task for progress monitoring
+ */
+export function createEncounterWithImage(userid, encounterData, imageFile) {
+  const dbEncounters = firebase.database().ref().child(userid + '/encounters');
+  const newEncounterId = dbEncounters.push().key;
+  const imageUpload = uploadEncounterImage(userid, newEncounterId, imageFile);
+  
+  imageUpload.on('state_changed', null, null, () => {
+    // On successful upload, update encounter with image url
+    const imageUrl = imageUpload.snapshot.downloadURL;
+    encounterData["image"] = imageUrl;
+    // Upload encounter to firebase
+    updateEncounter(userid, newEncounterId, encounterData);
+  });
+  
+  return imageUpload;
+}
+
+/**
+ * Uploads a new encounter image to firebase
+ * 
+ * @param userid - firebase uid of the active user
+ * @param encounterid - firebase id of the encounter
+ * @param imageFile - the image file to upload
+ * @returns file upload task for progress monitoring
+ */
+export function uploadEncounterImage(userid, encounterid, imageFile) {
+  const imageMetaData = { 
+    contentType: imageFile.type,
+  };
+  const storageRef = firebase.storage().ref();
+  const fileDestination = storageRef.child(userid + '/images/encounters/' + encounterid);
+  const fileUpload = fileDestination.put(imageFile, imageMetaData);
+  
+  return fileUpload;
+}
+
+/**
+ * Updates encounter data in firebase
+ * 
+ * @param userid - firebase uid of the active user
+ * @param encounterid - firebase id of the encounter
+ * @param encounterData - new data for the encounter
+ * @param onSuccess - optional function called once transaction is complete
+ */
+export function updateEncounter(userid, encounterid, encounterData) {
+  const dbEncounters = firebase.database().ref().child(userid + '/encounters');
+  const updatedEncounter = {
+    [encounterid]: encounterData
+  };
+  dbEncounters.update(updatedEncounter);
+}
+
+/**
+ * Uploads a new encounter image to firebase
+ * and updates encounter in firebase
+ * 
+ * @param userid - firebase uid of the active user
+ * @param encounterData - new data for the encounter
+ * @returns file upload task for progress monitoring
+ */
+export function updateEncounterWithImage(userid, encounterid, encounterData, imageFile) {
+  const imageUpload = uploadEncounterImage(userid, encounterid, imageFile);
+  imageUpload.on('state_changed', null, null, () => {
+    // On successful upload, update encounter data with image url
+    const imageUrl = imageUpload.snapshot.downloadURL;
+    encounterData["image"] = imageUrl;
+    // Upload encounter to firebase
+    updateEncounter(userid, encounterid, encounterData);
+  });
+  
+  return imageUpload;
+}
+
+/**
+ * Deletes a encounter from firebase
+ * 
+ * @param userid - firebase uid of the active user
+ * @param encounterid - firebase id of the encounter
+ */
+export function deleteEncounter(userid, encounterid) {
+  const dbEncounters = firebase.database().ref().child(userid + '/encounters');
+  const deletedEncounter = {
+    [encounterid]: null
+  };
+  dbEncounters.update(deletedEncounter);
+  deleteEncounterImage(userid, encounterid);
+}
+
+/**
+ * Deletes a encounter image from firebase storage
+ * 
+ * @param userid - the uid of the active firebase user
+ * @param encounterid - id of the encounter whose image we are deleting
+ */
+export function deleteEncounterImage(userid, encounterid) {
+  const storageRef = firebase.storage().ref();
+  const imagePath = storageRef.child(userid + '/images/encounters/' + encounterid);
+  imagePath.delete().then(function() {
+    // File deleted successfully
+  }).catch(function(error) {
+    console.log(error);
   });
 }
 
@@ -34,13 +182,22 @@ export function getEncounter(userid, encounterid, onResolve) {
  * and sets up a listener to be called on changes to encounters
  * 
  * @param userid - firebase uid of the active user
- * @param onResolve - function called once data is retrieved. Accepts encounter data as parameter
+ * @param onSuccess - function called once data is retrieved. Accepts encounter data as parameter
  */
-export function getAllEncounters(userid, onResolve) {
+export function getAllEncounters(userid, onSuccess) {
   const encounterRef = firebase.database().ref(userid + '/encounters/');
   encounterRef.on('value', snapshot => {
-    onResolve(snapshot.val());
+    onSuccess(snapshot.val());
   });
+}
+
+/**
+ * Removes any active listeners for encounter data
+ * 
+ * @param userid - the id of the active firebase user
+ */
+export function disconnectEncounters(userid) {
+  firebase.database().ref(userid + '/encounters').off();
 }
 
 //===== Character CRUD =====
@@ -49,12 +206,12 @@ export function getAllEncounters(userid, onResolve) {
  * 
  * @param userid - firebase uid of the active user
  * @param charid - firebase id of the character
- * @param onResolve - function called once data is retrieved
+ * @param onSuccess - function called once data is retrieved
  */
-export function getCharacter(userid, charid, onResolve) {
+export function getCharacter(userid, charid, onSuccess) {
   const characterRef = firebase.database().ref(userid + '/characters/' + charid);
   characterRef.once('value', snapshot => {
-    onResolve(snapshot.val());
+    onSuccess(snapshot.val());
   });
 }
 
@@ -119,7 +276,7 @@ export function uploadCharacterImage(userid, charid, imageFile) {
  * @param userid - firebase uid of the active user
  * @param charid - firebase id of the character
  * @param charData - new data for the character
- * @param onResolve - optional function called once transaction is complete
+ * @param onSuccess - optional function called once transaction is complete
  */
 export function updateCharacter(userid, charid, charData) {
   const dbCharacters = firebase.database().ref().child(userid + '/characters');
@@ -169,7 +326,7 @@ export function deleteCharacter(userid, charid) {
  * Deletes a character image from firebase storage
  * 
  * @param userid - the uid of the active firebase user
- * @charid - id of the character whose image we are deleting
+ * @param charid - id of the character whose image we are deleting
  */
 export function deleteCharacterImage(userid, charid) {
   const storageRef = firebase.storage().ref();
@@ -186,12 +343,12 @@ export function deleteCharacterImage(userid, charid) {
 * and sets up a listener to be called on changes to character data
 * 
 * @param userid - firebase uid of the active user
-* @param onResolve - function called once data is retrieved
+* @param onSuccess - function called once data is retrieved
 */
-export function getAllCharacters(userid, onResolve) {
+export function getAllCharacters(userid, onSuccess) {
   const characterRef = firebase.database().ref(userid + '/characters/');
   characterRef.on('value', snapshot => {
-    onResolve(snapshot.val());
+    onSuccess(snapshot.val());
   });
 }
 
@@ -210,12 +367,12 @@ export function disconnectCharacters(userid) {
 * 
 * @param userid - firebase uid of the active user
 * @param monsterid - firebase id of the monster
-* @param onResolve - function called once data is retrieved
+* @param onSuccess - function called once data is retrieved
 */
-export function getMonster(userid, monsterid, onResolve) {
+export function getMonster(userid, monsterid, onSuccess) {
   const monsterRef = firebase.database().ref(userid + '/monsters/' + monsterid);
   monsterRef.once('value', snapshot => {
-    onResolve(snapshot.val());
+    onSuccess(snapshot.val());
   });
 }
 
@@ -280,7 +437,7 @@ export function uploadMonsterImage(userid, charid, imageFile) {
  * @param userid - firebase uid of the active user
  * @param charid - firebase id of the monster
  * @param charData - new data for the monster
- * @param onResolve - optional function called once transaction is complete
+ * @param onSuccess - optional function called once transaction is complete
  */
 export function updateMonster(userid, charid, charData) {
   const dbMonsters = firebase.database().ref().child(userid + '/monsters');
@@ -347,12 +504,12 @@ export function deleteMonsterImage(userid, charid) {
 * and sets up a listener to be called on changes to monster data
 * 
 * @param userid - firebase uid of the active user
-* @param onResolve - function called once data is retrieved
+* @param onSuccess - function called once data is retrieved
 */
-export function getAllMonsters(userid, onResolve) {
+export function getAllMonsters(userid, onSuccess) {
   const monsterRef = firebase.database().ref(userid + '/monsters/');
   monsterRef.on('value', snapshot => {
-    onResolve(snapshot.val());
+    onSuccess(snapshot.val());
   });
 }
 

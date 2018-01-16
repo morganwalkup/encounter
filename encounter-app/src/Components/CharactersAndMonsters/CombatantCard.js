@@ -16,14 +16,23 @@ const propTypes = {
 
 class CombatantCard extends React.Component {
   
+  /**
+   * Handles user click of the "view" button
+   */
   handleClickView = () => {
     this.props.onClickView(this.props.id);
   }
   
+  /**
+   * Handles user click of the "edit" button
+   */
   handleClickEdit = () => {
     this.props.onClickEdit(this.props.id);
   }
   
+  /**
+   * Handles user click of the "delete" button
+   */
   handleClickDelete = () => {
     this.props.onClickDelete(this.props.id);
   }
@@ -32,7 +41,7 @@ class CombatantCard extends React.Component {
     const { classes, imgSrc, name } = this.props;
 
     return(
-      <Grid container justify="center">
+      <Grid container justify="center" spacing={0}>
         <Grid item xs={12} className={classes.cardContainer}>
           <div className={classes.card}>
             <div className={classes.avatarCircle}>

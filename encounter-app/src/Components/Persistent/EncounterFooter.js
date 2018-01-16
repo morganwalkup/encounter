@@ -35,6 +35,7 @@ const styles = theme => ({
     borderTop: 'solid thick #EE6055',
   },
   disclaimer: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     marginLeft: '10px',
     fontSize: '0.3em',
     color: 'rgba(255,255,255,0.5)',

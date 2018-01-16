@@ -23,7 +23,7 @@ function StatBadge(props) {
   );
 }
 
-StatBadge.PropTypes = propTypes;
+StatBadge.propTypes = propTypes;
 
 const styles = theme => ({
   badge: {
@@ -32,6 +32,7 @@ const styles = theme => ({
     borderRadius: '10%',
     background: theme.palette.grey[300],
     boxShadow: '0px 2px 5px rgba(0,0,0,0.8)',
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
   },
   badgeValue: {
     width: '100%',

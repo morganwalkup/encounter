@@ -1,18 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getUserId,
-         deleteMonster
+         deleteEncounter
         } from '../../DatabaseFunctions/FirebaseFunctions';
 import DeleteDialog from '../CharactersAndMonsters/DeleteDialog';
 import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
   open: PropTypes.bool,
-  monsterid: PropTypes.string,
-  monster: PropTypes.object,
+  id: PropTypes.string,
+  encounter: PropTypes.object,
 };
 
-class DeleteMonsterDialog extends React.Component {
+class DeleteEncounterDialog extends React.Component {
   
   /**
    * Handles close requests from the delete dialog
@@ -22,13 +22,13 @@ class DeleteMonsterDialog extends React.Component {
   }
   
   /**
-   * Deletes a monster from the database
+   * Deletes an encounter from the database
    */
   handleDelete = () => {
     // Get user id
     getUserId((userid) => {
-      //Delete monster from database
-      deleteMonster(userid, this.props.monsterid);
+      //Delete encounter from database
+      deleteEncounter(userid, this.props.id);
     });
     
     // Close the dialog
@@ -43,17 +43,17 @@ class DeleteMonsterDialog extends React.Component {
   }
   
   render() {
-    const { monster } = this.props;
+    const { encounter } = this.props;
     
-    //Catch null monster
-    if(monster == null) {
+    //Catch null character
+    if(encounter == null) {
       return <div></div>;
     }
     
     return (
       <DeleteDialog
-        objectName={monster.name}
-        objectType={'monster'}
+        objectName={encounter.title}
+        objectType={'encounter'}
         open={this.props.open}
         onDelete={this.handleDelete}
         onRequestClose={this.handleRequestClose}
@@ -62,8 +62,8 @@ class DeleteMonsterDialog extends React.Component {
   }
 }
 
-DeleteMonsterDialog.propTypes = propTypes;
+DeleteEncounterDialog.propTypes = propTypes;
 
 const styles = {};
 
-export default withStyles(styles)(DeleteMonsterDialog);
+export default withStyles(styles)(DeleteEncounterDialog);

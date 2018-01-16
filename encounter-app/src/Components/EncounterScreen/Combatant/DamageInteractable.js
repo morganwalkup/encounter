@@ -12,18 +12,30 @@ class DamageInteractable extends React.Component {
     };
   }
   
+  /**
+   * Handles user click on this component
+   */
   handleClick = () => {
     this.setState({
       showDamageInput: true,
     });
   };
 
+  /**
+   * Handles change of the damage textfield
+   * @param event - event raised by textfield value change
+   */
   handleChange = event => {
     this.setState({
       damage: event.target.value,
     });
   };
   
+  /**
+   * Handles user keypress when this component is focused
+   * Applies input damage on 'Enter'
+   * @param event - event raised by user keypress
+   */
   handleKeyPress = event => {
     if(event.key === 'Enter') {
       this.setState({
@@ -34,6 +46,9 @@ class DamageInteractable extends React.Component {
     }
   }
   
+  /**
+   * Handles un-focusing of this component
+   */
   handleBlur = () => {
     this.setState({
       damage: '',
@@ -44,6 +59,7 @@ class DamageInteractable extends React.Component {
   render() {
     const { classes } = this.props;
     
+    //Conditionally apply style elements
     let damageClasses = [classes.damage];
     let damageInteractable;
     if(this.state.showDamageInput === true) {

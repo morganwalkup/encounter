@@ -6,6 +6,7 @@ class CombatantCircle extends React.Component {
   render() {
     const { classes } = this.props;
     
+    //Conditionally apply styling
     let classNames = [];
     classNames.push(classes.healthBar);
     if(this.props.value / this.props.max > 0.5) {

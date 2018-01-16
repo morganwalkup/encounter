@@ -13,7 +13,11 @@ const propTypes = {
   buttonText: PropTypes.string.isRequired,
 };
 
-class CharactersHeader extends React.Component {
+class PageHeader extends React.Component {
+  
+  /**
+   * Handles user click of "new" button
+   */
   handleClickNew = () => {
     this.props.onClickNew();
   }
@@ -35,7 +39,7 @@ class CharactersHeader extends React.Component {
   }
 }
 
-CharactersHeader.propTypes = propTypes;
+PageHeader.propTypes = propTypes;
 
 const styles = theme => ({
   splash: {
@@ -65,4 +69,4 @@ const styles = theme => ({
   },
 });
 
-export default withStyles(styles)(CharactersHeader);
+export default withStyles(styles)(PageHeader);

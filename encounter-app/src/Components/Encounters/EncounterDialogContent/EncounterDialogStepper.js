@@ -16,18 +16,30 @@ const propTypes = {
 
 class EncounterDialogStepper extends React.Component {
       
+  /**
+   * Handles user click of "next" button
+   */
   handleNext = () => {
     this.props.onNext();
   }   
   
+  /**
+   * Handles user click of "back" button
+   */
   handleBack = () => {
     this.props.onBack();
   }
   
+  /**
+   * Handles user click of "cancel" button
+   */
   handleCancel = () => {
     this.props.onCancel();
   }
   
+  /**
+   * Handles user click of "save" button
+   */
   handleSave = () => {
     this.props.onSave();
   }
@@ -40,19 +52,16 @@ class EncounterDialogStepper extends React.Component {
         Cancel
       </Button>
     );
-    
     const backButton = (
       <Button dense onClick={this.handleBack}>
         <KeyboardArrowLeft /> Back
       </Button>
     );
-    
     const nextButton = (
       <Button dense onClick={this.handleNext}>
         Next <KeyboardArrowRight />
       </Button>
     );
-    
     const saveButton = (
       <Button dense color="primary" onClick={this.handleSave}>
         Save
