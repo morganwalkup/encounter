@@ -1,14 +1,15 @@
 0 info it worked if it ends with ok
 1 verbose cli [ '/home/ubuntu/.nvm/versions/node/v6.11.2/bin/node',
 1 verbose cli   '/home/ubuntu/.nvm/versions/node/v6.11.2/bin/npm',
-1 verbose cli   'start' ]
+1 verbose cli   'run',
+1 verbose cli   'build' ]
 2 info using npm@3.10.10
 3 info using node@v6.11.2
 4 verbose stack Error: ENOENT: no such file or directory, open '/home/ubuntu/workspace/package.json'
 4 verbose stack     at Error (native)
 5 verbose cwd /home/ubuntu/workspace
 6 error Linux 4.9.74-c9
-7 error argv "/home/ubuntu/.nvm/versions/node/v6.11.2/bin/node" "/home/ubuntu/.nvm/versions/node/v6.11.2/bin/npm" "start"
+7 error argv "/home/ubuntu/.nvm/versions/node/v6.11.2/bin/node" "/home/ubuntu/.nvm/versions/node/v6.11.2/bin/npm" "run" "build"
 8 error node v6.11.2
 9 error npm  v3.10.10
 10 error path /home/ubuntu/workspace/package.json
