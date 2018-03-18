@@ -11,6 +11,7 @@ import { withStyles } from 'material-ui/styles';
 const propTypes = {
   combatant: PropTypes.object,
   isCharacter: PropTypes.bool,
+  isNew: PropTypes.bool,
   open: PropTypes.bool,
   onRequestClose: PropTypes.func,
   onFieldChange: PropTypes.func,
@@ -59,7 +60,15 @@ class EditCombatantDialog extends React.Component {
   }
   
   render() {
-    const { isCharacter, combatant, classes } = this.props;
+    const { isCharacter, isNew, combatant, classes } = this.props;
+    
+    //Get dialog title
+    let dialogTitle = null;
+    if(isNew) {
+      dialogTitle = (isCharacter) ? "New Character" : "New Monster";
+    } else {
+      dialogTitle = (isCharacter) ? "Edit Character" : "Edit Monster";
+    }
     
     //Get initial avatar url for AvatarUpload
     let initialAvatarUrl = null;
@@ -120,7 +129,7 @@ class EditCombatantDialog extends React.Component {
     
     return (
       <CRUDDialog 
-        title={(isCharacter) ? "Edit Character" : "Edit Monster"}
+        title={dialogTitle}
         onSave={this.handleSave}
         onCancel={this.handleCancel}
         onRequestClose={this.handleRequestClose}

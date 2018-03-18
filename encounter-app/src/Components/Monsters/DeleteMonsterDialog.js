@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getUserId,
-         deleteMonster
-        } from '../../DatabaseFunctions/FirebaseFunctions';
+import Monster from '../../Models/Monster';
 import DeleteDialog from '../CharactersAndMonsters/DeleteDialog';
 import { withStyles } from 'material-ui/styles';
 
@@ -25,12 +23,9 @@ class DeleteMonsterDialog extends React.Component {
    * Deletes a monster from the database
    */
   handleDelete = () => {
-    // Get user id
-    getUserId((userid) => {
-      //Delete monster from database
-      deleteMonster(userid, this.props.monsterid);
-    });
-    
+    // Delete monster
+    const monster = Monster.copy(this.props.monster);
+    monster.deleteMonster();
     // Close the dialog
     this.handleRequestClose();
   }

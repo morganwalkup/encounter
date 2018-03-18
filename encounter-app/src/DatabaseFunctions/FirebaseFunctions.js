@@ -1,4 +1,7 @@
 import * as firebase from 'firebase';
+import Encounter from '../Models/Encounter';
+import Character from '../Models/Character';
+import Monster from '../Models/Monster';
 
 /**
  * Retrieves the active user id or 'anonymous' if no user is logged in
@@ -50,7 +53,8 @@ export function signOutUser() {
 export function getEncounter(userid, encounterid, onSuccess) {
   const encounterRef = firebase.database().ref(userid + '/encounters/' + encounterid);
   encounterRef.once('value', snapshot => {
-    onSuccess(snapshot.val());
+    const encounter = Encounter.fromFirebase(encounterid, snapshot.val());
+    onSuccess(encounter);
   });
 }
 
@@ -193,7 +197,15 @@ export function deleteEncounterImage(userid, encounterid) {
 export function getAllEncounters(userid, onSuccess) {
   const encounterRef = firebase.database().ref(userid + '/encounters/');
   encounterRef.on('value', snapshot => {
-    onSuccess(snapshot.val());
+    
+    const fbEncounters = snapshot.val();
+    let encounters = [];
+    for(let id in fbEncounters) {
+      const encounter = Encounter.fromFirebase(id, fbEncounters[id]);
+      encounters.push(encounter);
+    }
+    onSuccess(encounters);
+    
   });
 }
 
@@ -360,7 +372,15 @@ export function deleteCharacterImage(userid, charid) {
 export function getAllCharacters(userid, onSuccess) {
   const characterRef = firebase.database().ref(userid + '/characters/');
   characterRef.on('value', snapshot => {
-    onSuccess(snapshot.val());
+    
+    const fbCharacters = snapshot.val();
+    let characters = [];
+    for(let id in fbCharacters) {
+      const character = Character.fromFirebase(id, fbCharacters[id]);
+      characters.push(character);
+    }
+    onSuccess(characters);
+    
   });
 }
 
@@ -527,7 +547,15 @@ export function deleteMonsterImage(userid, monsterid) {
 export function getAllMonsters(userid, onSuccess) {
   const monsterRef = firebase.database().ref(userid + '/monsters/');
   monsterRef.on('value', snapshot => {
-    onSuccess(snapshot.val());
+    
+    const fbMonsters = snapshot.val();
+    let monsters = [];
+    for(let id in fbMonsters) {
+      const monster = Monster.fromFirebase(id, fbMonsters[id]);
+      monsters.push(monster);
+    }
+    onSuccess(monsters);
+    
   });
 }
 

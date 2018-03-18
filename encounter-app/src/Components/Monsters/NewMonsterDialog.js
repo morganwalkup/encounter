@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getUserId,
-         createMonster,
-         createMonsterWithImage,
-        } from '../../DatabaseFunctions/FirebaseFunctions';
+import Monster from '../../Models/Monster';
 import EditCombatantDialog from '../CharactersAndMonsters/EditCombatantDialog';
 import { withStyles } from 'material-ui/styles';
 
@@ -15,24 +12,9 @@ const propTypes = {
 class NewMonsterDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.defaultImage = "https://firebasestorage.googleapis.com/v0/b/encounter-49be9.appspot.com/o/admin%2Fimages%2Fmonsters%2FDefault.jpg?alt=media&token=d67e681c-849f-4160-923a-5c87acd3b48a";
-    this.defaultState = {
-      name: "",
-      image: this.defaultImage,
-      LVL: "",
-      AC: "",
-      HP: "",
-      SPD: "",
-      STR: "",
-      DEX: "",
-      CON: "",
-      INT: "",
-      WIS: "",
-      CHA: ""
-    };
     this.state = {
       imageFile: null,
-      monster: Object.assign({}, this.defaultState)
+      monster: new Monster()
     };
   }
   
@@ -73,22 +55,17 @@ class NewMonsterDialog extends React.Component {
    * Saves the monster data to the database and closes the dialog
    */
   handleSave = () => {
-    // Get user id and upload monster data to database
-    getUserId((userid) => {
-      const imageFile = this.state.imageFile;
-      const monsterData = Object.assign({}, this.state.monster);
-      
-      if(imageFile === null) {
-        createMonster(userid, monsterData);
-        this.handleRequestClose();
-        this.resetLocalMonsterData();
-      } else {
-        createMonsterWithImage(userid, monsterData, imageFile);
-        this.handleRequestClose();
-        this.resetLocalMonsterData();
-      }
-    });
+    const imageFile = this.state.imageFile;
+    const newMonster = Monster.copy(this.state.monster);
     
+    if(imageFile === null) {
+      newMonster.create();
+    } else {
+      newMonster.createWithImage(imageFile);
+    }
+    
+    this.handleRequestClose();
+    this.resetLocalMonsterData();
   }
   
   /**
@@ -105,7 +82,7 @@ class NewMonsterDialog extends React.Component {
   resetLocalMonsterData = () => {
     this.setState({
       imageFile: null,
-      monster: Object.assign({}, this.defaultState)
+      monster: new Monster()
     });
   }
   
@@ -116,6 +93,7 @@ class NewMonsterDialog extends React.Component {
       <EditCombatantDialog 
         combatant={monster}
         isMonster
+        isNew
         open={this.props.open}
         onRequestClose={this.handleRequestClose}
         onFieldChange={this.handleChange}

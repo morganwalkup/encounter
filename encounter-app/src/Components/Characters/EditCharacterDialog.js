@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getUserId,
-         updateCharacter,
-         updateCharacterWithImage,
-        } from '../../DatabaseFunctions/FirebaseFunctions'; 
+import Character from '../../Models/Character';
 import EditCombatantDialog from '../CharactersAndMonsters/EditCombatantDialog';
 import { withStyles } from 'material-ui/styles';
 
@@ -18,7 +15,7 @@ class EditCharacterDialog extends React.Component {
     super(props);
     this.state = {
       imageFile: null,
-      character: Object.assign({}, props.character)
+      character: Character.copy(props.character)
     };
   }
   
@@ -30,7 +27,7 @@ class EditCharacterDialog extends React.Component {
     if(nextProps !== this.props) {
       this.setState({
         imageFile: null,
-        character: Object.assign({}, nextProps.character)
+        character: Character.copy(nextProps.character)
       });
     }
   }
@@ -72,18 +69,16 @@ class EditCharacterDialog extends React.Component {
    * Saves altered character data to firebase and closes the dialog
    */
   handleSave = () => {
-    getUserId((userid) => {
-      const imageFile = this.state.imageFile;
-      const characterData = Object.assign({}, this.state.character);
-      
-      if(imageFile == null) {
-        updateCharacter(userid, this.props.characterid, characterData);
-        this.handleRequestClose();
-      } else {
-        updateCharacterWithImage(userid, this.props.characterid, characterData, imageFile);
-        this.handleRequestClose();
-      }
-    });
+    const imageFile = this.state.imageFile;
+    const newCharacter = Character.copy(this.state.character);
+    
+    if(imageFile == null) {
+      newCharacter.update();
+    } else {
+      newCharacter.updateWithImage(imageFile);
+    }
+    
+    this.handleRequestClose();
   }
   
   /**

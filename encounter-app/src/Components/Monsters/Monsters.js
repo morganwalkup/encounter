@@ -1,8 +1,9 @@
 import React from 'react';
-import { getUserId,
-         getAllMonsters,
-         disconnectMonsters
-        } from '../../DatabaseFunctions/FirebaseFunctions';
+import { 
+  getUserId,
+  getAllMonsters,
+  disconnectMonsters
+} from '../../DatabaseFunctions/FirebaseFunctions';
 import Grid from 'material-ui/Grid';
 import PageHeader from '../CharactersAndMonsters/PageHeader';
 import CombatantCard from '../CharactersAndMonsters/CombatantCard';
@@ -40,7 +41,7 @@ class Monsters extends React.Component {
   componentDidMount() {
     //Listen for user login changes
     getUserId((userId) => {
-      //Link component state to monster data in database
+      //Link component state to character data in database
       getAllMonsters(userId, (allMonsters) => {
         this.setState({
           monsters: allMonsters
@@ -119,21 +120,25 @@ class Monsters extends React.Component {
    * @return The monster with the given id, or null if no monster is found
    */
   getMonster(monsterId) {
-    return this.state.monsters[monsterId];
+    const monsters = this.state.monsters;
+    for(let i = 0; i < monsters.length; i++) {
+      if(monsters[i].id === monsterId) {
+        return monsters[i];
+      }
+    }
   }
   
   render() {
     const { classes } = this.props;
-    const monsters = this.state.monsters;
-  
-    //Generate Monster Cards
-    let CombatantCards = [];
-    for(var id in monsters) {
-      let monster = monsters[id];
-      CombatantCards.push(
-        <Grid item xs={12} sm={6} lg={4} key={id}>
+    const { monsters, selectedMonsterId, selectedMonster } = this.state;
+    
+    //Generate Character Cards
+    let combatantCards = [];
+    if(monsters) {
+      combatantCards = monsters.map(monster => 
+        <Grid item xs={12} sm={6} lg={4} key={monster.id}>
           <CombatantCard 
-            id={id}
+            id={monster.id}
             imgSrc={monster.image} 
             name={monster.name} 
             onClickView={this.handleClickView}
@@ -154,9 +159,9 @@ class Monsters extends React.Component {
               buttonText="New Monster"
             />
           </Grid>
-          <Grid item xs={11} sm={12} md={11} lg={9} className={classes.charCardsContainer}>
+          <Grid item xs={11} sm={12} md={11} lg={9} className={classes.cardsContainer}>
             <Grid container spacing={0}>
-              {CombatantCards}
+              {combatantCards}
             </Grid>
           </Grid>
         </Grid>
@@ -166,19 +171,19 @@ class Monsters extends React.Component {
           </Button>
         </Hidden>
         <ViewMonsterDialog 
-          monster={this.state.selectedMonster}
+          monster={selectedMonster}
           open={this.state.openDialog === this.dialogOptions.view}
           onRequestClose={this.handleRequestClose}
         />
         <EditMonsterDialog 
-          monsterid={this.state.selectedMonsterId}
-          monster={this.state.selectedMonster}
+          monsterid={selectedMonsterId}
+          monster={selectedMonster}
           open={this.state.openDialog === this.dialogOptions.edit}
           onRequestClose={this.handleRequestClose}
         />
         <DeleteMonsterDialog 
-          monsterid={this.state.selectedMonsterId}
-          monster={this.state.selectedMonster}
+          monsterid={selectedMonsterId}
+          monster={selectedMonster}
           open={this.state.openDialog === this.dialogOptions.del}
           onRequestClose={this.handleRequestClose}
         />
@@ -192,7 +197,7 @@ class Monsters extends React.Component {
 }
 
 const styles = theme => ({
-  charCardsContainer: {
+  cardsContainer: {
     paddingBottom: 60,
   },
   footer: {

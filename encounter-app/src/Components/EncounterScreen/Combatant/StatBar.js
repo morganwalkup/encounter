@@ -5,6 +5,7 @@ import { withStyles } from 'material-ui/styles';
 
 const propTypes = {
   classes: PropTypes.object.isRequired,
+  currentHP: PropTypes.string,
   initiative: PropTypes.string,
   speed: PropTypes.string,
   armorClass: PropTypes.string,
@@ -15,8 +16,9 @@ function StatBar(props) {
 
   return(
     <div className={classes.stats}> 
-      <StatBadge value={props.initiative} label='ITV' />
+      {/*<StatBadge value={props.initiative} label='ITV' />*/}
       <StatBadge value={props.speed} label='SPD' />
+      <StatBadge value={props.currentHP} label='HP' />
       <StatBadge value={props.armorClass} label='AC' />
     </div>
   );

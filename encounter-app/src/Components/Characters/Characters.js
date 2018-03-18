@@ -73,6 +73,8 @@ class Characters extends React.Component {
    * Handles a character view click
    */
   handleClickView = (characterId) => {
+    console.log(characterId);
+    console.log(this.getCharacter(characterId));
     this.setState({
       selectedCharacterId: characterId,
       selectedCharacter: this.getCharacter(characterId),
@@ -114,13 +116,18 @@ class Characters extends React.Component {
   }
   
   /**
-   * Retrieves a character using the given charcter id
+   * Retrieves a character using the given character id
    * 
    * @param characterId - the unique id of the character
    * @return Character with the given id, or null if no character is found
    */
   getCharacter(characterId) {
-    return this.state.characters[characterId];
+    const characters = this.state.characters;
+    for(let i = 0; i < characters.length; i++) {
+      if(characters[i].id === characterId) {
+        return characters[i];
+      }
+    }
   }
   
   render() {
@@ -128,13 +135,12 @@ class Characters extends React.Component {
     const { characters, selectedCharacterId, selectedCharacter } = this.state;
     
     //Generate Character Cards
-    let CombatantCards = [];
-    for(var id in characters) {
-      let character = characters[id];
-      CombatantCards.push(
-        <Grid item xs={12} sm={6} lg={4} key={id}>
+    let combatantCards = [];
+    if(characters) {
+      combatantCards = characters.map(character => 
+        <Grid item xs={12} sm={6} lg={4} key={character.id}>
           <CombatantCard 
-            id={id}
+            id={character.id}
             imgSrc={character.image} 
             name={character.name} 
             onClickView={this.handleClickView}
@@ -157,7 +163,7 @@ class Characters extends React.Component {
           </Grid>
           <Grid item xs={11} sm={12} md={11} lg={9} className={classes.charCardsContainer}>
             <Grid container spacing={0}>
-              {CombatantCards}
+              {combatantCards}
             </Grid>
           </Grid>
         </Grid>

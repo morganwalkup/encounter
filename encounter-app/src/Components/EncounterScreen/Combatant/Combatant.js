@@ -12,6 +12,12 @@ const propTypes = {
 };
 
 class Combatant extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentHP: this.props.combatant.HP,
+    };
+  }
   
   /**
    * Called after the component updates with new props or state
@@ -29,6 +35,15 @@ class Combatant extends React.Component {
     this.props.onInfoClick(this.props.combatant);
   }
   
+  /**
+   * Handles a change in combatant's health
+   */
+  handleHealthChange = (newHealth) => {
+    this.setState({
+      currentHP: newHealth
+    });
+  }
+  
   render() {
     const {classes, combatant} = this.props;
     
@@ -40,8 +55,13 @@ class Combatant extends React.Component {
     
     return (
       <div className={combatantClasses.join(' ')}>
-        <CombatantCircle hitPoints={combatant.HP} img={combatant.image}/>
+        <CombatantCircle 
+          onHealthChange={this.handleHealthChange}
+          hitPoints={combatant.HP} 
+          img={combatant.image}
+        />
         <StatBar 
+          currentHP={this.state.currentHP}
           speed={combatant.SPD}
           initiative={combatant.initiative.toString()}
           armorClass={combatant.AC}

@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getUserId,
-         deleteCharacter
-        } from '../../DatabaseFunctions/FirebaseFunctions';
+import Character from '../../Models/Character';
 import DeleteDialog from '../CharactersAndMonsters/DeleteDialog';
 import { withStyles } from 'material-ui/styles';
 
@@ -25,12 +23,9 @@ class DeleteCharacterDialog extends React.Component {
    * Deletes a character from the database
    */
   handleDelete = () => {
-    // Get user id
-    getUserId((userid) => {
-      //Delete character from database
-      deleteCharacter(userid, this.props.characterid);
-    });
-    
+    // Delete character
+    const character = Character.copy(this.props.character);
+    character.deleteChar();
     // Close the dialog
     this.handleRequestClose();
   }

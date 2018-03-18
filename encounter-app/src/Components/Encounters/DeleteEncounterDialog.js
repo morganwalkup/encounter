@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getUserId,
-         deleteEncounter
-        } from '../../DatabaseFunctions/FirebaseFunctions';
+import Encounter from '../../Models/Encounter';
 import DeleteDialog from '../CharactersAndMonsters/DeleteDialog';
 import { withStyles } from 'material-ui/styles';
 
@@ -25,12 +23,9 @@ class DeleteEncounterDialog extends React.Component {
    * Deletes an encounter from the database
    */
   handleDelete = () => {
-    // Get user id
-    getUserId((userid) => {
-      //Delete encounter from database
-      deleteEncounter(userid, this.props.id);
-    });
-    
+    // Delete encounter
+    const encounter = Encounter.copy(this.props.encounter);
+    encounter.deleteEncounter();
     // Close the dialog
     this.handleRequestClose();
   }
@@ -45,7 +40,7 @@ class DeleteEncounterDialog extends React.Component {
   render() {
     const { encounter } = this.props;
     
-    //Catch null character
+    //Catch null encounter
     if(encounter == null) {
       return <div></div>;
     }

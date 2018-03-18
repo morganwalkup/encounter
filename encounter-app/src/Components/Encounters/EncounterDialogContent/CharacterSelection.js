@@ -19,7 +19,7 @@ class CharacterSelection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      characters: null,
+      characters: [],
       selectedCharacterIndices: null
     };
   }
@@ -34,14 +34,11 @@ class CharacterSelection extends React.Component {
          const ids = this.props.selectedCharacterIds;
          let indices = [];
          if(ids != null) {
-           let charIndex = 0;
            for(let i = 0; i < ids.length; i++) {
-             charIndex = 0;
-             for(let id in allCharacters) {
-               if(ids[i] === id) {
-                 indices.push(charIndex);
+             for(let j = 0; j < allCharacters.length; j++) {
+               if(ids[i] === allCharacters[j].id) {
+                 indices.push(j);
                }
-               charIndex = charIndex + 1;
              }
            }
          }
@@ -74,7 +71,7 @@ class CharacterSelection extends React.Component {
     });
     //Send character ids to parent component
     const selectedCharacterIds = selectedIndices.map((index) => {
-      return Object.keys(this.state.characters)[index]; 
+      return this.state.characters[index].id; 
     });
     this.props.onCharacterSelect(selectedCharacterIds);
   }
@@ -82,12 +79,6 @@ class CharacterSelection extends React.Component {
   render() {
     const { classes } = this.props;
     const { characters, selectedCharacterIndices } = this.state;
-    
-    //Structure character data into rows for CombatantTable
-    let characterRows = [];
-    for(let id in characters) {
-      characterRows.push(characters[id]);
-    }
     
     return (
       <Grid container spacing={0} justify="center">
@@ -102,7 +93,7 @@ class CharacterSelection extends React.Component {
         <Grid item xs={12} md={10} lg={8}>
           <CombatantTable 
             isCharacterTable
-            combatants={characterRows}
+            combatants={characters}
             selectedCombatants={selectedCharacterIndices}
             onSelectionChange={this.handleSelectionChange}
           />

@@ -5,6 +5,7 @@ import { getEncounter,
         } from '../../DatabaseFunctions/FirebaseFunctions';
 import Grid from 'material-ui/Grid';
 import EncounterBackground from './EncounterBackground';
+import NextCombatant from './NextCombatant';
 import CombatantGroup from './CombatantGroup';
 import CombatantDialog from './Combatant/CombatantDialog';
 import SettingsDialog from './SettingsDialog';
@@ -63,9 +64,11 @@ class EncounterScreen extends React.Component {
     //Get user and encounter ids from url
     const userid = this.props.match.params.userid;
     const encounterid = this.props.match.params.encounterid;
+    console.log("Getting encounter screen data");
     
     //Get encounter data from firebase
     getEncounter(userid, encounterid, encounter => {
+      console.log(encounter);
       //Save background image and reset loading state
       this.setState({
         bgImage: encounter.image,
@@ -75,7 +78,7 @@ class EncounterScreen extends React.Component {
       });
 
       //Get data for characters in encounter
-      let characters = encounter.characters; //Ids of the characters
+      let characters = encounter.characterIDs; //Ids of the characters
       if(characters != null) {
         for(let i = 0; i < characters.length; i++) {
           getCharacter(userid, characters[i], character => {
@@ -98,7 +101,7 @@ class EncounterScreen extends React.Component {
       }
       
       //Get data for monsters in encounter
-      let monsters = encounter.monsters; //Ids of the monsters
+      let monsters = encounter.monsterIDs; //Ids of the monsters
       if(monsters != null) {
         for(let i = 0; i < monsters.length; i++) {
           getMonster(userid, monsters[i], monster => {
@@ -240,12 +243,20 @@ class EncounterScreen extends React.Component {
    * Renders the component
    */
   render() {
-    const { bgImage, orderedCombatants, openDialog } = this.state;
+    const { bgImage, orderedCombatants, activeCombatantIndex, openDialog } = this.state;
 
     // Show loading screen while combatants are still loading
     if(orderedCombatants == null) {
       return null; //TODO: Return loading screen
     }
+    
+    // Get current and next combatants' names
+    const currentCombatantName = (activeCombatantIndex === -1) ? "" : orderedCombatants[activeCombatantIndex].name;
+    let nextCombatantIndex = activeCombatantIndex + 1;
+    if(nextCombatantIndex === orderedCombatants.length) {
+      nextCombatantIndex = 0;
+    }
+    const nextCombatantName = orderedCombatants[nextCombatantIndex].name;
     
     // Split ordered combatants into characters and monsters for display
     let orderedCharacters = [];
@@ -262,6 +273,10 @@ class EncounterScreen extends React.Component {
     return(
       <div>
         <EncounterBackground img={bgImage}/>
+        <NextCombatant 
+          currentName={currentCombatantName}
+          nextName={nextCombatantName}
+        />
         <Grid container spacing={0} justify="space-between">
           <Grid item xs={6} sm={4} lg={2}>
             <CombatantGroup 

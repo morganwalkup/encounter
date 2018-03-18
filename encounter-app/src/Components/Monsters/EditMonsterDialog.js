@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getUserId,
-         updateMonster,
-         updateMonsterWithImage,
-        } from '../../DatabaseFunctions/FirebaseFunctions'; 
+import Monster from '../../Models/Monster';
 import EditCombatantDialog from '../CharactersAndMonsters/EditCombatantDialog';
 import { withStyles } from 'material-ui/styles';
 
@@ -18,7 +15,7 @@ class EditMonsterDialog extends React.Component {
     super(props);
     this.state = {
       imageFile: null,
-      monster: Object.assign({}, props.monster)
+      monster: Monster.copy(this.props.monster)
     };
   }
   
@@ -30,7 +27,7 @@ class EditMonsterDialog extends React.Component {
     if(nextProps !== this.props) {
       this.setState({
         imageFile: null,
-        monster: Object.assign({}, nextProps.monster)
+        monster: Monster.copy(nextProps.monster)
       });
     }
   }
@@ -72,18 +69,16 @@ class EditMonsterDialog extends React.Component {
    * Saves altered monster data to firebase and closes the dialog
    */
   handleSave = () => {
-    getUserId((userid) => {
-      const imageFile = this.state.imageFile;
-      const monsterData = Object.assign({}, this.state.monster);
-      
-      if(imageFile == null) {
-        updateMonster(userid, this.props.monsterid, monsterData);
-        this.handleRequestClose();
-      } else {
-        updateMonsterWithImage(userid, this.props.monsterid, monsterData, imageFile);
-        this.handleRequestClose();
-      }
-    });
+    const imageFile = this.state.imageFile;
+    const newMonster = Monster.copy(this.state.monster);
+    
+    if(imageFile == null) {
+      newMonster.update();
+    } else {
+      newMonster.updateWithImage(imageFile);
+    }
+    
+    this.handleRequestClose();
   }
   
   /**
@@ -95,7 +90,7 @@ class EditMonsterDialog extends React.Component {
   }
   
   render() {
-    const monster = this.state.monster;
+    const { monster } = this.state;
     
     return (
       <EditCombatantDialog

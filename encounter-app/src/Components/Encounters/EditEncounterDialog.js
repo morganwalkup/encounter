@@ -1,10 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  getUserId,
-  updateEncounter,
-  updateEncounterWithImage
-} from '../../DatabaseFunctions/FirebaseFunctions';
+import Encounter from '../../Models/Encounter';
 import CRUDDialog from '../CharactersAndMonsters/CRUDDialog';
 import EncounterDialogStepper from './EncounterDialogContent/EncounterDialogStepper';
 import EncounterDetails from './EncounterDialogContent/EncounterDetails';
@@ -25,7 +21,7 @@ class EditEncounterDialog extends React.Component {
     this.state = {
       activeDialogStep: 0,
       imageFile: null,
-      encounter: Object.assign({}, this.props.encounter),
+      encounter: Encounter.copy(this.props.encounter),
     };
   }
   
@@ -36,7 +32,7 @@ class EditEncounterDialog extends React.Component {
     if(nextProps !== this.props) {
       this.setState({
         imageFile: null,
-        encounter: Object.assign({}, nextProps.encounter)
+        encounter: Encounter.copy(nextProps.encounter)
       });
     }
   }
@@ -78,20 +74,18 @@ class EditEncounterDialog extends React.Component {
    * Saves encounter data to firebase and closes the dialog
    */
   handleSave = () => {
-    //Get user id and save encounter to database
-    getUserId((userid) => {
-      const imageFile = this.state.imageFile;
-      const encounterid = this.props.id;
-      const encounterData = Object.assign({}, this.state.encounter);
-      if(imageFile === null) {
-        updateEncounter(userid, encounterid, encounterData);
-      } else {
-        updateEncounterWithImage(userid, encounterid, encounterData, imageFile);
-      }
-      this.handleRequestClose();
-      this.setState({
-        activeDialogStep: 0
-      });
+    const imageFile = this.state.imageFile;
+    const newEncounter = Encounter.copy(this.state.encounter);
+    
+    if(imageFile === null) {
+      newEncounter.update();
+    } else {
+      newEncounter.updateWithImage(imageFile);
+    }
+    
+    this.handleRequestClose();
+    this.setState({
+      activeDialogStep: 0
     });
   }
   
@@ -124,7 +118,7 @@ class EditEncounterDialog extends React.Component {
    */
   handleCharacterSelect = (selectedCharacterIds) => {
     const encounterObj = this.state.encounter;
-    encounterObj.characters = selectedCharacterIds;
+    encounterObj.characterIDs = selectedCharacterIds;
     this.setState({
       encounter: encounterObj
     });
@@ -136,7 +130,7 @@ class EditEncounterDialog extends React.Component {
    */
   handleMonsterSelect = (selectedMonsterIds) => {
     const encounterObj = this.state.encounter;
-    encounterObj.monsters = selectedMonsterIds;
+    encounterObj.monsterIDs = selectedMonsterIds;
     this.setState({
       encounter: encounterObj
     });
@@ -155,11 +149,11 @@ class EditEncounterDialog extends React.Component {
         onImageChange={this.handleImageChange}
       />,
       <CharacterSelection 
-        selectedCharacterIds={this.state.encounter.characters}
+        selectedCharacterIds={this.state.encounter.characterIDs}
         onCharacterSelect={this.handleCharacterSelect} 
       />,
       <MonsterSelection 
-        selectedMonsterIds={this.state.encounter.monsters}
+        selectedMonsterIds={this.state.encounter.monsterIDs}
         onMonsterSelect={this.handleMonsterSelect} 
       />
     ];

@@ -20,11 +20,11 @@ class Encounters extends React.Component {
   constructor(props) {
     super(props);
     this.dialogOptions = {
-      none: 0,
-      create: 1,
-      view: 2,
-      edit: 3,
-      del: 4,
+      none: 'none',
+      create: 'create',
+      view: 'view',
+      edit: 'edit',
+      del: 'delete',
     };
     this.state = {
       encounters: null,
@@ -78,10 +78,9 @@ class Encounters extends React.Component {
    * Handles an encounter "edit" click
    */
   handleClickEdit = (encounterid) => {
-    const encounter = this.state.encounters[encounterid];
     this.setState({
       selectedEncounterId: encounterid,
-      selectedEncounter: encounter,
+      selectedEncounter: this.getEncounter(encounterid),
       openDialog: this.dialogOptions.edit,
     });
   }
@@ -90,28 +89,40 @@ class Encounters extends React.Component {
    * Handles an encounter "delete" click
    */
   handleClickDelete = (encounterid) => {
-    const encounter = this.state.encounters[encounterid];
     this.setState({
       selectedEncounterId: encounterid,
-      selectedEncounter: encounter,
+      selectedEncounter: this.getEncounter(encounterid),
       openDialog: this.dialogOptions.del,
     });
   }
   
+  /**
+   * Retrieves a character using the given character id
+   * @param encounterId - the unique id of the character
+   * @return Encounter with the given id, or null if no encounter is found
+   */
+  getEncounter(encounterId) {
+    const encounters = this.state.encounters;
+    for(let i = 0; i < encounters.length; i++) {
+      if(encounters[i].id === encounterId) {
+        return encounters[i];
+      }
+    }
+  }
+  
   render() {
     const { classes } = this.props;
-    const { encounters } = this.state;
-  
+    const { encounters, selectedEncounter, selectedEncounterId } = this.state;
+
     //Generate Encounter Cards
     let encounterCards = [];
     const userid = getMostRecentUserId();
-    for(var id in encounters) {
-      let encounter = encounters[id];
-      encounterCards.push(
-        <Grid item xs={12} sm={6} lg={4} key={id}>
+    if(encounters) {
+      encounterCards = encounters.map(encounter => 
+        <Grid item xs={12} sm={6} lg={4} key={encounter.id}>
           <EncounterCard 
             userid={userid}
-            id={id}
+            id={encounter.id}
             img={encounter.image} 
             title={encounter.title} 
             description={encounter.description}
@@ -148,14 +159,14 @@ class Encounters extends React.Component {
           onRequestClose={this.handleRequestClose}
         />
         <EditEncounterDialog
-          id={this.state.selectedEncounterId}
-          encounter={this.state.selectedEncounter}
+          id={selectedEncounterId}
+          encounter={selectedEncounter}
           open={this.state.openDialog === this.dialogOptions.edit}
           onRequestClose={this.handleRequestClose}
         />
         <DeleteEncounterDialog
-          id={this.state.selectedEncounterId}
-          encounter={this.state.selectedEncounter}
+          id={selectedEncounterId}
+          encounter={selectedEncounter}
           open={this.state.openDialog === this.dialogOptions.del}
           onRequestClose={this.handleRequestClose}
         />

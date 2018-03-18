@@ -19,7 +19,7 @@ class MonsterSelection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      monsters: null,
+      monsters: [],
       selectedMonsterIndices: null
     };
   }
@@ -34,14 +34,11 @@ class MonsterSelection extends React.Component {
          const ids = this.props.selectedMonsterIds;
          let indices = [];
          if(ids != null) {
-           let charIndex = 0;
            for(let i = 0; i < ids.length; i++) {
-             charIndex = 0;
-             for(let id in allMonsters) {
-               if(ids[i] === id) {
-                 indices.push(charIndex);
+             for(let j = 0; j < allMonsters.length; j++) {
+               if(ids[i] === allMonsters[j].id) {
+                 indices.push(j);
                }
-               charIndex = charIndex + 1;
              }
            }
          }
@@ -74,7 +71,7 @@ class MonsterSelection extends React.Component {
     });
     //Send monster ids to parent component
     const selectedMonsterIds = selection.map((index) => {
-      return Object.keys(this.state.monsters)[index]; 
+      return this.state.monsters[index].id; 
     });
     this.props.onMonsterSelect(selectedMonsterIds);
   }
@@ -82,12 +79,6 @@ class MonsterSelection extends React.Component {
   render() {
     const { classes } = this.props;
     const { monsters, selectedMonsterIndices } = this.state;
-    
-    //Structure character data into rows for CombatantTable
-    let monsterRows = [];
-    for(let id in monsters) {
-      monsterRows.push(monsters[id]);
-    }
     
     return (
       <Grid container spacing={0} justify="center">
@@ -101,7 +92,7 @@ class MonsterSelection extends React.Component {
         </Grid>
         <Grid item xs={12} md={10} lg={8}>
           <CombatantTable 
-            combatants={monsterRows}
+            combatants={monsters}
             selectedCombatants={selectedMonsterIndices}
             onSelectionChange={this.handleSelectionChange}
           />

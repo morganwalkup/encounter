@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getUserId,
-         createCharacter,
-         createCharacterWithImage,
-        } from '../../DatabaseFunctions/FirebaseFunctions';
+import Character from '../../Models/Character';
 import EditCombatantDialog from '../CharactersAndMonsters/EditCombatantDialog';
 import { withStyles } from 'material-ui/styles';
 
@@ -15,24 +12,9 @@ const propTypes = {
 class NewCharacterDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.defaultImage = "https://firebasestorage.googleapis.com/v0/b/encounter-49be9.appspot.com/o/admin%2Fimages%2Fcharacters%2FDefault.jpg?alt=media&token=d67e681c-849f-4160-923a-5c87acd3b48a";
-    this.defaultState = {
-      name: "",
-      image: this.defaultImage,
-      LVL: "",
-      AC: "",
-      HP: "",
-      SPD: "",
-      STR: "",
-      DEX: "",
-      CON: "",
-      INT: "",
-      WIS: "",
-      CHA: ""
-    };
     this.state = {
       imageFile: null,
-      character: Object.assign({}, this.defaultState)
+      character: new Character()
     };
   }
   
@@ -73,22 +55,17 @@ class NewCharacterDialog extends React.Component {
    * Saves the character data to the database and closes the dialog
    */
   handleSave = () => {
-    // Get user id and upload character data to database
-    getUserId((userid) => {
-      const imageFile = this.state.imageFile;
-      const characterData = Object.assign({}, this.state.character);
-      
-      if(imageFile === null) {
-        createCharacter(userid, characterData);
-        this.handleRequestClose();
-        this.resetLocalCharacterData();
-      } else {
-        createCharacterWithImage(userid, characterData, imageFile);
-        this.handleRequestClose();
-        this.resetLocalCharacterData();
-      }
-    });
+    const imageFile = this.state.imageFile;
+    const newCharacter = Character.copy(this.state.character);
     
+    if(imageFile === null) {
+      newCharacter.create();
+    } else {
+      newCharacter.createWithImage(imageFile);
+    }
+    
+    this.handleRequestClose();
+    this.resetLocalCharacterData();
   }
   
   /**
@@ -105,7 +82,7 @@ class NewCharacterDialog extends React.Component {
   resetLocalCharacterData = () => {
     this.setState({
       imageFile: null,
-      character: Object.assign({}, this.defaultState)
+      character: new Character()
     });
   }
   
@@ -116,6 +93,7 @@ class NewCharacterDialog extends React.Component {
       <EditCombatantDialog 
         combatant={character}
         isCharacter
+        isNew
         open={this.props.open}
         onRequestClose={this.handleRequestClose}
         onFieldChange={this.handleChange}

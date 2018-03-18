@@ -3,9 +3,8 @@ import {
   Link,
 } from 'react-router-dom';
 import Grid from 'material-ui/Grid';
-import SplashBackground from '../../images/dndphbfaded.jpg';
+import SplashBackground from '../../images/squadfadedflipped.jpg';
 import Typography from 'material-ui/Typography';
-import Card, { CardActions, CardContent } from 'material-ui/Card';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import { blueGrey } from 'material-ui/colors';
@@ -14,63 +13,21 @@ function HomeSplash(props) {
   const { classes } = props;
   return(
     <Grid container spacing={0} className={classes.splash}>
-      <Grid item xs={12}>
-        <Typography className={classes.tagline}>Visual Combat for D&D</Typography>
+      <Grid item xs={0} md={6}>
       </Grid>
-      <Grid item xs={12} className={classes.splashCardContainer}>
-        <Grid container justify="center" spacing={0}>
-          <Grid item xs={12} sm={4} md={3}>
-            <Card className={classes.splashCard}>
-              <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
-                Characters
-              </Typography>
-              <CardContent className={classes.splashCardContent}>
-                <Typography type='subheading' component="p" align='center'>
-                  Create intrepid, daring adventurers and their stalwart allies
-                </Typography>
-              </CardContent>
-              <CardActions className={classes.splashCardActions}>
-                <Button raised component={Link} to="/characters">
-                  Create a Character
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={4} md={3}>
-             <Card className={classes.splashCard}>
-              <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
-                Encounters
-              </Typography>
-              <CardContent className={classes.splashCardContent}>
-                <Typography type='subheading' component="p" align='center'>
-                  Pit your characters against fearsome foes in the arena of your choice
-                </Typography>
-              </CardContent>
-              <CardActions className={classes.splashCardActions}>
-                <Button raised component={Link} to="/encounters">
-                  Create an Encounter
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={4} md={3}>
-             <Card className={classes.splashCard}>
-              <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
-                Monsters
-              </Typography>
-              <CardContent className={classes.splashCardContent}>
-                <Typography type='subheading' component="p" align='center'>
-                  Craft unspeakable horrors to oppose and endanger your adventurers
-                </Typography>
-              </CardContent>
-              <CardActions className={classes.splashCardActions}>
-                <Button raised component={Link} to="/monsters">
-                  Create a Monster
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        </Grid>
+      <Grid item xs={12} md={6} className={classes.callContainer}>
+        <Typography type="display3" className={classes.tagline}>Visual Combat for Tabletop Games</Typography>
+        <Typography type="display1" className={classes.description}>
+          <em>Encounter!</em> makes combat engaging, fluid, and simple. Sign up now to see the difference.
+        </Typography>
+        <Button
+          raised 
+          className={classes.actionButton}
+          component={Link}
+          to="/signup"
+        >
+          Sign Up!
+        </Button>
       </Grid>
     </Grid>
   );
@@ -88,18 +45,29 @@ const styles = theme => ({
     backgroundColor: 'black',
     borderBottom: 'solid thick #69f0ae',
   },
-  tagline: {
-    fontSize: '2em',
-    fontWeight: 'bold',
-    letterSpacing: '1px',
-    color: 'white',
-    margin: '25px 10px',
-    marginBottom: '15px',
-    textShadow: '0px 2px 5px rgba(0,0,0,1)',
-    textAlign: 'center',
-  },
-  splashCardContainer: {
+  callContainer: {
+    padding: '0 30px',
+    marginTop: 10,
     marginBottom: 30,
+  },
+  tagline: {
+    fontWeight: 'bold',
+    color: 'white',
+    textShadow: '0px 2px 5px rgba(0,0,0,1)',
+  },
+  description: {
+    color: 'white',
+    textShadow: '0px 2px 5px rgba(0,0,0,1)',
+  },
+  actionButton: {
+    margin: '25px 0',
+    color: 'black',
+    backgroundColor: '#69f0ae',
+    '&:hover': {
+      backgroundColor: '#9fffe0',
+    },
+    transformOrigin: 'left',
+    transform: 'scale(1.5)',
   },
   splashCard: {
     width: '90%',

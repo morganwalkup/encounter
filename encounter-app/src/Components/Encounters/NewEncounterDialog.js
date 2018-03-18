@@ -1,10 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  getUserId,
-  createEncounter,
-  createEncounterWithImage
-} from '../../DatabaseFunctions/FirebaseFunctions';
+import Encounter from '../../Models/Encounter';
 import CRUDDialog from '../CharactersAndMonsters/CRUDDialog';
 import EncounterDialogStepper from './EncounterDialogContent/EncounterDialogStepper';
 import EncounterDetails from './EncounterDialogContent/EncounterDetails';
@@ -20,18 +16,10 @@ const propTypes = {
 class NewEncounterDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.defaultImageURL = "https://firebasestorage.googleapis.com/v0/b/encounter-49be9.appspot.com/o/admin%2Fimages%2Fencounters%2FDefaultEncounter.jpg?alt=media&token=41e728ac-1167-4436-bd44-e40c533595b4";
-    this.defaultEncounter = {
-      title: null,
-      description: null,
-      image: this.defaultImageURL,
-      characters: [],
-      monsters: [],
-    };
     this.state = {
       activeDialogStep: 0,
       imageFile: null,
-      encounter: Object.assign({}, this.defaultEncounter),
+      encounter: new Encounter(),
     };
   }
   
@@ -72,20 +60,17 @@ class NewEncounterDialog extends React.Component {
    * Saves encounter data to firebase and closes the dialog
    */
   handleSave = () => {
-    //Get user id and save encounter to database
-    getUserId((userid) => {
-      const imageFile = this.state.imageFile;
-      const encounterData = Object.assign({}, this.state.encounter);
-      if(imageFile === null) {
-        createEncounter(userid, encounterData);
-        this.resetComponentState();
-        this.handleRequestClose();
-      } else {
-        createEncounterWithImage(userid, encounterData, imageFile);
-        this.resetComponentState();
-        this.handleRequestClose();
-      }
-    });
+    const imageFile = this.state.imageFile;
+    const newEncounter = Encounter.copy(this.state.encounter);
+    
+    if(imageFile === null) {
+      newEncounter.create();
+    } else {
+      newEncounter.createWithImage(imageFile);
+    }
+    
+    this.handleRequestClose();
+    this.resetComponentState();
   }
   
   /**
@@ -117,7 +102,7 @@ class NewEncounterDialog extends React.Component {
    */
   handleCharacterSelect = (selectedCharacterIds) => {
     const encounterObj = this.state.encounter;
-    encounterObj.characters = selectedCharacterIds;
+    encounterObj.characterIDs = selectedCharacterIds;
     this.setState({
       encounter: encounterObj
     });
@@ -129,7 +114,7 @@ class NewEncounterDialog extends React.Component {
    */
   handleMonsterSelect = (selectedMonsterIds) => {
     const encounterObj = this.state.encounter;
-    encounterObj.monsters = selectedMonsterIds;
+    encounterObj.monsterIDs = selectedMonsterIds;
     this.setState({
       encounter: encounterObj
     });
@@ -142,7 +127,7 @@ class NewEncounterDialog extends React.Component {
     this.setState({
       activeDialogStep: 0,
       imageFile: null,
-      encounter: Object.assign({}, this.defaultEncounter),
+      encounter: new Encounter(),
     });
   }
 

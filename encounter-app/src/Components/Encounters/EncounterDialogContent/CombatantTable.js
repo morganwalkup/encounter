@@ -40,7 +40,7 @@ class CombatantTable extends React.PureComponent {
           name: 'created_date', 
           title: 'Date',
           getCellValue: row => {
-            const date = new Date(row.created_date);
+            const date = new Date(row.createdDate);
             return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
           },
         }

@@ -29,6 +29,8 @@ class CombatantCircle extends React.Component {
     this.setState({
       health: newHealth,
     });
+    
+    this.props.onHealthChange(newHealth);
   }
   
   render() {
