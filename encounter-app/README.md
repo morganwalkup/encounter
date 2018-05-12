@@ -1,3 +1,23 @@
+## Morgan's Quick Tips
+
+# Running the development environment
+1. In C9 bash, navigate to ~/workspace/encounter-app
+2. Type "npm start"
+3. In the toolbar, click Preview->Preview Running Application
+4. Use ^C to exit when finished
+
+# Publishing a build
+1. In C9 bash, navigate to ~/workspace/encounter-app
+2. Type "npm run build"
+3. A new build will be created at ~/workspace/encounter-app/build
+4. Change the name of index.html to 200.html (This is for ReactRouter)
+5. In C9 bash, navigate to ~workspace/encounter-app/build
+6. Type "surge"
+7. Surge will display email, token, and project path. Press enter
+8. Surge will display project size and domain. Change domain name to "walkupandaway-encounter.surge.sh"
+9. Press enter and wait for surge to finish uploading the build
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
