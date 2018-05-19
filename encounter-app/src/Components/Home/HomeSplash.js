@@ -13,7 +13,7 @@ function HomeSplash(props) {
   const { classes } = props;
   return(
     <Grid container spacing={0} className={classes.splash}>
-      <Grid item xs={0} md={6}>
+      <Grid item xs={1} md={6}>
       </Grid>
       <Grid item xs={12} md={6} className={classes.callContainer}>
         <Typography type="display3" className={classes.tagline}>Visual Combat for Tabletop Games</Typography>

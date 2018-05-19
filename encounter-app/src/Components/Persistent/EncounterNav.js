@@ -2,7 +2,7 @@ import React from 'react';
 import { 
   getUserId,
   signOutUser,
-} from '../../DatabaseFunctions/FirebaseFunctions';        
+} from '../../DatabaseFunctions/FirebaseFunctions';   
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import AppBar from 'material-ui/AppBar';
@@ -46,6 +46,7 @@ class EncounterNav extends React.Component {
    * Handles user click of the menu button (only visible on smaller screens)
    */
   handleMenuClick = () => {
+    console.log("Menu clicked!");
     this.setState(prevState => ({
       isDrawerOpen: !prevState.isDrawerOpen,
     }));
@@ -77,7 +78,7 @@ class EncounterNav extends React.Component {
       appBarClasses.push(classes.hoverOnlyAppBar);
     }
     
-    //Display "sign up" or "sign out" buttons depending on user state
+    //Display "sign up" or "sign out" buttons depending on user login state
     let authenticationButton;
     if(isUserSignedIn) {
       authenticationButton = (
@@ -105,6 +106,39 @@ class EncounterNav extends React.Component {
       );
     }
     
+    //Display or hide encounter/character/monster links depending on user login state
+    let siteLinks = [];
+    if(isUserSignedIn) {
+      siteLinks.push(
+        <Button 
+          color="contrast"
+          component={Link}
+          to="/encounters"
+        >
+          Encounters
+        </Button>
+      );
+      siteLinks.push(
+        <Button 
+          color="contrast"
+          component={Link}
+          to="/characters"
+        >
+          Characters
+        </Button>
+      );
+      siteLinks.push(
+        <Button 
+          color="contrast"
+          component={Link}
+          to="/monsters"
+        >
+          Monsters
+        </Button>
+      );
+    }
+    
+    //Return component
     return (
       <div>
         <AppBar className={appBarClasses.join(' ')}>
@@ -120,33 +154,13 @@ class EncounterNav extends React.Component {
             </Typography>
 
             <Hidden smDown>
-              <Button 
-                color="contrast"
-                component={Link}
-                to="/encounters"
-              >
-                Encounters
-              </Button>
-              <Button 
-                color="contrast"
-                component={Link}
-                to="/characters"
-              >
-                Characters
-              </Button>
-              <Button 
-                color="contrast"
-                component={Link}
-                to="/monsters"
-              >
-                Monsters
-              </Button>
+              {siteLinks}
               {authenticationButton}
             </Hidden>
             
             <Hidden mdUp>
-              <IconButton color="contrast" aria-label="Menu">
-                <MenuIcon onClick={this.handleMenuClick}/>
+              <IconButton color="contrast" aria-label="Menu" onClick={this.handleMenuClick}>
+                <MenuIcon/>
               </IconButton>
             </Hidden>
             

@@ -64,11 +64,9 @@ class EncounterScreen extends React.Component {
     //Get user and encounter ids from url
     const userid = this.props.match.params.userid;
     const encounterid = this.props.match.params.encounterid;
-    console.log("Getting encounter screen data");
     
     //Get encounter data from firebase
     getEncounter(userid, encounterid, encounter => {
-      console.log(encounter);
       //Save background image and reset loading state
       this.setState({
         bgImage: encounter.image,

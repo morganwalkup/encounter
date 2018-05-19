@@ -8,7 +8,7 @@ import { withStyles } from 'material-ui/styles';
 function EncounterDrawerContent(props) {
   const { isUserSignedIn, onSignOut, classes } = props;
 
-  //Display "sign up" or "sign out" buttons depending on user state
+  //Display "sign up" or "sign out" buttons depending on user login state
   let authenticationButton;
   if(isUserSignedIn) {
     authenticationButton = (
@@ -24,12 +24,10 @@ function EncounterDrawerContent(props) {
     );
   }
   
-  return (
-    <div className={classes.drawerContent}>
-      <List>
-        {authenticationButton}
-      </List>
-      <Divider />
+  //Display or hide encounter/character/monster links depending on user login state
+  let linkList;
+  if(isUserSignedIn) {
+    linkList = (
       <List>
         <ListItem button component={Link} to="/encounters">
           <ListItemText primary="Encounters" />
@@ -41,6 +39,16 @@ function EncounterDrawerContent(props) {
           <ListItemText primary="Monsters" />
         </ListItem>
       </List>
+    );
+  }
+  
+  return (
+    <div className={classes.drawerContent}>
+      <List>
+        {authenticationButton}
+      </List>
+      <Divider />
+      {linkList}
     </div>
   );
 }
