@@ -77,7 +77,7 @@ function HomeExamples(props) {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12}>
+      {/*<Grid item xs={12}>
         <Button 
           raised 
           component={Link}
@@ -86,7 +86,7 @@ function HomeExamples(props) {
         >
           Build your own!
         </Button>
-      </Grid>
+      </Grid>*/}
       
     </Grid>
   );
