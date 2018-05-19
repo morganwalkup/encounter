@@ -2,10 +2,3 @@
     width: 0px;  /* remove scrollbar space */
     background: transparent;  /* make scrollbar invisible */
 }
-
-@-moz-document url-prefix() { 
-    body { 
-        overflow: hidden; 
-        
-    } 
-}
