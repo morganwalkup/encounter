@@ -17,8 +17,10 @@ import Hidden from 'material-ui/Hidden';
 import { blueGrey } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
+
 const propTypes = {
-  subtle: PropTypes.bool,
+  hoverOnly: PropTypes.bool,
+  homeScreen: PropTypes.bool,
 };
 
 class EncounterNav extends React.Component {
@@ -69,14 +71,13 @@ class EncounterNav extends React.Component {
   }
   
   render() {
-    const { classes, hoverOnly } = this.props;
+    const { classes, hoverOnly, homeScreen } = this.props;
     const { isUserSignedIn } = this.state;
     
     //Conditionally apply styling
     let appBarClasses = [classes.appBar];
-    if(hoverOnly === true) {
-      appBarClasses.push(classes.hoverOnlyAppBar);
-    }
+    if(hoverOnly) appBarClasses.push(classes.hoverOnlyAppBar);
+    if(homeScreen) appBarClasses.push(classes.homeAppBar);
     
     //Display "sign up" or "sign out" buttons depending on user login state
     let authenticationButton;
@@ -111,6 +112,7 @@ class EncounterNav extends React.Component {
     if(isUserSignedIn) {
       siteLinks.push(
         <Button 
+          key="EncountersNavLink"
           color="contrast"
           component={Link}
           to="/encounters"
@@ -120,6 +122,7 @@ class EncounterNav extends React.Component {
       );
       siteLinks.push(
         <Button 
+          key="CharactersNavLink"
           color="contrast"
           component={Link}
           to="/characters"
@@ -129,6 +132,7 @@ class EncounterNav extends React.Component {
       );
       siteLinks.push(
         <Button 
+          key="MonstersNavLink"
           color="contrast"
           component={Link}
           to="/monsters"
@@ -204,6 +208,10 @@ const styles = theme => ({
     '&:hover': {
       opacity: 1.0,
     },
+  },
+  homeAppBar: {
+    backgroundColor: 'transparent',
+    boxShadow: 'none',
   },
   title: {
     flex: 1,

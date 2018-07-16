@@ -15,19 +15,40 @@ import Encounters from './Components/Encounters/Encounters';
 import EncounterScreen from './Components/EncounterScreen/EncounterScreen';
 import EncounterFooter from './Components/Persistent/EncounterFooter';
 import { withStyles } from 'material-ui/styles';
+import * as firebase from 'firebase';
 
 function App(props) {
   const { classes } = props;
+  
+  // Configure firebase
+  if(firebase.apps.length === 0) {
+    const config = {
+      apiKey: "AIzaSyBjC4MMGZ1TeXso6WuLgj5I3VqeIxq61Dg",
+      authDomain: "encounter-49be9.firebaseapp.com",
+      databaseURL: "https://encounter-49be9.firebaseio.com",
+      projectId: "encounter-49be9",
+      storageBucket: "encounter-49be9.appspot.com",
+      messagingSenderId: "52182315576"
+    };
+    firebase.initializeApp(config);
+  }
   
   return(
     <Router>
     <div>
       {/* Reset browser styling */}
       <Reboot />
-      {/* Navbar - Apply hoverOnly effect for encounter screen */}
-      <Route path="/playencounter" children={({ match }) => (
-        <EncounterNav hoverOnly={match ? true : false} />
-      )}/>
+      
+      {/* Navbar - Apply effects for specific pages */}
+      <Switch>
+        <Route exact path="/" render={()=>
+          <EncounterNav homeScreen/>
+        }/>
+        <Route path="/playencounter" render={()=>
+          <EncounterNav hoverOnly/>}
+        />
+        <Route component={EncounterNav}/>
+      </Switch>
       
       {/* Page Content */}
       <Grid 

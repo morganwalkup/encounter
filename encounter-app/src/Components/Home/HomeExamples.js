@@ -9,9 +9,9 @@ import Typography from 'material-ui/Typography';
 import { GridList, GridListTile, GridListTileBar } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import PlayCircleFilled from 'material-ui-icons/PlayCircleFilled';
-import Button from 'material-ui/Button';
+//import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
-import { blueGrey } from 'material-ui/colors';
+//import { blueGrey } from 'material-ui/colors';
 
 function HomeExamples(props) {
   const { classes } = props;
@@ -46,11 +46,11 @@ function HomeExamples(props) {
   return(
     <Grid container spacing={0} className={classes.examples}>
       <Grid item xs={12} >
-        <Typography className={classes.tagline}>Encounter Examples</Typography>
+        <Typography type="display1" className={classes.tagline}>EXAMPLES</Typography>
       </Grid>
       <Grid item xs={12} className={classes.examplesContainer}>
         <Grid container justify="center" spacing={0}>
-          <Grid item xs={11} md={8} >
+          <Grid item xs={11} md={8} lg={6} >
               <div className={classes.container}>
                 <GridList cellHeight={160} className={classes.gridList}>
                 
@@ -97,19 +97,19 @@ const styles = theme => ({
     width: '100%',
     height: 'auto',
     minHeight: 450,
-    backgroundColor: blueGrey[900],
+    backgroundColor: "#e4e4e4",
   },
   tagline: {
     fontSize: '2em',
     fontWeight: 'bold',
     letterSpacing: '1px',
-    color: 'white',
+    color: 'black',
     margin: '25px 10px',
-    textShadow: '0px 2px 5px rgba(0,0,0,1)',
+    //textShadow: '0px 2px 5px rgba(0,0,0,1)',
     textAlign: 'center',
   },
   examplesContainer: {
-    marginBottom: '10px',  
+    marginBottom: '75px',  
   },
   buildButton: {
     display: 'block',

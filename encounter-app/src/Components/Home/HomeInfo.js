@@ -8,13 +8,10 @@ import { blueGrey } from 'material-ui/colors';
 function HomeInfo(props) {
   const { classes } = props;
   return(
-    <Grid container spacing={0} className={classes.splash}>
-      <Grid item xs={12}>
-        <Typography className={classes.tagline}>So Much to Love!</Typography>
-      </Grid>
-      <Grid item xs={12} className={classes.splashCardContainer}>
-        <Grid container justify="center" spacing={0}>
-          <Grid item xs={12} sm={4} md={3}>
+    <Grid container justify="center" spacing={0} className={classes.splash}>
+      <Grid item xs={11} md={12} className={classes.splashCardContainer}>
+        <Grid container justify="center" spacing={8}>
+          <Grid item xs={12} sm={4} md={3} lg={2}>
             <Card className={classes.splashCard}>
               <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
                 Polished Animations
@@ -26,7 +23,7 @@ function HomeInfo(props) {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid item xs={12} sm={4} md={3} lg={2}>
              <Card className={classes.splashCard}>
               <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
                 Initiative Tracking
@@ -38,7 +35,7 @@ function HomeInfo(props) {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid item xs={12} sm={4} md={3} lg={2}>
              <Card className={classes.splashCard}>
               <Typography type="title" component="h2" align='center' className={classes.splashCardTitle}>
                 Stat Blocks
@@ -60,27 +57,36 @@ const styles = theme => ({
   splash: {
     width: '100%',
     height: 'auto',
-    backgroundColor: blueGrey[900],
-    borderBottom: 'solid thick #FFFA58',
+    backgroundColor: '#e4e4e4',
+    //borderBottom: 'solid thick #FFFA58',
+    //borderTop: 'solid thick #69f0ae'
   },
   tagline: {
     fontSize: '2em',
     fontWeight: 'bold',
     letterSpacing: '1px',
-    color: 'white',
+    color: 'black',
     margin: '25px 10px',
     marginBottom: '15px',
     textShadow: '0px 2px 5px rgba(0,0,0,1)',
     textAlign: 'center',
   },
   splashCardContainer: {
-    marginBottom: 30,
+    marginBottom: 45,
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: 30,
+    }
   },
   splashCard: {
-    width: '90%',
-    margin: '0 5%',
+    width: '100%',
+    //margin: '0 5%',
     marginTop: 10,
     borderRadius: '5px 5px 3px 3px',
+    minHeight: '100%',
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: 10,
+      minHeight: 0,
+    }
   },
   splashCardTitle: {
     color: 'white',

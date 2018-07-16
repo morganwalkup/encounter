@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from 'material-ui/Grid';
-import SplashBackground from '../../images/dndphbfaded.jpg';
+import SplashBackground from '../../images/squadfaded.jpg';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 

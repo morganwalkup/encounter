@@ -3,7 +3,6 @@ import {
   Link,
 } from 'react-router-dom';
 import Grid from 'material-ui/Grid';
-import SplashBackground from '../../images/squadfadedflipped.jpg';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
@@ -12,52 +11,75 @@ import { blueGrey } from 'material-ui/colors';
 function HomeSplash(props) {
   const { classes } = props;
   return(
-    <Grid container spacing={0} className={classes.splash}>
-      <Grid item xs={1} md={6}>
+    <div className={classes.splashContainer}>
+      <img className={classes.squadHeader} src={require('../../images/squadhome.jpg')} alt=''/>
+      <Grid container spacing={0} className={classes.splash}>
+        <Grid item xs={6}>
+        </Grid>
+        <Grid item xs={12} lg={4} className={classes.callContainer}>
+          <Typography type="display2" className={classes.tagline}>ENCOUNTER!</Typography>
+          <Typography type="display1" className={classes.description}>
+            Bring engaging combat to your tabletop games
+          </Typography>
+          <Button
+            raised 
+            className={classes.actionButton}
+            component={Link}
+            to="/signup"
+          >
+            Sign Up!
+          </Button>
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={6} className={classes.callContainer}>
-        <Typography type="display3" className={classes.tagline}>Visual Combat for Tabletop Games</Typography>
-        <Typography type="display1" className={classes.description}>
-          <em>Encounter!</em> makes combat engaging, fluid, and simple. Sign up now to see the difference.
-        </Typography>
-        <Button
-          raised 
-          className={classes.actionButton}
-          component={Link}
-          to="/signup"
-        >
-          Sign Up!
-        </Button>
-      </Grid>
-    </Grid>
+    </div>
   );
 }
 
 const styles = theme => ({
-  splash: {
+  splashContainer: {
+    width: '100vw',
+    overflow: 'hidden',
+  },
+  squadHeader: {
+    display: 'block',
     width: '100%',
     height: 'auto',
-    minHeight: 450,
-    paddingTop: theme.spacing.unit * 8,
-    backgroundImage: "url(" + SplashBackground + ")",
-    backgroundSize: '100% auto',
-    backgroundRepeat: 'no-repeat',
     backgroundColor: 'black',
-    borderBottom: 'solid thick #69f0ae',
+    [theme.breakpoints.down('xs')]: {
+      width: '200%',
+    }
+  },
+  splash: {
+    [theme.breakpoints.down('md')]: {
+      color: 'black',
+      backgroundColor: '#e4e4e4',
+    },
+    [theme.breakpoints.up('lg')]: {
+      position: 'absolute',
+      top: theme.spacing.unit * 14,
+      color: 'white',
+    }
   },
   callContainer: {
     padding: '0 30px',
-    marginTop: 10,
     marginBottom: 30,
+    textAlign: 'center',
   },
   tagline: {
+    color: 'inherit',
     fontWeight: 'bold',
-    color: 'white',
-    textShadow: '0px 2px 5px rgba(0,0,0,1)',
+    letterSpacing: '2px',
+    [theme.breakpoints.up('lg')]: {
+      textShadow: '0px 2px 5px rgba(0,0,0,1)',
+    }
   },
   description: {
-    color: 'white',
-    textShadow: '0px 2px 5px rgba(0,0,0,1)',
+    color: 'inherit',
+    lineHeight: '60px',
+    margin: '10px 0',
+    [theme.breakpoints.up('lg')]: {
+      textShadow: '0px 2px 5px rgba(0,0,0,1)',
+    }
   },
   actionButton: {
     margin: '25px 0',
@@ -66,7 +88,7 @@ const styles = theme => ({
     '&:hover': {
       backgroundColor: '#9fffe0',
     },
-    transformOrigin: 'left',
+    transformOrigin: 'center',
     transform: 'scale(1.5)',
   },
   splashCard: {
