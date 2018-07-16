@@ -4,9 +4,13 @@ import { withStyles } from 'material-ui/styles';
 function EncounterBackground(props) {
   const { classes, img } = props;
   
+  const bgDivStyle = {
+    backgroundImage: 'url(' + img + ')',
+  };
+  
   return(
-    <div className={classes.bgDiv}>
-      <img src={img} alt="Encounter Background" className={classes.bgImage}/>
+    <div className={classes.bgDiv} style={bgDivStyle}>
+      {/*<img src={img} alt="Encounter Background" className={classes.bgImage}/>*/}
     </div>
   );
 }
@@ -22,7 +26,9 @@ const styles = theme => ({
     backgroundColor: 'black',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',      
+    alignItems: 'center',    
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   },
   bgImage: {
     overflow: 'none',
