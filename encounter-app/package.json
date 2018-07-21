@@ -3,18 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@devexpress/dx-react-core": "1.0.0-beta.3",
+    "@devexpress/dx-react-grid": "1.0.0-beta.3",
+    "@devexpress/dx-react-grid-material-ui": "1.0.0-beta.3",
     "firebase": "^4.8.1",
     "material-ui": "^1.0.0-beta.27",
     "material-ui-icons": "^1.0.0-beta.17",
     "react": "^16.0.0",
+    "react-adsense": "0.0.5",
     "react-bootstrap": "^0.31.5",
     "react-dom": "^16.0.0",
     "react-firebaseui": "^1.0.10",
     "react-scripts": "1.0.14",
-    "typeface-roboto": "0.0.43",
-    "@devexpress/dx-react-core": "1.0.0-beta.3",
-    "@devexpress/dx-react-grid": "1.0.0-beta.3",
-    "@devexpress/dx-react-grid-material-ui": "1.0.0-beta.3"
+    "typeface-roboto": "0.0.43"
   },
   "scripts": {
     "start": "react-scripts start",

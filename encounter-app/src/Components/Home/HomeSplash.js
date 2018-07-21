@@ -37,7 +37,7 @@ function HomeSplash(props) {
 
 const styles = theme => ({
   splashContainer: {
-    width: '100vw',
+    width: '100%',
     overflow: 'hidden',
   },
   squadHeader: {

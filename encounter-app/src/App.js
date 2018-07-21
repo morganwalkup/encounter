@@ -13,6 +13,7 @@ import Characters from './Components/Characters/Characters';
 import Monsters from './Components/Monsters/Monsters';
 import Encounters from './Components/Encounters/Encounters';
 import EncounterScreen from './Components/EncounterScreen/EncounterScreen';
+import RevHitsBannerAd from './Components/Persistent/RevHitsBannerAd';
 import EncounterFooter from './Components/Persistent/EncounterFooter';
 import { withStyles } from 'material-ui/styles';
 import * as firebase from 'firebase';
@@ -70,6 +71,14 @@ function App(props) {
           </Switch>
         </Grid>
         
+        {/* Ad banner */}
+        <Grid item xs={12}>
+          <Switch>
+            <Route path="/playencounter" />
+            <Route path="/" component={RevHitsBannerAd}/>
+          </Switch>
+        </Grid>
+        
         {/* Page footer */}
         <Grid item xs={12}>
           <Switch>
@@ -87,6 +96,8 @@ function App(props) {
 const styles = ({
   appContainer: {
     minHeight: '100vh',
+    width: '100%',
+    overflow: 'hidden',
   }
 });
 

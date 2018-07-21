@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Grid from 'material-ui/Grid';
-import ExampleBg1 from '../../images/dndphb.jpg';
-import ExampleBg2 from '../../images/battlefield.jpg';
-import ExampleBg3 from '../../images/battlefield2.jpg';
-import ExampleBg4 from '../../images/battlefield3.jpg';
+import ExampleBg1 from '../../images/battlefield3.jpg';
+import ExampleBg2 from '../../images/forhonor.jpg';
+import ExampleBg3 from '../../images/volo.jpg';
+import ExampleBg4 from '../../images/battlefield2.jpg';
 import Typography from 'material-ui/Typography';
 import { GridList, GridListTile, GridListTileBar } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
@@ -19,27 +19,27 @@ function HomeExamples(props) {
   const exampleEncounters = [
     {
       bg: ExampleBg1,
-      title: 'Frost Giant\'s Lair',
+      title: 'Crescent Cavern',
       subtitle: 'Example 1',
-      link: '/playencounter/anonymous/-L2w26doG8h7187XOw5W',
+      link: '/playencounter/anonymous/-L2wSRYyAwEziXvV1Sx5',
     },
     {
       bg: ExampleBg2,
-      title: 'Moonball Arena',
+      title: 'City\'s Last Stand',
       subtitle: 'Example 2',
       link: '/playencounter/anonymous/-L2w2P4q-IKXPMyfMf1V',
     },
     {
       bg: ExampleBg3,
-      title: 'Moonlit Night',
+      title: 'Frost Giant\'s Lair',
       subtitle: 'Example 3',
-      link: '/playencounter/anonymous/-L2wSJj56TNpUaS1FyPf',
+      link: '/playencounter/anonymous/-L2w26doG8h7187XOw5W',
     },
     {
       bg: ExampleBg4,
-      title: 'Crescent Cavern',
+      title: 'Moonlit Night',
       subtitle: 'Example 4',
-      link: '/playencounter/anonymous/-L2wSRYyAwEziXvV1Sx5',
+      link: '/playencounter/anonymous/-L2wSJj56TNpUaS1FyPf',
     }
   ];
   

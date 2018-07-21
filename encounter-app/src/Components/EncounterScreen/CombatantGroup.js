@@ -36,6 +36,7 @@ class CombatantGroup extends React.Component {
     const combatantNode = ReactDOM.findDOMNode(combatant);
     const cgNode = ReactDOM.findDOMNode(this);
     const paddingTop = 20;
+    console.log(cgNode);
     cgNode.scrollTo({
       top: combatantNode.offsetTop - paddingTop,
       left: 0,
