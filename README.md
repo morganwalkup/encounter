@@ -6,7 +6,9 @@ It allows dungeon masters to construct "encounters", consisting of one or more p
 
 Encounter! Will automatically roll for initiative and control the turn order, allowing DMs to focus on the storytelling.
 
-[See for yourself!](https://walkupandaway-encounter.surge.sh/)
+Official website: https://walkupandaway-encounter.surge.sh/
+
+<img width="1792" alt="Screenshot 2024-08-03 at 11 44 00 PM" src="https://github.com/user-attachments/assets/d9ca5148-557b-418e-b6fc-93ab105641d5">
 
 ## Morgan's Quick Tips
 
