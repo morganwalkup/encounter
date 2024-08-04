@@ -1,17 +1,27 @@
+# Encounter!
+
+Encounter! is a web app for managing combat in tabletop games, like D&D.
+
+It allows dungeon masters to construct "encounters", consisting of one or more players, one or more enemies, and one battleground.
+
+Encounter! Will automatically roll for initiative and control the turn order, allowing DMs to focus on the storytelling.
+
+[See for yourself!](https://walkupandaway-encounter.surge.sh/)
+
 ## Morgan's Quick Tips
 
 # Running the development environment
-1. In C9 bash, navigate to ~/workspace/encounter-app
+1. In bash, navigate to ~/workspace/encounter-app
 2. Type "npm start"
 3. In the toolbar, click Preview->Preview Running Application
 4. Use ^C to exit when finished
 
 # Publishing a build
-1. In C9 bash, navigate to ~/workspace/encounter-app
+1. In bash, navigate to ~/workspace/encounter-app
 2. Type "npm run build"
 3. A new build will be created at ~/workspace/encounter-app/build
 4. Change the name of index.html to 200.html (This is for ReactRouter)
-5. In C9 bash, navigate to ~workspace/encounter-app/build
+5. In bash, navigate to ~workspace/encounter-app/build
 6. Type "surge"
 7. Surge will display email, token, and project path. Press enter
 8. Surge will display project size and domain. Change domain name to "walkupandaway-encounter.surge.sh"
