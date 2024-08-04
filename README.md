@@ -1,3 +1,13 @@
+# Encounter!
+
+Encounter! is a web app for managing combat in tabletop games, like D&D.
+
+It allows dungeon masters to construct "encounters", consisting of one or more players, one or more enemies, and one battleground.
+
+Encounter! Will automatically roll for initiative and control the turn order, allowing DMs to focus on the storytelling.
+
+[See for yourself!](https://walkupandaway-encounter.surge.sh/)
+
 ## Morgan's Quick Tips
 
 # Running the development environment
